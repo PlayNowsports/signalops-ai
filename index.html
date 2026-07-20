@@ -46,6 +46,7 @@
         </div>
         <div class="top-actions">
           <div class="fy-control"><label for="fiscal-year">FORECAST YEAR</label><select id="fiscal-year" disabled><option value="all">All FYs</option></select></div>
+          <input id="topbar-key" type="password" placeholder="sk-ant-… (for AI extraction)" style="padding:9px 10px;border:1px solid #cdd9d4;border-radius:8px;font:11px inherit;width:200px;color:var(--ink)">
           <span id="file-badge" class="file-badge">No dataset loaded</span>
           <label class="button secondary" for="file-input">Upload XLSX / CSV</label>
           <input id="file-input" type="file" accept=".xlsx,.xls,.csv" hidden>
@@ -134,7 +135,7 @@
           <article class="panel">
             <h3>Connection</h3>
             <label class="field-label">Anthropic API key<input id="anthropic-key" type="password" autocomplete="off" placeholder="sk-ant-…"></label>
-            <label class="field-label">Claude model<input id="anthropic-model" value="claude-sonnet-5"></label>
+            <label class="field-label">Claude model<input id="anthropic-model" value="claude-sonnet-4-6"></label>
             <label class="field-label">Rows to process<select id="ai-limit"><option value="25">First 25 — demo</option><option value="50" selected>First 50</option><option value="all">All current renewals</option></select></label>
             <div class="privacy-note">The key remains in memory for this browser session and is sent directly to Anthropic. Use a temporary/restricted key. A production rollout should use a controlled backend proxy.</div>
             <button id="test-ai" class="button secondary" disabled>Test connection</button>
@@ -352,7 +353,7 @@
   const normalize = v => String(v ?? '').trim().toLowerCase();
   const val = (row, key) => { const aliases=FIELD_ALIASES[key]||[key];for (const name of aliases) if (Object.prototype.hasOwnProperty.call(row,name)) return row[name];const wanted=new Set(aliases.map(normalize));for(const name of Object.keys(row))if(wanted.has(normalize(name)))return row[name];return null; };
   const hasField = (headers,key) => { const wanted=new Set((FIELD_ALIASES[key]||[key]).map(normalize));return headers.some(h=>wanted.has(normalize(h))); };
-  const num = v => { if (v === null || v === undefined || v === '') return null; const n = Number(String(v).replace(/[$,%]/g,'')); return Number.isFinite(n) ? n : null; };
+  const num = v => { if (v === null || v === undefined || v === '') return null; let s=String(v).replace(/[$,%]/g,''); const fyMatch=s.match(/^FY\s*(\d{2,4})$/i); if(fyMatch){const yr=Number(fyMatch[1]);s=String(yr<100?2000+yr:yr)} const n = Number(s); return Number.isFinite(n) ? n : null; };
   const combinedText = row => [val(row,'note'),val(row,'gong'),val(row,'reason'),val(row,'lossReason')].filter(Boolean).join(' | ');
 
   function toast(message) { const el=$('toast'); el.textContent=message; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),2600); }
@@ -378,7 +379,7 @@
       }
       if (!rows.length) throw new Error('The first sheet has no data rows.');
       state.headers=Object.keys(rows[0]); state.rows=rows;
-      const fiscalYears=[...new Set(rows.map(r=>num(val(r,'closeFY'))).filter(Boolean))].sort((a,b)=>a-b);state.selectedFY=fiscalYears.includes(2026)?2026:(fiscalYears.at(-1)||null);renderFiscalYears(fiscalYears);
+      const fiscalYears=[...new Set(rows.map(r=>{let fy=num(val(r,'closeFY'));if(fy)return fy;const fp=String(val(r,'fiscalPeriod')||val(r,'closeFYQ')||'');const m=fp.match(/FY\s*(\d{2,4})/i);if(m){const yr=Number(m[1]);return yr<100?2000+yr:yr}return null}).filter(Boolean))].sort((a,b)=>a-b);state.selectedFY=fiscalYears.includes(2027)?2027:fiscalYears.includes(2026)?2026:(fiscalYears.at(-1)||null);renderFiscalYears(fiscalYears);
       state.quality=validateData(rows,state.headers);
       const blockers=state.quality.filter(q=>q.severity==='blocker');
       if (blockers.length) { state.accounts=[]; renderAll(); switchView('quality'); throw new Error('Run stopped: '+blockers.length+' blocking schema issue'+(blockers.length===1?'':'s')+'.'); }
@@ -447,8 +448,9 @@
     const isOpen=outcome? !['won','lost','closed won','closed lost','churned'].includes(outcome) : !/closed won|closed lost|churned/.test(stage);
     const motion=normalize(val(row,'recordType'))+' '+normalize(val(row,'dealType'));
     const isRenewal=motion.trim()?/subscription renewal|renewal|retention|churn|contract/.test(motion):true;
-    const closeFY=num(val(row,'closeFY'));
-    const matchesFY=state.selectedFY===null||state.selectedFY==='all'||closeFY===null||closeFY===Number(state.selectedFY);
+    let closeFY=num(val(row,'closeFY'));
+    if(!closeFY){const fp=String(val(row,'fiscalPeriod')||val(row,'closeFYQ')||'');const m=fp.match(/FY\s*(\d{2,4})/i);if(m){const yr=Number(m[1]);closeFY=yr<100?2000+yr:yr}}
+    const matchesFY=state.selectedFY===null||state.selectedFY==='all'||(closeFY!==null&&closeFY===Number(state.selectedFY));
     return isOpen&&isRenewal&&matchesFY;
   }
   function buildAccounts(rows) {
@@ -627,7 +629,7 @@
   const AI_CATEGORIES=['budget_constraint','champion_turnover_or_disengagement','product_gap_or_underuse','competitive_displacement','merger_acquisition_or_org_change','procurement_pushback','customer_disengagement','no_risk_detected','ambiguous'];
   const AI_SYSTEM_PROMPT=`You are a cautious B2B SaaS Revenue Operations analyst. Extract current unresolved renewal risk and credible expansion evidence from two short customer-text fields. Do not infer facts that are not present. Treat resolved or negated statements such as "no retention risk", "budget approved", and "procurement completed" as no current risk. Return ONLY JSON with exactly these keys: {"risk_category":"one allowed category","risk_present":boolean,"expansion_present":boolean,"confidence":number,"evidence_text":"short source-grounded phrase","reasoning":"one sentence","needs_human_review":boolean}. Allowed risk_category values: ${AI_CATEGORIES.join(', ')}. Confidence must be 0 to 1. Use ambiguous and needs_human_review=true when evidence conflicts or is unclear.`;
   async function callClaude(row,key,model,signal){
-    const payload={model,max_tokens:350,temperature:0,system:AI_SYSTEM_PROMPT,messages:[{role:'user',content:`CSM Health Note: ${val(row,'note')||'(blank)'}\nLatest Gong Call Highlight: ${val(row,'gong')||'(blank)'}`} ]};
+    const payload={model,max_tokens:350,system:AI_SYSTEM_PROMPT,messages:[{role:'user',content:`CSM Health Note: ${val(row,'note')||'(blank)'}\nLatest Gong Call Highlight: ${val(row,'gong')||'(blank)'}`} ]};
     const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(payload),signal});
     if(!response.ok){const retryable=response.status===429||response.status>=500;let detail='';try{const body=await response.json();detail=body?.error?.message?` — ${body.error.message}`:'';}catch{}throw new Error(`Anthropic ${response.status}${detail}${retryable?' — retry later':''}`);}
     const data=await response.json(),raw=(data.content||[]).find(x=>x.type==='text')?.text||'';let parsed;
@@ -668,6 +670,8 @@
     document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
     document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.jump)));
     $('file-input').addEventListener('change',e=>handleFile(e.target.files[0]));$('export-button').addEventListener('click',exportQueue);$('export-quality').addEventListener('click',exportQuality);
+    $('topbar-key').addEventListener('input',e=>{$('anthropic-key').value=e.target.value;$('run-ai').disabled=e.target.value.trim().length<10;$('test-ai').disabled=e.target.value.trim().length<10});
+    $('anthropic-key').addEventListener('input',e=>{$('topbar-key').value=e.target.value});
     $('fiscal-year').addEventListener('change',e=>{state.selectedFY=e.target.value==='all'?'all':Number(e.target.value);state.quality=validateData(state.rows,state.headers);state.accounts=buildAccounts(state.rows);if(state.aiResults.length)applyAIResults();renderAll();toast('Forecast population changed to '+(state.selectedFY==='all'?'all fiscal years':'FY'+String(state.selectedFY).slice(-2)));});
     $('dash-risk-filter').addEventListener('change',renderOperationalQueue);$('dash-type-filter').addEventListener('change',renderOperationalQueue);
     $('trigger-account').addEventListener('change',renderTriggers);$('save-triggers').addEventListener('click',saveTriggers);$('trigger-grid').addEventListener('click',e=>{const b=e.target.closest('[data-copy-trigger]');if(b)copyTrigger(b.dataset.copyTrigger);});
