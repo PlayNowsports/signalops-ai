@@ -1,0 +1,13 @@
+{
+  "name": "signalops-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Deterministic renewal and expansion operating tool for RevOps",
+  "scripts": {
+    "test": "node tests/core.test.js",
+    "fixture": "node tests/run-fixture.js"
+  },
+  "devDependencies": {
+    "xlsx": "0.18.5"
+  }
+}
