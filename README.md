@@ -82,3 +82,4 @@ The uploaded workbook is processed in memory. Raw rows are not sent over the net
 ## Third-party software
 
 Spreadsheet parsing uses SheetJS Community Edition 0.18.5, distributed under the Apache 2.0 license. The static application loads the pinned browser build from jsDelivr; local verification installs the same pinned npm version.
+
