@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tulip GTM Operations — Take-Home Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#14304F; --navy-2:#1C3F61; --navy-chart:#4F8FEF; --steel:#6B7A99; --cream:#0A0F1C; --paper:#131C2E;
+  --panel-soft:#16213A; --line:#223047; --brass:#22D3EE; --brass-dk:#0E94AB; --red:#F2545B; --green:#34D399;
+  --amber:#F0B429; --ink:#E8EEF7; --ink-soft:#8A94A6; --mono:"IBM Plex Mono",monospace;
+}
+*{box-sizing:border-box;}
+body{margin:0; background:#05070A; font-family:"IBM Plex Sans",Arial,sans-serif; color:var(--ink);
+  min-height:100vh; overflow:hidden;}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif; color:var(--ink); margin:0;}
+.mono{font-family:var(--mono);}
+text{font-family:"IBM Plex Sans",Arial,sans-serif;}
+.axislabel{font-size:8.5px; fill:var(--ink-soft);}
+.valuelabel{font-size:9.5px; font-weight:600;}
+
+/* ===== deck shell ===== */
+.deck-stage{ width:100vw; height:calc(100vh - 60px); display:flex; align-items:center; justify-content:center; position:relative; }
+.slide{
+  width:1600px; height:900px; background:var(--cream); position:absolute; overflow:hidden;
+  box-shadow:0 24px 70px rgba(0,0,0,.45); border:1px solid #1B2436;
+  display:none; flex-direction:column;
+  transform:scale(var(--z,1)); transform-origin:center;
+}
+.slide.active{display:flex;}
+.navbar{
+  position:fixed; bottom:10px; left:50%; transform:translateX(-50%); z-index:100;
+  transition:opacity .4s; opacity:1;
+  display:flex; align-items:center; gap:14px; background:rgba(14,34,56,.92); padding:8px 18px;
+  border-radius:24px; box-shadow:0 6px 18px rgba(0,0,0,.4);
+}
+.navbar button{ background:none; border:none; color:#EDE7D8; font-size:1.1rem; cursor:pointer; padding:2px 8px; }
+.navbar button:hover{ color:var(--brass); }
+.navbar .dots{ display:flex; gap:7px; }
+.navbar .dot{ width:8px; height:8px; border-radius:50%; background:#4C5A6A; cursor:pointer; }
+.navbar .dot.on{ background:var(--brass); }
+.navbar .lbl{ font-family:var(--mono); font-size:.68rem; color:#9FB0BD; min-width:120px; text-align:center; }
+.insight-target{cursor:help; outline:1px solid transparent; outline-offset:4px; transition:outline-color .15s,filter .15s;}
+.insight-target:hover,.insight-target:focus-visible{outline-color:rgba(34,211,238,.7); filter:brightness(1.08);}
+.strategy-popover{position:fixed;right:24px;bottom:76px;z-index:240;width:390px;max-width:calc(100vw - 48px);background:rgba(19,28,46,.98);border:1px solid var(--brass);box-shadow:0 16px 42px rgba(0,0,0,.48);padding:18px 20px 17px;opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .15s,transform .15s;}
+.strategy-popover.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+.strategy-popover .sp-label{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--brass);}
+.strategy-popover .sp-title{font-family:"IBM Plex Serif",Georgia,serif;font-size:1.02rem;color:var(--ink);font-weight:700;margin:7px 28px 7px 0;line-height:1.25;}
+.strategy-popover .sp-body{font-size:.7rem;color:var(--ink-soft);line-height:1.48;}
+.strategy-popover .sp-question{margin-top:10px;padding-top:9px;border-top:1px solid var(--line);font-size:.67rem;color:var(--ink);line-height:1.42;}
+.strategy-popover .sp-question b{color:var(--amber);font-family:var(--mono);font-size:.57rem;text-transform:uppercase;letter-spacing:.05em;}
+.strategy-popover button{position:absolute;right:12px;top:10px;background:none;border:0;color:var(--ink-soft);font-size:1.15rem;cursor:pointer;}
+.insight-hint{position:fixed;left:24px;bottom:18px;z-index:210;font-family:var(--mono);font-size:.56rem;letter-spacing:.05em;text-transform:uppercase;color:var(--brass);background:rgba(19,28,46,.94);border:1px solid var(--line);padding:7px 10px;}
+canvas{cursor:crosshair;}
+
+/* ===== shared slide header/footer ===== */
+.head{background:var(--navy); color:#EDE7D8; padding:14px 40px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0;}
+.head .eyebrow{font-family:var(--mono); font-size:.65rem; letter-spacing:.11em; text-transform:uppercase; color:#07111E; background:var(--brass); display:inline-block; padding:4px 10px; border-radius:2px; font-weight:700;}
+.head .title{font-family:"IBM Plex Serif"; font-size:1.22rem; font-weight:700; color:#fff; margin-top:5px;}
+.head .pagenum{font-family:var(--mono); font-size:.7rem; color:#8FA0AE;}
+.takeaway{background:var(--navy); color:#fff; padding:13px 40px; text-align:center; flex-shrink:0;}
+.takeaway b{font-family:"IBM Plex Serif"; font-size:1.05rem; font-weight:700;}
+.takeaway b span{color:var(--brass);}
+
+/* ===== title slide ===== */
+.title-body{flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:0 80px; background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 55%,#1c3a58 100%);}
+.title-body .kicker{font-family:var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--brass); font-size:.95rem; margin-bottom:22px;}
+.title-body h1{color:#fff; font-size:2.9rem; max-width:1100px; line-height:1.25;}
+.title-body .sub{color:#C9CFD6; font-size:1.15rem; margin-top:22px; max-width:820px;}
+.title-body .agenda{display:flex; gap:0; margin-top:56px; border-top:1px solid rgba(255,255,255,.2); padding-top:26px; width:100%; max-width:1200px; justify-content:center;}
+.title-body .agenda .step{flex:1; max-width:260px; padding:0 18px; border-right:1px solid rgba(255,255,255,.18);}
+.title-body .agenda .step:last-child{border-right:none;}
+.title-body .agenda .step .n{font-family:"IBM Plex Serif"; color:var(--brass); font-size:1.3rem; font-weight:700;}
+.title-body .agenda .step .t{color:#fff; font-size:.92rem; font-weight:600; margin-top:4px;}
+.title-body .agenda .step .d{color:#9FB0BD; font-size:.78rem; margin-top:4px;}
+.title-body .meta{position:absolute; bottom:26px; right:40px; color:#8FA0AE; font-family:var(--mono); font-size:.72rem;}
+.formal-cover{flex:1; position:relative; display:flex; flex-direction:column; justify-content:space-between; padding:64px 78px 54px; background:var(--cream); color:var(--ink);}
+.formal-cover:before{content:""; position:absolute; left:0; top:0; bottom:0; width:16px; background:var(--brass);}
+.formal-cover .cover-rule{width:112px; height:5px; background:var(--amber); margin-bottom:42px;}
+.formal-cover .cover-kicker{font-family:var(--mono); font-size:.78rem; letter-spacing:.13em; text-transform:uppercase; color:var(--brass);}
+.formal-cover h1{font-family:"IBM Plex Serif",Georgia,serif; color:var(--ink); font-size:3.25rem; line-height:1.12; max-width:1160px; margin-top:24px;}
+.formal-cover .cover-thesis{font-size:1.18rem; line-height:1.5; max-width:1040px; color:var(--ink-soft); margin-top:24px;}
+.formal-cover .cover-meta{display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid var(--line); padding-top:22px; color:var(--ink-soft); font-size:.78rem;}
+.formal-cover .cover-meta b{display:block; color:var(--ink); font-family:"IBM Plex Serif"; font-size:1.05rem; margin-bottom:4px;}
+.formal-cover .cover-tag{font-family:var(--mono); text-transform:uppercase; letter-spacing:.08em; color:var(--brass);}
+.nav-map{display:grid; grid-template-columns:120px 1fr 1fr 1fr; border:1px solid var(--line); background:var(--paper);}
+.nav-map > div{padding:11px 14px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); min-height:58px;}
+.nav-map > div:nth-child(4n){border-right:0;}
+.nav-map .nav-head{font-family:var(--mono); font-size:.62rem; letter-spacing:.06em; text-transform:uppercase; color:var(--steel); min-height:auto; background:var(--panel-soft);}
+.nav-map .ex{font-family:"IBM Plex Serif"; font-weight:700; color:var(--brass); font-size:.96rem;}
+.nav-map .jump{cursor:pointer; transition:background .15s,border-color .15s;}
+.nav-map .jump:hover{background:rgba(34,211,238,.08); outline:1px solid var(--brass); outline-offset:-1px;}
+.nav-map .jump b{display:block; font-size:.77rem; color:var(--ink); margin-bottom:3px;}
+.nav-map .jump span{display:block; font-size:.65rem; color:var(--ink-soft); line-height:1.3;}
+.deck-link{display:inline-flex; align-items:center; gap:8px; color:var(--brass); text-decoration:none; font-family:var(--mono); font-size:.72rem; border-bottom:1px solid rgba(34,211,238,.4); padding-bottom:2px;}
+.deck-link:hover{color:#fff; border-color:#fff;}
+.quad-grid{display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:14px; flex:1; min-height:0;}
+.quad{background:var(--paper); border:1px solid var(--line); padding:16px 20px; display:flex; flex-direction:column; min-height:0;}
+.quad .cap{font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.06em; color:var(--brass); margin-bottom:8px;}
+.quad ul{margin:0; padding-left:18px; color:var(--ink-soft); font-size:.75rem; line-height:1.45;}
+.quad li{margin-bottom:5px;}
+.quad b{color:var(--ink);}
+.gate-table{width:100%; border-collapse:collapse; font-size:.7rem;}
+.gate-table th{font-family:var(--mono); text-transform:uppercase; letter-spacing:.05em; color:var(--steel); font-size:.58rem; text-align:left; padding:8px 10px; border-bottom:1px solid var(--line);}
+.gate-table td{padding:9px 10px; border-bottom:1px solid var(--line); color:var(--ink-soft); vertical-align:top; line-height:1.35;}
+.gate-table td:first-child{color:var(--ink); font-weight:600;}
+.status-ok{color:var(--green)!important; font-family:var(--mono); text-transform:uppercase;}
+.status-pending{color:var(--amber)!important; font-family:var(--mono); text-transform:uppercase;}
+.prompt-box{background:var(--panel-soft); border:1px solid var(--line); border-left:3px solid var(--brass); padding:12px 14px; font-family:var(--mono); font-size:.65rem; color:#C9D3DF; line-height:1.45;}
+.click-banner{display:flex; align-items:center; justify-content:space-between; background:rgba(34,211,238,.10); border:1px solid rgba(34,211,238,.42); padding:10px 16px; font-family:var(--mono); color:var(--brass); font-size:.68rem; text-transform:uppercase; letter-spacing:.08em;}
+.exercise-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; flex:1; min-height:0;}
+.exercise-tile{background:var(--paper); border:1px solid var(--line); border-top:5px solid var(--brass); padding:18px; cursor:pointer; position:relative; display:flex; flex-direction:column; transition:transform .15s, border-color .15s, background .15s;}
+.exercise-tile:hover{transform:translateY(-4px); border-color:var(--brass); background:#17253A;}
+.exercise-tile .ex-num{font-family:"IBM Plex Serif"; font-size:2.3rem; color:var(--brass); font-weight:700; line-height:1;}
+.exercise-tile h3{font-size:1.05rem; color:var(--ink); margin:12px 0 6px; line-height:1.2;}
+.exercise-tile .question{font-size:.73rem; color:var(--ink-soft); line-height:1.42; min-height:46px;}
+.exercise-tile .subjump-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:14px;}
+.subjump{font-family:var(--mono); font-size:.58rem; color:var(--brass); border:1px solid rgba(34,211,238,.35); padding:4px 7px; border-radius:12px; cursor:pointer;}
+.subjump:hover{background:var(--brass); color:#07111E;}
+.visual-sequence{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:28px; position:relative; padding:18px 12px 12px; background:linear-gradient(var(--line),var(--line)) center 57px / 84% 3px no-repeat;}
+.visual-sequence:before{display:none; content:none;}
+.visual-sequence .rec-node{grid-row:1; min-width:0;}
+.visual-sequence .rec-node:nth-child(1){grid-column:1;}
+.visual-sequence .rec-node:nth-child(2){grid-column:2;}
+.visual-sequence .rec-node:nth-child(3){grid-column:3;}
+.visual-sequence .rec-node:nth-child(4){grid-column:4;}
+.visual-sequence .rec-node:nth-child(5){grid-column:5;}
+.rec-node{position:relative; z-index:1; text-align:center;}
+.rec-node .circle{width:72px; height:72px; border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; background:var(--paper); border:4px solid var(--brass); font-family:"IBM Plex Serif"; font-size:1.3rem; font-weight:700; color:var(--ink);}
+.rec-node h4{font-size:.79rem; color:var(--ink); margin:0 0 5px; line-height:1.25;}
+.rec-node p{font-size:.64rem; color:var(--ink-soft); line-height:1.35; margin:0;}
+.rec-node .owner{display:inline-block; margin-top:7px; font-family:var(--mono); font-size:.55rem; color:var(--brass); text-transform:uppercase;}
+.priority-plot{position:relative; height:230px; background:var(--paper); border:1px solid var(--line); margin-top:10px;}
+.priority-plot:before,.priority-plot:after{content:""; position:absolute; background:var(--line);}
+.priority-plot:before{left:50%; top:0; bottom:0; width:1px;}.priority-plot:after{top:50%; left:0; right:0; height:1px;}
+.plot-label{position:absolute; font-family:var(--mono); font-size:.55rem; color:var(--steel); text-transform:uppercase;}
+.plot-dot{position:absolute; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:.62rem; font-weight:700; color:#07111E; box-shadow:0 3px 10px rgba(0,0,0,.35);}
+.swimlane{display:grid; grid-template-columns:150px repeat(4,1fr); grid-template-rows:45px repeat(4,1fr); border:1px solid var(--line); flex:1; min-height:0; background:var(--paper);}
+.swimlane > div{border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:9px 10px; min-width:0;}
+.lane-head{font-family:var(--mono); font-size:.6rem; text-transform:uppercase; color:var(--brass); background:var(--panel-soft); display:flex; align-items:center; justify-content:center; text-align:center;}
+.lane-owner{font-family:"IBM Plex Serif"; font-size:.78rem; color:var(--ink); font-weight:700; display:flex; align-items:center;}
+.ticket{border-left:4px solid var(--brass); background:#18243A; padding:7px 8px; height:100%; display:flex; flex-direction:column; justify-content:center; font-size:.63rem; color:var(--ink-soft); line-height:1.25;}
+.ticket b{color:var(--ink); font-size:.68rem; margin-bottom:3px;}.ticket small{font-family:var(--mono); color:var(--brass); font-size:.5rem; text-transform:uppercase;}
+.handoff{color:var(--brass); font-size:1.1rem; display:flex; align-items:center; justify-content:center; height:100%;}
+.signal-flow{display:grid; grid-template-columns:1fr 44px 1fr 44px 1fr; align-items:center; gap:8px;}
+.signal-step{background:var(--paper); border:1px solid var(--line); text-align:center; padding:16px 12px; min-height:128px; display:flex; flex-direction:column; justify-content:center;}
+.signal-step .big{font-family:"IBM Plex Serif"; font-size:1.55rem; color:var(--ink); font-weight:700;}.signal-step .lbl{font-family:var(--mono); font-size:.58rem; color:var(--brass); text-transform:uppercase; margin-top:5px;}.signal-step p{font-size:.64rem; color:var(--ink-soft); line-height:1.35; margin:7px 0 0;}
+.conflict-bars{display:grid; grid-template-columns:150px 1fr 1fr 150px; gap:6px; align-items:center;}
+.conflict-bars > div{padding:7px 9px; border-bottom:1px solid var(--line); font-size:.65rem; color:var(--ink-soft);}.conflict-bars .acct{color:var(--ink); font-weight:600;}.health-bar{height:9px; background:var(--green); border-radius:5px;}.text-bar{height:9px; background:var(--red); border-radius:5px;}
+.exec-route{display:grid; grid-template-columns:130px 1fr 1fr 160px; gap:8px; align-items:center;}.exec-route > div{padding:8px 10px; border-bottom:1px solid var(--line); font-size:.64rem; color:var(--ink-soft);}.exec-route .acct{color:var(--ink); font-weight:600;}.exec-route .ask{color:var(--brass);}.risk-meter{height:9px; background:var(--line); border-radius:5px; overflow:hidden;}.risk-meter span{display:block; height:100%; background:linear-gradient(90deg,var(--amber),var(--red));}
+.tool-hero{display:grid; grid-template-columns:.85fr 1.15fr; gap:18px; flex:1; min-height:0;}.tool-metrics{display:grid; grid-template-columns:1fr 1fr; gap:12px;}.tool-metric{background:var(--paper); border:1px solid var(--line); padding:16px;}.tool-metric .v{font-family:"IBM Plex Serif"; font-size:1.65rem; font-weight:700; color:var(--ink);}.tool-metric .l{font-family:var(--mono); color:var(--brass); font-size:.57rem; text-transform:uppercase; margin-top:4px;}.tool-metric p{font-size:.64rem; color:var(--ink-soft); line-height:1.35; margin:7px 0 0;}
+.workflow-rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:26px;position:relative;background:linear-gradient(var(--line),var(--line)) center 42px / 80% 2px no-repeat;}.workflow-rail:before{display:none;content:none;}.workflow-rail .wf-node{grid-row:1;min-width:0;}.workflow-rail .wf-node:nth-child(1){grid-column:1;}.workflow-rail .wf-node:nth-child(2){grid-column:2;}.workflow-rail .wf-node:nth-child(3){grid-column:3;}.workflow-rail .wf-node:nth-child(4){grid-column:4;}.wf-node{position:relative;z-index:1;text-align:center;}.wf-node .icon{width:58px;height:58px;border-radius:50%;background:var(--paper);border:3px solid var(--brass);margin:0 auto 9px;display:flex;align-items:center;justify-content:center;font-family:"IBM Plex Serif";font-weight:700;color:var(--ink);font-size:1rem;}.wf-node b{display:block;color:var(--ink);font-size:.75rem;}.wf-node span{display:block;color:var(--ink-soft);font-size:.62rem;line-height:1.35;margin-top:4px;}
+.package-map{display:grid; grid-template-columns:1fr 1.15fr 1fr; grid-template-rows:1fr 1fr; gap:16px; flex:1;}.package-center{grid-column:2;grid-row:1 / 3;background:var(--navy);border:1px solid var(--brass);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}.package-center .big{font-family:"IBM Plex Serif";font-size:1.6rem;color:#fff;font-weight:700;}.package-asset{background:var(--paper);border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;justify-content:center;}.package-asset .n{font-family:"IBM Plex Serif";font-size:1.35rem;color:var(--brass);font-weight:700;}.package-asset b{color:var(--ink);font-size:.8rem;margin:6px 0;}.package-asset span{color:var(--ink-soft);font-size:.65rem;line-height:1.35;}
+
+/* ===== data confidence brief slide ===== */
+.dcb-body{flex:1; padding:16px 36px 10px; display:flex; flex-direction:column; min-height:0;}
+.dcb-stats{display:flex; gap:0; border:1px solid var(--line); background:var(--paper); margin-bottom:12px; flex-shrink:0;}
+.dcb-stats .s{flex:1; text-align:center; padding:8px 10px; border-right:1px solid var(--line);}
+.dcb-stats .s:last-child{border-right:none;}
+.dcb-stats .s .v{font-family:"IBM Plex Serif"; font-weight:700; font-size:1.35rem; color:var(--ink);}
+.dcb-stats .s .v.r{color:var(--red);}
+.dcb-stats .s .l{font-family:var(--mono); font-size:.56rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin-top:2px;}
+.dcb-table{flex:1; display:flex; flex-direction:column; gap:5px; min-height:0;}
+.dcb-row{display:grid; grid-template-columns:26px 210px 1fr 1fr 1fr; gap:0; border:1px solid var(--line); background:var(--paper); align-items:stretch; flex:1;}
+.dcb-row .rk{background:var(--navy); color:var(--brass); font-family:"IBM Plex Serif"; font-weight:700; display:flex; align-items:center; justify-content:center; font-size:1.05rem;}
+.dcb-row .nm{display:flex; flex-direction:column; justify-content:center; padding:4px 10px; border-right:1px solid var(--line);}
+.dcb-row .nm b{font-size:.76rem; line-height:1.2; color:var(--ink);}
+.dcb-row .nm .cf{font-family:var(--mono); font-size:.54rem; text-transform:uppercase; padding:1px 6px; border-radius:8px; display:inline-block; margin-top:4px; width:fit-content;}
+.cf.high{background:rgba(242,84,91,.14); color:var(--red);}
+.cf.med{background:rgba(240,180,41,.14); color:var(--amber);}
+.dcb-row .cell{padding:4px 10px; font-size:.68rem; line-height:1.32; border-right:1px solid var(--line); display:flex; flex-direction:column; justify-content:center;}
+.dcb-row .cell:last-child{border-right:none;}
+.dcb-row .cell .lb{font-family:var(--mono); font-size:.52rem; text-transform:uppercase; letter-spacing:.04em; color:var(--steel); margin-bottom:2px;}
+.dcb-foot{display:flex; gap:12px; margin-top:8px; flex-shrink:0;}
+.dcb-foot .item{flex:1; background:rgba(240,180,41,.08); border:1px solid rgba(240,180,41,.32); border-left:3px solid var(--amber); padding:6px 12px; font-size:.68rem; line-height:1.3;}
+.dcb-foot .item b{color:var(--ink);}
+.dq-grid{flex:1; display:grid; grid-template-columns:1fr 1fr 1fr; grid-template-rows:1fr 1fr; gap:10px; min-height:0;}
+.dq-card{background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:8px 14px 6px; display:flex; flex-direction:column; min-height:0; overflow:hidden;}
+.dq-card .dq-head{display:flex; align-items:baseline; gap:8px; margin-bottom:2px;}
+.dq-card .dq-head .rk{font-family:"IBM Plex Serif"; font-weight:700; color:var(--brass); font-size:1rem;}
+.dq-card .dq-head b{font-size:.76rem; color:var(--ink); line-height:1.15;}
+.dq-card .dq-head .cf{margin-left:auto; font-family:var(--mono); font-size:.52rem; text-transform:uppercase; padding:1px 7px; border-radius:8px; white-space:nowrap;}
+.dq-card svg{flex:1; width:100%; height:auto; min-height:0;}
+.dq-card .dq-fix{font-size:.62rem; color:var(--ink-soft); line-height:1.3; border-top:1px dashed var(--line); padding-top:3px; margin-top:2px;}
+.dq-card .dq-fix b{color:var(--brass);}
+
+/* ===== Ex2A hypothesis tree (reused) ===== */
+.root{display:flex; align-items:center; gap:34px; padding:16px 40px 12px; border-bottom:1px solid var(--line); background:linear-gradient(180deg,#0D1420 0%, var(--cream) 100%); flex-shrink:0;}
+.root .kpi{background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:10px 20px; text-align:center; min-width:118px;}
+.root .kpi .v{font-family:"IBM Plex Serif"; font-weight:700; font-size:1.85rem; color:var(--ink); line-height:1;}
+.root .kpi .l{font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-soft); margin-top:5px;}
+.root .arrow-kpi{font-size:1.6rem; color:var(--brass); font-weight:700;}
+.root .delta{background:var(--navy); color:#fff; border-radius:3px; padding:10px 22px; text-align:center; min-width:150px;}
+.root .delta .v{font-family:"IBM Plex Serif"; font-weight:700; font-size:1.85rem; color:#fff; line-height:1;}
+.root .delta .v span{color:var(--brass); font-size:1.1rem;}
+.root .delta .l{font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.07em; color:#B8C4CE; margin-top:5px;}
+.root .slopebox{background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:8px 16px 4px;}
+.root .slopebox .cap{font-family:var(--mono); font-size:.6rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); text-align:center;}
+.root .headline{flex:1; font-family:"IBM Plex Serif"; font-size:1.05rem; font-weight:600; color:var(--ink); line-height:1.3; padding-left:8px; border-left:3px solid var(--brass);}
+.connector{height:14px; position:relative; flex-shrink:0;}
+.connector svg{width:100%; height:100%; display:block;}
+.branches{flex:1; display:flex; gap:0; padding:0 40px 14px; min-height:0;}
+.branch{background:var(--paper); border:1px solid var(--line); border-radius:3px; display:flex; flex-direction:column; overflow:hidden; margin-right:14px;}
+.branch:last-child{margin-right:0;}
+.b1{flex:0 0 46%; border-top:5px solid var(--navy-chart);}
+.b2{flex:0 0 30%; border-top:5px solid var(--steel);}
+.b3{flex:0 0 24%; border-top:5px solid #4A5568;}
+.branch-head{padding:10px 16px 8px; border-bottom:1px solid var(--line); display:flex; align-items:flex-start; gap:8px;}
+.branch-head .bnum{font-family:"IBM Plex Serif"; font-weight:700; font-size:1.1rem; color:var(--brass-dk); width:20px; flex-shrink:0;}
+.branch-head .btxt{flex:1;}
+.branch-head .btxt h3{font-size:.98rem; line-height:1.2;}
+.branch-head .conf{font-family:var(--mono); font-size:.6rem; text-transform:uppercase; letter-spacing:.05em; padding:2px 8px; border-radius:9px; white-space:nowrap; margin-top:2px; display:inline-block;}
+.conf.high{background:rgba(242,84,91,.14); color:var(--red);}
+.conf.med{background:rgba(240,180,41,.14); color:var(--amber);}
+.conf.medlow{background:rgba(138,148,166,.16); color:var(--ink-soft);}
+.concl{font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); margin-top:3px;}
+.branch-body{flex:1; padding:10px 16px 12px; display:flex; flex-direction:column; gap:8px; min-height:0;}
+.viz-row{display:flex; gap:10px; flex:1; min-height:0;}
+.viz-box{flex:1; background:var(--panel-soft); border:1px solid var(--line); border-radius:2px; padding:6px 8px 4px; display:flex; flex-direction:column; min-width:0;}
+.viz-cap{font-family:var(--mono); font-size:.56rem; text-transform:uppercase; letter-spacing:.04em; color:var(--steel); margin-bottom:2px;}
+.viz-box svg{flex:1; width:100%; height:auto;}
+.interp{font-size:.72rem; line-height:1.35; color:var(--ink-soft); border-top:1px dashed var(--line); padding-top:6px;}
+.interp b{color:var(--ink);}
+.taglabel{font-family:var(--mono); font-size:.6rem; background:rgba(34,211,238,.12); color:var(--brass); padding:2px 8px; border-radius:8px; display:inline-block; margin-top:4px;}
+
+/* ===== Ex2B segment mix model ===== */
+.b2b-body{flex:1; display:flex; flex-direction:column; padding:14px 36px 8px; min-height:0; gap:12px;}
+.reveal-row{display:flex; gap:14px; flex-shrink:0;}
+.reveal-card{flex:1; background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:12px 16px; text-align:center;}
+.reveal-card .seg{font-family:var(--mono); font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; color:var(--steel);}
+.reveal-card .nums{display:flex; align-items:center; justify-content:center; gap:10px; margin-top:6px;}
+.reveal-card .nums .assumed{font-family:"IBM Plex Serif"; font-weight:700; font-size:1.5rem; color:#5B6B85;}
+.reveal-card .nums .arrow{color:var(--brass); font-size:1.1rem;}
+.reveal-card .nums .actual{font-family:"IBM Plex Serif"; font-weight:700; font-size:1.9rem; color:var(--red);}
+.reveal-card .cap{font-family:var(--mono); font-size:.56rem; color:var(--ink-soft); margin-top:4px;}
+.reveal-card.headline{background:var(--navy); border-color:var(--navy);}
+.reveal-card.headline .seg{color:var(--brass);}
+.reveal-card.headline .nums .assumed{color:#7C93AE;}
+.reveal-card.headline .nums .actual{color:#fff;}
+.reveal-card.headline .cap{color:#B8C4CE;}
+
+.mid-row{display:flex; gap:14px; flex:1; min-height:0;}
+.mid-box{flex:1; background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:10px 16px; display:flex; flex-direction:column; min-height:0;}
+.mid-box .cap{font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--steel); margin-bottom:4px;}
+.mid-box svg{flex:1; width:100%; height:auto;}
+
+.impact-box{background:var(--navy); border-radius:3px; padding:14px 24px; display:flex; align-items:center; gap:26px; flex-shrink:0;}
+.impact-box .big{font-family:"IBM Plex Serif"; font-weight:700; font-size:2.1rem; color:#fff;}
+.impact-box .big span{color:var(--brass);}
+.impact-box .txt{color:#C9CFD6; font-size:.82rem; line-height:1.4; flex:1;}
+.impact-box .txt b{color:#fff;}
+
+.note-row{background:rgba(240,180,41,.08); border:1px solid rgba(240,180,41,.32); border-left:3px solid var(--amber); padding:7px 16px; font-size:.7rem; color:var(--ink-soft); flex-shrink:0;}
+.note-row b{color:var(--ink);}
+
+/* ===== Ex2C GTM point of view ===== */
+.c-body{flex:1; display:flex; flex-direction:column; padding:16px 40px 8px; min-height:0; gap:14px;}
+.pov{background:var(--paper); border:1px solid var(--line); border-left:4px solid var(--navy-chart); border-radius:3px; padding:16px 22px; font-size:.92rem; line-height:1.45; flex-shrink:0;}
+.pov b{color:var(--ink);}
+.pov .lead{font-family:"IBM Plex Serif"; font-size:1.1rem; font-weight:700; color:var(--ink); display:block; margin-bottom:6px;}
+.flow{display:flex; align-items:stretch; gap:0; flex-shrink:0;}
+.flow-step{flex:1; min-width:150px; background:var(--paper); border:1px solid var(--line); padding:14px 18px;}
+.flow-step .flow-when{font-family:var(--mono); text-transform:uppercase; font-size:.64rem; color:var(--brass); letter-spacing:.05em;}
+.flow-step h5{margin:6px 0 5px; font-size:.92rem; font-family:"IBM Plex Serif"; color:var(--ink); font-weight:700;}
+.flow-step p{font-size:.78rem; margin:0; color:var(--ink-soft); line-height:1.42;}
+.flow-arrow{display:flex; align-items:center; justify-content:center; width:34px; color:var(--brass); font-size:1.3rem; flex-shrink:0;}
+.worry-row{display:flex; gap:14px; flex:1; min-height:0;}
+.worry-card{flex:1; background:var(--panel-soft); border:1px solid var(--line); border-radius:3px; padding:14px 18px; display:flex; flex-direction:column;}
+.worry-card .wnum{font-family:"IBM Plex Serif"; font-weight:700; color:var(--red); font-size:1.2rem;}
+.worry-card h5{margin:4px 0 6px; font-size:.85rem; color:var(--ink); font-family:"IBM Plex Serif";}
+.worry-card p{font-size:.76rem; color:var(--ink-soft); line-height:1.4; margin:0;}
+.worry-card .howknow{margin-top:auto; padding-top:8px; border-top:1px dashed var(--line); font-size:.72rem; color:var(--brass);}
+
+/* ===== Ex2D validation plan ===== */
+.d-body{flex:1; display:flex; flex-direction:column; padding:20px 40px 8px; min-height:0; gap:18px; justify-content:center;}
+.timeline{display:flex; align-items:stretch; gap:0;}
+.tl-step{flex:1; background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:18px 20px; position:relative;}
+.tl-step .tl-when{font-family:var(--mono); text-transform:uppercase; font-size:.66rem; color:var(--brass); letter-spacing:.05em; background:rgba(34,211,238,.1); padding:3px 9px; border-radius:10px; display:inline-block;}
+.tl-step h5{margin:10px 0 6px; font-size:.95rem; font-family:"IBM Plex Serif"; color:var(--ink); font-weight:700; line-height:1.25;}
+.tl-step p{font-size:.78rem; margin:0; color:var(--ink-soft); line-height:1.42;}
+.tl-connector{display:flex; align-items:center; justify-content:center; width:26px; color:var(--line); font-size:1.1rem; flex-shrink:0;}
+.d-foot{background:var(--panel-soft); border:1px solid var(--line); border-left:4px solid var(--green); border-radius:3px; padding:14px 22px; font-size:.85rem; color:var(--ink-soft); line-height:1.4;}
+.d-foot b{color:var(--ink);}
+.gantt-box{background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:12px 20px; flex-shrink:0;}
+.gantt-box .cap{font-family:var(--mono); font-size:.62rem; text-transform:uppercase; letter-spacing:.05em; color:var(--steel); margin-bottom:2px;}
+.legend-row{display:flex; gap:14px;}
+.legend-item{flex:1; background:var(--panel-soft); border:1px solid var(--line); border-radius:3px; padding:8px 12px; font-size:.72rem; color:var(--ink-soft); line-height:1.35; display:flex; gap:8px; align-items:flex-start;}
+.legend-item .dot{width:9px; height:9px; border-radius:50%; flex-shrink:0; margin-top:3px;}
+.legend-item b{color:var(--ink); display:block; font-size:.74rem; margin-bottom:1px;}
+.exec-body{flex:1;display:flex;flex-direction:column;padding:18px 42px 10px;gap:14px;min-height:0;}
+.exec-decision{display:grid;grid-template-columns:160px 1fr;align-items:center;background:linear-gradient(90deg,var(--navy),#182C48);border:1px solid var(--brass);padding:15px 20px;}
+.exec-decision .label{font-family:var(--mono);font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;color:var(--brass);}
+.exec-decision .statement{font-family:"IBM Plex Serif";font-size:1.15rem;line-height:1.35;color:#fff;font-weight:700;}
+.exec-proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;flex:1;min-height:0;}
+.exec-proof{background:var(--paper);border:1px solid var(--line);border-top:5px solid var(--brass);padding:16px 18px;display:flex;flex-direction:column;min-height:0;}
+.exec-proof:nth-child(2){border-top-color:var(--amber);}.exec-proof:nth-child(3){border-top-color:var(--red);}
+.exec-proof .cap{font-family:var(--mono);font-size:.6rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);}
+.exec-proof .metric{font-family:"IBM Plex Serif";font-size:2rem;line-height:1;color:var(--ink);font-weight:700;margin:10px 0 5px;}
+.exec-proof .meaning{font-size:.75rem;line-height:1.4;color:var(--ink-soft);margin-bottom:12px;}
+.exec-proof .meaning b{color:var(--ink);}
+.exec-compare{margin-top:auto;display:grid;gap:7px;}
+.exec-bar-row{display:grid;grid-template-columns:72px 1fr 68px;align-items:center;gap:8px;font-size:.61rem;color:var(--ink-soft);}
+.exec-bar-row b{text-align:right;color:var(--ink);font-family:var(--mono);font-size:.61rem;}
+.exec-track{height:8px;background:#223047;position:relative;overflow:hidden;}
+.exec-fill{height:100%;background:var(--brass);}.exec-fill.amber{background:var(--amber);}.exec-fill.red{background:var(--red);}.exec-fill.green{background:var(--green);}
+.exec-sequence{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.exec-step{background:var(--panel-soft);border-left:4px solid var(--green);padding:10px 14px;display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:center;}
+.exec-step:nth-child(2){border-left-color:var(--amber);}.exec-step:nth-child(3){border-left-color:var(--brass);}
+.exec-step .when{font-family:var(--mono);font-size:.59rem;text-transform:uppercase;letter-spacing:.07em;color:var(--green);}.exec-step:nth-child(2) .when{color:var(--amber);}.exec-step:nth-child(3) .when{color:var(--brass);}
+.exec-step b{font-size:.69rem;color:var(--ink);}.exec-step span{display:block;font-size:.6rem;color:var(--ink-soft);margin-top:3px;line-height:1.25;}
+</style>
+</head>
+<body>
+
+<div class="deck-stage">
+
+  <!-- ============ SLIDE 1: TITLE ============ -->
+  <div class="slide active" id="slide-0">
+    <div class="formal-cover">
+      <div>
+        <div class="cover-rule"></div>
+        <div class="cover-kicker">Tulip · GTM Operations</div>
+        <h1>Win-Rate, Churn &amp;<br>Expansion Decision Review</h1>
+      </div>
+      <div class="cover-meta">
+        <div><span class="cover-tag">Prepared by</span><b>Erin Nelson</b>Senior Revenue Operations Candidate</div>
+        <div style="text-align:right;"><span class="cover-tag">Prepared for</span><b>Tulip GTM Operations Panel</b>CRO · CCO · Revenue Operations Leadership<br><span style="font-size:.68rem;">July 2026 · Confidential</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ AGENDA ============ -->
+  <div class="slide" id="slide-agenda">
+    <div class="head">
+      <div><div class="eyebrow">Executive Summary · Navigation</div><div class="title">Four questions structure the review—from data confidence to a live operating tool</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="padding:20px 48px 10px; gap:14px;">
+      <div class="click-banner"><span>↓ Click any exercise—or its subpart—to jump directly to that section</span><span>Interactive deck</span></div>
+      <div class="exercise-grid">
+        <div class="exercise-tile" onclick="goToId('slide-1')"><div class="ex-num">01</div><h3>Data Confidence Brief</h3><div class="question">Can leadership trust the source data and the metric definitions?</div><div class="subjump-row"><span class="subjump" onclick="event.stopPropagation();goToId('slide-1')">Data audit</span></div></div>
+        <div class="exercise-tile" onclick="goToId('slide-2')" style="border-top-color:var(--amber);"><div class="ex-num" style="color:var(--amber);">02</div><h3>Win-Rate Diagnostic</h3><div class="question">What drove the decline, what did the plan assume, and what should change?</div><div class="subjump-row"><span class="subjump" onclick="event.stopPropagation();goToId('slide-2')">2A Diagnose</span><span class="subjump" onclick="event.stopPropagation();goToId('slide-3')">2B Quantify</span><span class="subjump" onclick="event.stopPropagation();goToId('slide-4')">2C Recommend</span><span class="subjump" onclick="event.stopPropagation();goToId('slide-5')">2D Validate</span></div></div>
+        <div class="exercise-tile" onclick="goToId('slide-6')" style="border-top-color:var(--red);"><div class="ex-num" style="color:var(--red);">03</div><h3>Churn &amp; Expansion</h3><div class="question">Where is the installed-base risk, why is it present, and who acts?</div><div class="subjump-row"><span class="subjump" onclick="event.stopPropagation();goToId('slide-6')">3A Forecast</span><span class="subjump" onclick="event.stopPropagation();goToId('slide-7')">3B/C Signals</span><span class="subjump" onclick="event.stopPropagation();goToId('slide-8')">3D/E Route</span></div></div>
+        <div class="exercise-tile" onclick="goToId('slide-ex4')" style="border-top-color:var(--green);"><div class="ex-num" style="color:var(--green);">04</div><h3>Churn Tool</h3><div class="question">How does the analysis become a repeatable weekly operating decision?</div><div class="subjump-row"><span class="subjump" onclick="event.stopPropagation();goToId('slide-ex4')">Live tool</span><span class="subjump" onclick="event.stopPropagation();goToId('slide-ai')">AI workflow</span><span class="subjump" onclick="event.stopPropagation();goToId('slide-appendix')">Appendix</span></div></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1.2fr .8fr; gap:14px; flex-shrink:0;"><div class="mid-box"><div class="cap" style="color:var(--brass);">Executive takeaway</div><div style="font-family:'IBM Plex Serif'; font-size:1rem; color:var(--ink); font-weight:700;">Repair partner conversion, reset the planning baseline, and put $2.38M of churn exposure into a named weekly action cadence.</div></div><div class="mid-box"><div class="cap" style="color:var(--green);">Exercise 4</div><a class="deck-link" href="https://signalops-ai-d1bm.vercel.app/" target="_blank" rel="noopener" style="font-size:.78rem;">Open the live Churn Tool ↗</a></div></div>
+    </div>
+    <div class="takeaway"><b>Click any exercise card or subpart to move directly to the question, evidence, and takeaway.</b></div>
+  </div>
+
+  <!-- ============ EXEC SUMMARY ============ -->
+  <div class="slide" id="slide-exec">
+    <div class="head">
+      <div><div class="eyebrow">Executive summary · decision takeaway</div><div class="title">Do not add direct headcount: repair partner conversion and put $2.38M of renewals under weekly ownership</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="exec-body">
+      <div class="exec-decision"><div class="label">Leadership decision</div><div class="statement">Reset FY27 assumptions and start the renewal-risk cadence now. Release partner investment only after a four-week evidence gate.</div></div>
+      <div class="exec-proof-grid">
+        <div class="exec-proof"><div class="cap">1 · Root cause</div><div class="metric">Partner, not direct</div><div class="meaning"><b>Partner volume and conversion both fell;</b> direct conversion improved. The land-and-expand strategy is not the failure mode.</div><div class="exec-compare"><div class="exec-bar-row"><span>Partner FY25</span><div class="exec-track"><div class="exec-fill" style="width:100%;"></div></div><b>30.5%</b></div><div class="exec-bar-row"><span>Partner FY26</span><div class="exec-track"><div class="exec-fill red" style="width:49%;"></div></div><b>14.8%</b></div><div class="exec-bar-row"><span>Direct FY25</span><div class="exec-track"><div class="exec-fill" style="width:14%;"></div></div><b>4.4%</b></div><div class="exec-bar-row"><span>Direct FY26</span><div class="exec-track"><div class="exec-fill green" style="width:25%;"></div></div><b>7.5%</b></div></div></div>
+        <div class="exec-proof"><div class="cap">2 · Planning consequence</div><div class="metric">35% plan vs 9.6%</div><div class="meaning"><b>The Mid-Market baseline was never supported by observed performance.</b> Treat the miss as a planning-control failure before treating it as a capacity gap.</div><div class="exec-compare"><div class="exec-bar-row"><span>Plan</span><div class="exec-track"><div class="exec-fill amber" style="width:100%;"></div></div><b>35.0%</b></div><div class="exec-bar-row"><span>Observed</span><div class="exec-track"><div class="exec-fill" style="width:27%;"></div></div><b>9.6%</b></div><div style="font-family:'IBM Plex Serif';font-size:1.25rem;color:var(--amber);font-weight:700;margin-top:6px;">$1.46M <span style="font-family:var(--mono);font-size:.58rem;color:var(--ink-soft);">2-YEAR MM GAP</span></div></div></div>
+        <div class="exec-proof"><div class="cap">3 · Immediate exposure</div><div class="metric">$2.38M P50 churn</div><div class="meaning"><b>16.6% of the $14.3M open renewal book</b>, calibrated against 439 closed renewals. Five structured “Healthy” accounts show material text risk.</div><div class="exec-compare"><div class="exec-bar-row"><span>P50 churn</span><div class="exec-track"><div class="exec-fill red" style="width:16.6%;min-width:18px;"></div></div><b>16.6%</b></div><div class="exec-bar-row"><span>Open book</span><div class="exec-track"><div class="exec-fill" style="width:100%;"></div></div><b>$14.3M</b></div><div style="font-family:'IBM Plex Serif';font-size:1.25rem;color:var(--red);font-weight:700;margin-top:6px;">5 <span style="font-family:var(--mono);font-size:.58rem;color:var(--ink-soft);">HIDDEN-RISK ACCOUNTS</span></div></div></div>
+      </div>
+      <div class="exec-sequence"><div class="exec-step"><div class="when">Start now</div><div><b>Reset plan + weekly renewal review</b><span>RevOps/Finance re-baseline; CRO/CCO assign the top ten asks.</span></div></div><div class="exec-step"><div class="when">4 weeks</div><div><b>Prove the partner diagnosis</b><span>Correct attribution and test enablement, volume, and conversion causes.</span></div></div><div class="exec-step"><div class="when">90 days</div><div><b>Fund or stop the recovery program</b><span>Release investment only if partner conversion and sourced pipeline clear the gates.</span></div></div></div>
+    </div>
+    <div class="takeaway"><b>Act on the renewal base and planning reset now; keep partner spend and direct hiring evidence-gated.</b></div>
+  </div>
+
+  <!-- ============ SLIDE 2: DATA CONFIDENCE BRIEF ============ -->
+  <div class="slide" id="slide-1">
+    <div class="head">
+      <div><div class="eyebrow">Exercise 1 · Data Confidence Brief</div><div class="title">Six material issues change how the source data should be interpreted</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="dcb-body">
+      <div style="display:flex; align-items:center; gap:14px; background:var(--paper); border:1px solid var(--line); border-left:3px solid var(--brass); border-radius:3px; padding:7px 16px; margin-bottom:10px; flex-shrink:0;">
+        <span style="font-family:var(--mono); font-size:.6rem; text-transform:uppercase; letter-spacing:.05em; color:var(--brass); white-space:nowrap;">Win-rate formula check</span>
+        <span style="font-family:var(--mono); font-size:.78rem; color:var(--ink);">Win&nbsp;rate&nbsp;=&nbsp;Closed-Won&nbsp;÷&nbsp;(Won&nbsp;+&nbsp;Lost)</span>
+        <span style="font-size:.72rem; color:var(--ink-soft); line-height:1.3;">The brief's formula is correct and standard — verified by computing it directly on this export. What isn't reproducible is the assumed <b style="color:var(--ink);">level</b>: correctly computed, it's <b style="color:var(--ink);">10.9% → 8.7%</b>, not 25% → 20%. Same ~20% relative decline; the analysis uses the data's own numbers.</span>
+      </div>
+      <div class="dq-grid">
+
+        <!-- 1. Schema completeness donut -->
+        <div class="dq-card">
+          <div class="dq-head"><span class="rk">1</span><b>28 documented columns are missing</b><span class="cf" style="background:rgba(242,84,91,.14); color:var(--red);">Blocks FY24 recon</span></div>
+          <svg viewBox="0 0 240 118" preserveAspectRatio="xMidYMid meet">
+            <circle cx="62" cy="59" r="40" fill="none" stroke="var(--line)" stroke-width="15"/>
+            <circle cx="62" cy="59" r="40" fill="none" stroke="var(--brass)" stroke-width="15"
+              stroke-dasharray="152.2 99.2" transform="rotate(-90 62 59)"/><title>43 of 71 documented columns present. Confirmed missing: FY24 Segment — which is why the FY24-vs-FY26 reconciliation the brief requests cannot be run from this file. Flagged as unrunnable rather than approximated.</title>
+            <text x="62" y="56" text-anchor="middle" class="valuelabel" font-size="15" fill="var(--ink)">43/71</text>
+            <text x="62" y="70" text-anchor="middle" class="axislabel" font-size="7">present</text>
+            <text x="128" y="34" class="valuelabel" font-size="9" fill="var(--brass)">■ 43 present (61%)</text>
+            <text x="128" y="50" class="valuelabel" font-size="9" fill="var(--ink-soft)">■ 28 missing (39%)</text>
+            <text x="128" y="74" class="axislabel" font-size="7.5" fill="var(--red)">Missing incl. FY24 Segment —</text>
+            <text x="128" y="85" class="axislabel" font-size="7.5" fill="var(--red)">the brief's FY24-vs-FY26</text>
+            <text x="128" y="96" class="axislabel" font-size="7.5" fill="var(--red)">comparison cannot be run</text>
+          </svg>
+          <div class="dq-fix"><b>FIX</b> Flagged as unrunnable rather than faked. Ask Sales Ops where an FY24 crosswalk lives.</div>
+        </div>
+
+        <!-- 2. Segment swap bars -->
+        <div class="dq-card">
+          <div class="dq-head"><span class="rk">2</span><b>Segment fields functionally swapped</b><span class="cf" style="background:rgba(242,84,91,.14); color:var(--red);">Distorts Ex.2</span></div>
+          <svg viewBox="0 0 240 118" preserveAspectRatio="xMidYMid meet">
+            <text x="4" y="12" class="axislabel" font-size="7">"Company Size" holds segment codes, not headcounts:</text><title>Extra detail: SMB and SME coexist in every fiscal year (FY26: 289 SMB vs 45 SME rows) — so this is NOT a clean mid-year rename. Could be two sub-tiers or inconsistent entry. Either way, both mean "<500 employees" per the GTM context, so they are merged into one SME tier throughout.</title>
+            <text x="4" y="30" class="axislabel" font-size="8">SMB</text><rect x="34" y="22" width="133" height="10" fill="var(--brass)"/><text x="171" y="31" class="valuelabel" font-size="8" fill="var(--brass)">666</text>
+            <text x="4" y="46" class="axislabel" font-size="8">ENT</text><rect x="34" y="38" width="76" height="10" fill="var(--navy-chart)"/><text x="114" y="47" class="valuelabel" font-size="8" fill="var(--navy-chart)">378</text>
+            <text x="4" y="62" class="axislabel" font-size="8">MM</text><rect x="34" y="54" width="62" height="10" fill="var(--steel)"/><text x="100" y="63" class="valuelabel" font-size="8" fill="#93A5C4">309</text>
+            <text x="4" y="78" class="axislabel" font-size="8">SME</text><rect x="34" y="70" width="15" height="10" fill="var(--amber)"/><text x="53" y="79" class="valuelabel" font-size="8" fill="var(--amber)">77</text>
+            <text x="4" y="94" class="axislabel" font-size="7" fill="var(--amber)">SMB + SME both used for the same tier.</text>
+            <text x="4" y="104" class="axislabel" font-size="7" fill="var(--amber)">"FY26 Segment" holds industries (Gen Mfg 1,079,</text>
+            <text x="4" y="114" class="axislabel" font-size="7" fill="var(--amber)">Pharma 183, Med Dev 107, A&amp;D 89), not tiers.</text>
+          </svg>
+          <div class="dq-fix"><b>FIX</b> Company Size used as true segment, SMB+SME merged. Ask SFDC admin: rename event or two real tiers?</div>
+        </div>
+
+        <!-- 3. Stage drift paired bars -->
+        <div class="dq-card">
+          <div class="dq-head"><span class="rk">3</span><b>Stage drift understates win rate</b><span class="cf" style="background:rgba(242,84,91,.14); color:var(--red);">Distorts Ex.2</span></div>
+          <svg viewBox="0 0 240 118" preserveAspectRatio="xMidYMid meet">
+            <text x="4" y="10" class="axislabel" font-size="7">Correct (Won/Lost field) vs. literal "Closed Won/Lost" strings:</text><title>The 68 undocumented-stage rows: Ordered/Won 52, Rejected 11, GTM Ops Review 2, 0 With Finance 2, 5 Procurement 1. In FY25 the literal filter silently drops 11 of 26 wins (26W/213L becomes 15W/213L) — that is what drags 10.9% down to 6.6%.</title>
+            <line x1="30" y1="18" x2="30" y2="96" stroke="var(--line)"/>
+            <line x1="30" y1="96" x2="230" y2="96" stroke="var(--line)"/>
+            <!-- FY25: correct 10.9 -> h=65.4 (x6); literal 6.6 -> 39.6 -->
+            <rect x="52" y="30.6" width="26" height="65.4" fill="var(--brass)"/>
+            <text x="65" y="26" class="valuelabel" text-anchor="middle" font-size="9" fill="var(--brass)">10.9%</text>
+            <rect x="82" y="56.4" width="26" height="39.6" fill="var(--red)"/>
+            <text x="95" y="52" class="valuelabel" text-anchor="middle" font-size="9" fill="var(--red)">6.6%</text>
+            <text x="80" y="108" class="axislabel" text-anchor="middle" font-size="8">FY25</text>
+            <!-- FY26: correct 8.7 -> 52.2; literal 7.5 -> 45 -->
+            <rect x="142" y="43.8" width="26" height="52.2" fill="var(--brass)"/>
+            <text x="155" y="39" class="valuelabel" text-anchor="middle" font-size="9" fill="var(--brass)">8.7%</text>
+            <rect x="172" y="51" width="26" height="45" fill="var(--red)"/>
+            <text x="185" y="47" class="valuelabel" text-anchor="middle" font-size="9" fill="var(--red)">7.5%</text>
+            <text x="170" y="108" class="axislabel" text-anchor="middle" font-size="8">FY26</text>
+          </svg>
+          <div class="dq-fix"><b>FIX</b> 63 closed rows sit in undocumented stages (Ordered/Won, Rejected…). Every figure here uses Won/Lost. Ask RevTech to retire legacy stage values.</div>
+        </div>
+
+        <!-- 4. ARR reconciliation donut -->
+        <div class="dq-card">
+          <div class="dq-head"><span class="rk">4</span><b>ARR fields disagree on renewals</b><span class="cf" style="background:rgba(242,84,91,.14); color:var(--red);">Distorts Ex.3</span></div>
+          <svg viewBox="0 0 240 118" preserveAspectRatio="xMidYMid meet">
+            <circle cx="62" cy="59" r="40" fill="none" stroke="var(--line)" stroke-width="15"/>
+            <circle cx="62" cy="59" r="40" fill="none" stroke="var(--red)" stroke-width="15"
+              stroke-dasharray="50.2 201.1" transform="rotate(-90 62 59)"/>
+            <text x="62" y="56" text-anchor="middle" class="valuelabel" font-size="13" fill="var(--ink)">20%</text>
+            <text x="62" y="70" text-anchor="middle" class="axislabel" font-size="6.5">111 of 556 renewals</text>
+            <text x="128" y="26" class="valuelabel" font-size="8.5" fill="var(--red)">Renewal ARR ≠ Booking</text><title>Magnitude: the median disagreement among the 111 mismatched renewals is ~50%; the worst is ~11-12x. The 0.91 sentinel: 8 occurrences in New Committed ARR, 2 in Total Booking — an export/null-handling artifact, excluded from all ARR-weighted math.</title>
+            <text x="128" y="38" class="axislabel" font-size="7.5">&gt;5% apart, not rounding:</text>
+            <text x="128" y="54" class="axislabel" font-size="7.5" fill="var(--ink)">Quartz: $18.8K vs $1.6K (12x)</text>
+            <text x="128" y="66" class="axislabel" font-size="7.5" fill="var(--ink)">Antares: $1.9M vs $276K (7x)</text>
+            <text x="128" y="84" class="axislabel" font-size="7.5" fill="var(--amber)">+ sentinel 0.91 appears 10×</text>
+            <text x="128" y="95" class="axislabel" font-size="7.5" fill="var(--amber)">(export bug, not dollars)</text>
+          </svg>
+          <div class="dq-fix"><b>FIX</b> Renewal ARR is the only sizing field; 10 sentinel rows dropped. Ask Deal Desk which field is contractual truth on multi-year.</div>
+        </div>
+
+        <!-- 5. Partner attribution stacked bar -->
+        <div class="dq-card">
+          <div class="dq-head"><span class="rk">5</span><b>Partner attribution contradicts itself</b><span class="cf" style="background:rgba(240,180,41,.14); color:var(--amber);">Distorts channel</span></div>
+          <svg viewBox="0 0 240 118" preserveAspectRatio="xMidYMid meet">
+            <text x="4" y="14" class="axislabel" font-size="7">1,458 rows — partner fields: agree vs. contradict:</text><title>Unmentioned insight: the mismatches concentrate in Americas (122) and EMEA (85); only 13 in APAC — DMG MORI-territory deals are comparatively well-tagged. Largest partners of record overall: Brightway Systems Integration (220 deals), Polaris Manufacturing Services (96).</title>
+            <rect x="10" y="26" width="187" height="22" fill="var(--panel-soft)" stroke="var(--line)"/>
+            <rect x="197" y="26" width="23" height="22" fill="var(--red)"/>
+            <rect x="220" y="26" width="10" height="22" fill="var(--amber)"/>
+            <text x="103" y="41" class="valuelabel" text-anchor="middle" font-size="9" fill="var(--ink-soft)">1,238 consistent (85%)</text>
+            <text x="10" y="66" class="valuelabel" font-size="8" fill="var(--red)">■ 153 "Generated by Tulip" but carry a Partner of Record</text>
+            <text x="10" y="80" class="valuelabel" font-size="8" fill="var(--amber)">■ 67 "Generated by Partner" with no Partner of Record</text>
+            <text x="10" y="98" class="axislabel" font-size="7.5" fill="var(--ink)">220 rows (15%) contradict — and channel is the #1 driver</text>
+            <text x="10" y="109" class="axislabel" font-size="7.5" fill="var(--ink)">of the decline, so this reconciles first (Week 1 of the plan)</text>
+          </svg>
+          <div class="dq-fix"><b>FIX</b> Generated by (binary, fully populated) = channel truth. Ask Partner Ops which field drives comp; standardize on it.</div>
+        </div>
+
+        <!-- 6. Hygiene counts + assumptions -->
+        <div class="dq-card">
+          <div class="dq-head"><span class="rk">6</span><b>Hygiene &amp; standing assumptions</b><span class="cf" style="background:rgba(240,180,41,.14); color:var(--amber);">Small, real</span></div>
+          <svg viewBox="0 0 240 60" preserveAspectRatio="xMidYMid meet"><title>The two test rows: "ACME TEST" and "Ame test" — same owner, blank account, 0.91 sentinel booking. The broken-date row closes 13 months before it was created, with blank account/industry/geo. All three excluded from every analysis in this deck.</title>
+            <rect x="8" y="10" width="68" height="40" rx="3" fill="var(--panel-soft)" stroke="var(--line)"/>
+            <text x="42" y="30" text-anchor="middle" class="valuelabel" font-size="14" fill="var(--red)">2</text>
+            <text x="42" y="43" text-anchor="middle" class="axislabel" font-size="6.5">literal test rows</text>
+            <rect x="86" y="10" width="68" height="40" rx="3" fill="var(--panel-soft)" stroke="var(--line)"/>
+            <text x="120" y="30" text-anchor="middle" class="valuelabel" font-size="14" fill="var(--red)">1</text>
+            <text x="120" y="43" text-anchor="middle" class="axislabel" font-size="6.5">close before create</text>
+            <rect x="164" y="10" width="68" height="40" rx="3" fill="var(--panel-soft)" stroke="var(--line)"/>
+            <text x="198" y="30" text-anchor="middle" class="valuelabel" font-size="14" fill="var(--amber)">15</text>
+            <text x="198" y="43" text-anchor="middle" class="axislabel" font-size="6.5">stale "open" renewals</text>
+          </svg>
+          <div style="font-size:.62rem; color:var(--ink-soft); line-height:1.4; margin-top:4px;">
+            <b style="color:var(--ink);">Assumptions in force:</b> new business = <b style="color:var(--brass);">Deal Type = Initial Deployment</b> ·
+            closed = <b style="color:var(--brass);">Won/Lost field</b>, never Stage text · renewal sizing = <b style="color:var(--brass);">Renewal ARR</b> only ·
+            3 junk rows excluded everywhere; 15 stale renewals kept but flagged low-confidence.
+          </div>
+          <div class="dq-fix"><b>FIX</b> Ask Sales Ops for a Close&lt;Created validation rule + a weekly stale-pipeline report.</div>
+        </div>
+
+      </div>
+    </div>
+    <div class="takeaway"><b>The data is usable after explicit repairs; uncorrected stage, attribution, and field-definition issues would materially change the answer.</b></div>
+  </div>
+
+  <!-- ============ SLIDE 3: EX 2A HYPOTHESIS TREE ============ -->
+  <div class="slide" id="slide-2">
+    <div class="head">
+      <div><div class="eyebrow">Exercise 2A · Hypothesis Tree</div><div class="title">The partner channel explains the win-rate decline; direct conversion improved</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="root">
+      <div class="kpi"><div class="v">10.9%</div><div class="l">FY25 win rate</div></div>
+      <div class="arrow-kpi">→</div>
+      <div class="kpi"><div class="v" style="color:var(--red);">8.7%</div><div class="l">FY26 win rate</div></div>
+      <div class="slopebox">
+        <div class="cap">FY25 → FY26</div>
+        <svg viewBox="0 0 130 78" width="130" height="78"><title>Raw counts: FY25 = 26 won / 213 lost (n=239). FY26 = 14 won / 147 lost (n=161). Note closed volume itself fell 33% YoY — the funnel shrank as well as converted worse.</title>
+          <line x1="14" y1="10" x2="14" y2="66" stroke="var(--line)" stroke-width="1"/>
+          <line x1="14" y1="66" x2="118" y2="66" stroke="var(--line)" stroke-width="1"/>
+          <line x1="26" y1="21.6" x2="104" y2="52.2" stroke="var(--red)" stroke-width="2.4"/>
+          <circle cx="26" cy="21.6" r="4" fill="var(--navy-chart)"/>
+          <circle cx="104" cy="52.2" r="4" fill="var(--red)"/>
+          <text x="26" y="15" class="valuelabel" text-anchor="middle" fill="var(--navy-chart)">10.9%</text>
+          <text x="104" y="65.5" class="valuelabel" text-anchor="middle" fill="var(--red)">8.7%</text>
+          <text x="26" y="76" class="axislabel" text-anchor="middle">FY25</text>
+          <text x="104" y="76" class="axislabel" text-anchor="middle">FY26</text>
+        </svg>
+      </div>
+      <div class="delta"><div class="v">−2.2<span>pp</span></div><div class="l">≈ −20% relative</div></div>
+      <div class="headline">The decline is concentrated in the <b style="color:var(--brass);">partner channel</b>; the underlying land-and-expand motion remains sound.
+        <div style="font-size:.68rem; font-weight:400; font-family:'IBM Plex Sans'; color:var(--ink-soft); margin-top:6px; line-height:1.35;">
+        <b style="color:var(--amber); font-family:var(--mono); font-size:.6rem; text-transform:uppercase;">Position on the 25%→20% brief assumption:</b>
+        the definition (won ÷ closed) is right, but the level isn't reproducible in this data — computed correctly
+        (Won/Lost field per Ex.1 #2, Initial Deployment cohort), it's 10.9%→8.7%. Same ~20% relative decline;
+        we analyze the data's own numbers rather than forcing them to 25/20.</div>
+      </div>
+    </div>
+
+    <div class="connector">
+      <svg viewBox="0 0 1600 14" preserveAspectRatio="none">
+        <line x1="800" y1="0" x2="800" y2="7" stroke="var(--line)" stroke-width="2"/>
+        <line x1="453" y1="7" x2="1187" y2="7" stroke="var(--line)" stroke-width="2"/>
+        <line x1="453" y1="7" x2="453" y2="14" stroke="var(--line)" stroke-width="2"/>
+        <line x1="925" y1="7" x2="925" y2="14" stroke="var(--line)" stroke-width="2"/>
+        <line x1="1187" y1="7" x2="1187" y2="14" stroke="var(--line)" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <div class="branches">
+      <div class="branch b1">
+        <div class="branch-head"><div class="bnum">1</div><div class="btxt"><h3>Partner-channel deterioration</h3><span class="conf high">Confidence: High</span><div class="concl">Conclusion → Dominant driver</div></div></div>
+        <div class="branch-body">
+          <div class="viz-row" style="flex:1.1;">
+            <div class="viz-box">
+              <div class="viz-cap">Win rate: partner vs. direct</div>
+              <svg viewBox="0 0 230 110" preserveAspectRatio="xMidYMid meet"><title>Raw counts — FY25: partner 18W/41L, direct 8W/172L. FY26: partner 4W/23L, direct 10W/124L. Caution: FY26 partner n is only 27 closed deals, so the 14.8% is direction-robust but decimal-fragile.</title>
+                <line x1="28" y1="8" x2="28" y2="95" stroke="var(--line)" stroke-width="1"/>
+                <line x1="28" y1="95" x2="210" y2="95" stroke="var(--line)" stroke-width="1"/>
+                <text x="24" y="12" class="axislabel" text-anchor="end">35%</text>
+                <text x="24" y="98" class="axislabel" text-anchor="end">0%</text>
+                <line x1="46" y1="21.6" x2="188" y2="61.9" stroke="var(--brass)" stroke-width="2.6"/>
+                <circle cx="46" cy="21.6" r="4" fill="var(--brass)"/><circle cx="188" cy="61.9" r="4" fill="var(--brass)"/>
+                <text x="46" y="15" class="valuelabel" text-anchor="middle" fill="var(--brass-dk)">30.5%</text>
+                <text x="188" y="75" class="valuelabel" text-anchor="middle" fill="var(--brass-dk)">14.8%</text>
+                <line x1="46" y1="88.7" x2="188" y2="80.7" stroke="var(--steel)" stroke-width="2.6"/>
+                <circle cx="46" cy="88.7" r="4" fill="var(--steel)"/><circle cx="188" cy="80.7" r="4" fill="var(--steel)"/>
+                <text x="46" y="102" class="axislabel" text-anchor="middle" fill="var(--steel)">4.4%</text>
+                <text x="188" y="93" class="valuelabel" text-anchor="middle" fill="var(--steel)">7.5%</text>
+                <text x="46" y="108" class="axislabel" text-anchor="middle">FY25</text>
+                <text x="188" y="108" class="axislabel" text-anchor="middle">FY26</text>
+                <rect x="150" y="6" width="8" height="8" fill="var(--brass)"/><text x="162" y="14" class="axislabel">Partner</text>
+                <rect x="150" y="18" width="8" height="8" fill="var(--steel)"/><text x="162" y="26" class="axislabel">Direct</text>
+              </svg>
+            </div>
+            <div class="viz-box">
+              <div class="viz-cap">Share of closed volume</div>
+              <svg viewBox="0 0 230 110" preserveAspectRatio="xMidYMid meet"><title>Absolute volumes: partner fell 59 → 27 closed deals (−54%); direct fell 180 → 134 (−26%). Direct's share rose only because partner shrank twice as fast — direct did NOT grow.</title>
+                <text x="10" y="24" class="axislabel">Partner</text>
+                <line x1="66" y1="20" x2="196" y2="20" stroke="var(--line)" stroke-width="1.5"/>
+                <circle cx="66" cy="20" r="5" fill="var(--brass)"/><circle cx="150.8" cy="20" r="5" fill="var(--brass)" opacity=".5"/>
+                <text x="66" y="12" class="valuelabel" text-anchor="middle" fill="var(--brass-dk)">24.7%</text>
+                <text x="150.8" y="34" class="valuelabel" text-anchor="middle" fill="var(--brass-dk)">16.8%</text>
+                <text x="10" y="60" class="axislabel">Direct</text>
+                <line x1="66" y1="56" x2="196" y2="56" stroke="var(--line)" stroke-width="1.5"/>
+                <circle cx="127" cy="56" r="5" fill="var(--steel)" opacity=".5"/><circle cx="167.8" cy="56" r="5" fill="var(--steel)"/>
+                <text x="127" y="48" class="valuelabel" text-anchor="middle" fill="var(--steel)">75.3%</text>
+                <text x="167.8" y="70" class="valuelabel" text-anchor="middle" fill="var(--steel)">83.2%</text>
+                <text x="60" y="95" class="axislabel" text-anchor="middle">● FY25</text>
+                <text x="150" y="95" class="axislabel" text-anchor="middle">○ FY26</text>
+                <text x="115" y="108" class="axislabel" text-anchor="middle" fill="var(--red)">Partner lost 8pp of mix share</text>
+              </svg>
+            </div>
+          </div>
+          <div class="viz-row" style="flex:0.85;">
+            <div class="viz-box">
+              <div class="viz-cap">Contribution to the −2.2pp decline (waterfall)</div>
+              <svg viewBox="0 0 400 92" preserveAspectRatio="xMidYMid meet"><title>Convention: mix effect = FY26 mix at frozen FY25 rates; rate effect = FY26 rates at frozen FY25 mix; interaction = the overlap (both hits landed on the same shrinking channel) so components sum exactly to −2.18pp. Unrounded: −2.06, −1.60, +1.48.</title>
+                <line x1="10" y1="30" x2="390" y2="30" stroke="var(--line)" stroke-width="1" stroke-dasharray="2,2"/>
+                <text x="4" y="33" class="axislabel">0</text>
+                <rect x="45" y="30" width="46" height="25.2" fill="var(--red)"/>
+                <text x="68" y="66" class="axislabel" text-anchor="middle">Mix</text>
+                <text x="68" y="27" class="valuelabel" text-anchor="middle" fill="var(--red)">−2.1</text>
+                <line x1="91" y1="55.2" x2="135" y2="55.2" stroke="var(--line)" stroke-width="1" stroke-dasharray="2,2"/>
+                <rect x="135" y="55.2" width="46" height="19.2" fill="var(--red)" opacity=".75"/>
+                <text x="158" y="85" class="axislabel" text-anchor="middle">Rate</text>
+                <text x="158" y="52.5" class="valuelabel" text-anchor="middle" fill="var(--red)">−1.6</text>
+                <line x1="181" y1="74.4" x2="225" y2="74.4" stroke="var(--line)" stroke-width="1" stroke-dasharray="2,2"/>
+                <rect x="225" y="56.4" width="46" height="18" fill="var(--green)"/>
+                <text x="248" y="52.5" class="valuelabel" text-anchor="middle" fill="var(--green)">+1.5</text>
+                <text x="248" y="85" class="axislabel" text-anchor="middle">Interaction</text>
+                <line x1="271" y1="56.4" x2="315" y2="56.4" stroke="var(--line)" stroke-width="1" stroke-dasharray="2,2"/>
+                <rect x="325" y="30" width="46" height="26.4" fill="var(--navy-chart)"/>
+                <text x="348" y="27" class="valuelabel" text-anchor="middle" fill="var(--navy-chart)">−2.2</text>
+                <text x="348" y="66" class="axislabel" text-anchor="middle">Net</text>
+              </svg>
+            </div>
+          </div>
+          <div class="interp"><b>Not a direct-sales problem</b> — direct win rate improved. Tulip lost both partner-sourced <i>volume</i> and partner-deal <i>conversion</i> in the same year.</div>
+        </div>
+      </div>
+
+      <div class="branch b2">
+        <div class="branch-head"><div class="bnum">2</div><div class="btxt"><h3>Segment mix &amp; performance</h3><span class="conf med">Confidence: Medium</span><div class="concl">Conclusion → Secondary lens</div></div></div>
+        <div class="branch-body">
+          <div style="font-size:.78rem; color:var(--ink-soft); line-height:1.5; padding:2px 2px 8px;">
+            Volume tilted toward Enterprise (18.6% → 36.9% of closed deals) while SME shrank (53.6% → 32.5%) —
+            but ENT's own win rate <b style="color:var(--green);">improved</b> (6.8 → 10.2%) while SME and MM both fell.
+            A mix-shift story can't survive its "problem" segment being the only one improving.
+            <b style="color:var(--ink);">Full segment evidence — one slide ahead.</b></div>
+          <div class="viz-row" style="flex:0.6;">
+            <div class="viz-box">
+              <div class="viz-cap">Decomposition</div>
+              <div style="display:flex; justify-content:space-around; align-items:center; flex:1; font-family:var(--mono); font-size:.68rem;">
+                <div style="text-align:center;"><div style="color:var(--red); font-weight:700;">−1.1</div>Mix</div>
+                <div style="text-align:center;"><div style="color:var(--red); font-weight:700;">−2.7</div>Rate</div>
+                <div style="text-align:center;"><div style="color:var(--green); font-weight:700;">+1.6</div>Interact.</div>
+                <div style="text-align:center;"><div style="color:var(--navy-chart); font-weight:700;">−2.2</div>Net</div>
+              </div>
+            </div>
+          </div>
+          <span class="taglabel">Alternative lens — overlaps with channel, not additive</span>
+          <div class="interp">ENT grew share <i>and</i> improved; SME + MM both eroded. Not simply "too much Enterprise." <b>Full segment reveal → next slide.</b></div>
+        </div>
+      </div>
+
+      <div class="branch b3">
+        <div class="branch-head"><div class="bnum">3</div><div class="btxt"><h3>Buyer &amp; market pressure</h3><span class="conf medlow">Confidence: Medium-Low</span><div class="concl">Contribution not separately isolated</div></div></div>
+        <div class="branch-body">
+          <div class="viz-row">
+            <div class="viz-box">
+              <div class="viz-cap">Loss reasons (of populated rows)</div>
+              <svg viewBox="0 0 170 110" preserveAspectRatio="xMidYMid meet"><title>Unmentioned insight: FY26's #2 loss reason is "Change in priorities / indefinite delay" at 20.1%. And "Lost to Competitor" is only 4.3% (FY25) → 7.5% (FY26) of losses — competitive displacement is NOT rising, which independently supports the hold-pricing call in the GTM plan.</title>
+                <text x="4" y="16" class="axislabel">No Decision / Non-Resp.</text>
+                <rect x="6" y="20" width="118" height="12" fill="var(--steel)"/>
+                <text x="128" y="30" class="valuelabel" fill="var(--steel)">~31–38%</text>
+                <text x="4" y="52" class="axislabel">No Budget / Lost Funding</text>
+                <rect x="6" y="56" width="27" height="10" fill="#3A4A63"/>
+                <rect x="6" y="68" width="47" height="10" fill="var(--red)"/>
+                <text x="37" y="64" class="axislabel" fill="#8A94A6">FY25 8.1%</text>
+                <text x="57" y="77" class="valuelabel" fill="var(--red)">FY26 14.2% ↑</text>
+              </svg>
+            </div>
+          </div>
+          <div class="viz-row" style="flex:0.75;">
+            <div class="viz-box" style="align-items:center;">
+              <div class="viz-cap" style="align-self:flex-start;">Data completeness</div>
+              <svg viewBox="0 0 100 60" width="90"><title>Populated on 405 of 1,458 rows (27.8%). Loss Reason only exists on closed-lost rows by design, but even among losses the field is far from complete — treat every loss-reason percentage as a sample, not a census.</title>
+                <circle cx="50" cy="50" r="34" fill="none" stroke="var(--line)" stroke-width="9"/>
+                <circle cx="50" cy="50" r="34" fill="none" stroke="var(--amber)" stroke-width="9" stroke-dasharray="59.8 213.6" stroke-dashoffset="53.4" transform="rotate(-90 50 50)"/>
+                <text x="50" y="46" text-anchor="middle" class="valuelabel" font-size="13" fill="var(--ink)">28%</text>
+                <text x="50" y="58" text-anchor="middle" class="axislabel" font-size="6.5">405 / 1,458 rows</text>
+              </svg>
+            </div>
+          </div>
+          <span class="taglabel">Likely embedded in conversion-rate erosion</span>
+          <div class="interp">Directionally supportive of buyer-side pressure, but too sparse to assign a standalone % of the decline.</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin:0 40px 10px; background:var(--paper); border:1px solid var(--line); border-radius:3px; padding:6px 16px; display:flex; gap:18px; align-items:center; flex-shrink:0;">
+      <span style="font-family:var(--mono); font-size:.58rem; text-transform:uppercase; letter-spacing:.05em; color:var(--steel); white-space:nowrap;">Also tested, ranked lower</span>
+      <span style="font-size:.68rem; color:var(--ink-soft); line-height:1.35;"><b style="color:var(--ink);">Geo shift</b> — mix is stable (Americas ~66% both years); APAC's rate collapse (35%→0%, n=20/16) is DMG MORI territory, i.e. the partner story again, not an independent driver.
+      <b style="color:var(--ink);">Deal-size drift</b> — won-deal size rose with ENT share; follows branch 2, not separate.
+      <b style="color:var(--ink);">Rep turnover / comp changes</b> — not observable in this export; assigned to the validation interviews (§2D) rather than guessed at.</span>
+    </div>
+    <div class="takeaway"><b>The evidence points to a <span>partner-channel problem</span> — not a broad failure of Tulip's direct sales motion or land-and-expand strategy.</b></div>
+  </div>
+
+  <!-- ============ SLIDE 4: EX 2B SEGMENT MIX MODEL ============ -->
+  <div class="slide" id="slide-3">
+    <div class="head">
+      <div><div class="eyebrow">Exercise 2B · Segment Mix Model</div><div class="title">The plan assumed win rates the data never supported — a $1.46M miss in Mid-Market alone</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body">
+      <div class="reveal-row">
+        <div class="reveal-card">
+          <div class="seg">SME</div>
+          <div class="nums"><span class="assumed">10%</span><span class="arrow">→</span><span class="actual">7.7%</span></div>
+          <div class="cap">Assumed vs. FY26 actual win rate</div>
+        </div>
+        <div class="reveal-card headline">
+          <div class="seg">Mid-Market — the big miss</div>
+          <div class="nums"><span class="assumed">35%</span><span class="arrow">→</span><span class="actual">8.2%</span></div>
+          <div class="cap">Actual is less than a quarter of the assumed rate</div>
+        </div>
+        <div class="reveal-card">
+          <div class="seg">Enterprise</div>
+          <div class="nums"><span class="assumed">15%</span><span class="arrow">→</span><span class="actual" style="color:var(--green);">10.2%</span></div>
+          <div class="cap">Only segment beating its FY25 rate</div>
+        </div>
+      </div>
+
+      <div class="mid-row">
+        <div class="mid-box" style="flex:1;">
+          <div class="cap">Assumed vs. FY26-actual win rate, all three segments</div>
+          <div style="flex:1; position:relative;"><canvas id="rateChart"></canvas></div>
+        </div>
+        <div class="mid-box" style="flex:1;">
+          <div class="cap">Segment mix — assumed vs. FY26 actual</div>
+          <div style="flex:1; position:relative;"><canvas id="mixChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="mid-row" style="flex:0.85;">
+        <div class="mid-box" style="flex:1.4;">
+          <div class="cap">MM deals won — actual vs. at assumed 35% rate (FY25–FY26 combined)</div>
+          <div style="flex:1; position:relative;"><canvas id="revenueChart"></canvas></div>
+        </div>
+        <div class="mid-box" style="flex:0.75; align-items:center; justify-content:center; text-align:center;">
+          <div class="cap" style="align-self:flex-start;">Revenue gap</div>
+          <div style="font-family:'IBM Plex Serif'; font-weight:700; font-size:2.3rem; color:var(--ink); margin-top:8px;">$1.46M<span style="color:var(--brass); font-size:1rem;">/2yr</span></div>
+          <div style="font-size:.72rem; color:var(--ink-soft); margin-top:8px; line-height:1.4;">29-deal gap × $49,957 avg won-deal size — one consistent population for both count and price.</div>
+        </div>
+      </div>
+
+      <div class="note-row"><b>On scenarios:</b> we don't present a second, competing set of "recovery" scenarios
+      here — segment mix is a secondary, overlapping lens on the same decline (Ex.2A decomposition: mix −1.1pp,
+      rate −2.7pp). The channel-based read in the hypothesis tree is the one we're standing behind.</div>
+    </div>
+    <div class="takeaway"><b>Every segment underperformed its assumed rate except <span>Enterprise</span> — Mid-Market's plan was built on a number the data never supported.</b></div>
+  </div>
+
+  <!-- ============ SLIDE 5: EX 2C GTM POINT OF VIEW ============ -->
+  <div class="slide" id="slide-4">
+    <div class="head">
+      <div><div class="eyebrow">Exercise 2C · GTM Point of View</div><div class="title">Keep land-and-expand — fix the partner channel, not the segment mix</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="c-body">
+      <div class="pov" style="padding:12px 22px;">
+        <span class="lead" style="margin-bottom:2px;">Keep the motion. Reallocate investment to partner, not segment targeting.</span>
+        Partner's win-rate advantage over direct collapsed (6.9x → 2.0x) while <b>direct actually improved</b> — the
+        motion isn't broken; its highest-converting channel is underinvested.
+        <span style="color:var(--brass); font-family:var(--mono); font-size:.66rem; text-transform:uppercase;">What would change my mind:</span>
+        <span style="font-size:.8rem;">(1) corrected partner attribution erases the channel gap, or (2) expansion ARR on landed accounts stops outpacing land ARR — either falsifies "land-and-expand works, channel is the problem."</span>
+      </div>
+
+      <div class="mid-row" style="flex:0.95;">
+        <div class="mid-box" style="flex:0.55;">
+          <div class="cap">Partner ÷ direct win-rate multiple</div>
+          <svg viewBox="0 0 220 140" preserveAspectRatio="xMidYMid meet"><title>Derivation: 30.5 ÷ 4.4 = 6.9x (FY25); 14.8 ÷ 7.5 = 2.0x (FY26). The advantage compressed from both directions — partner fell AND direct improved. At 2.0x, partner is still the better channel; the case is reinvestment, not abandonment.</title>
+            <line x1="30" y1="10" x2="30" y2="115" stroke="var(--line)" stroke-width="1"/>
+            <line x1="30" y1="115" x2="200" y2="115" stroke="var(--line)" stroke-width="1"/>
+            <line x1="30" y1="103" x2="200" y2="103" stroke="var(--ink-soft)" stroke-width="1" stroke-dasharray="2,2"/>
+            <text x="204" y="106" class="axislabel" fill="var(--ink-soft)">1x</text>
+            <rect x="50" y="31.8" width="50" height="83.2" fill="var(--brass)"/>
+            <text x="75" y="24" class="valuelabel" text-anchor="middle" fill="var(--brass)">6.9x</text>
+            <text x="75" y="128" class="axislabel" text-anchor="middle">FY25</text>
+            <rect x="130" y="91.4" width="50" height="23.6" fill="var(--red)"/>
+            <text x="155" y="84" class="valuelabel" text-anchor="middle" fill="var(--red)">2.0x</text>
+            <text x="155" y="128" class="axislabel" text-anchor="middle">FY26</text>
+          </svg>
+        </div>
+        <div class="mid-box" style="flex:1.45;">
+          <div class="cap">The five levers — what stops, starts, changes (per brief)</div>
+          <table style="width:100%; border-collapse:collapse; font-size:.7rem; flex:1;">
+            <tr style="border-bottom:1px solid var(--line);"><td style="padding:4px 8px; color:var(--brass); font-family:var(--mono); font-size:.62rem; text-transform:uppercase; width:130px;">Marketing investment</td>
+              <td style="padding:4px 8px; color:var(--ink-soft);"><b style="color:var(--green);">START</b> partner co-marketing (MDF, joint case studies with DMG MORI + top SIs). <b style="color:var(--red);">HOLD</b> flat on direct demand-gen — SME/MM inbound isn't the constraint; conversion is.</td></tr>
+            <tr style="border-bottom:1px solid var(--line);"><td style="padding:4px 8px; color:var(--brass); font-family:var(--mono); font-size:.62rem; text-transform:uppercase;">SDR / AE focus</td>
+              <td style="padding:4px 8px; color:var(--ink-soft);"><b style="color:var(--red);">STOP</b> planned direct-only SDR headcount growth until the partner audit lands. <b style="color:var(--amber);">CHANGE</b> AE comp to neutral or partner-favorable on sourced deals.</td></tr>
+            <tr style="border-bottom:1px solid var(--line);"><td style="padding:4px 8px; color:var(--brass); font-family:var(--mono); font-size:.62rem; text-transform:uppercase;">Partner channel</td>
+              <td style="padding:4px 8px; color:var(--ink-soft);"><b style="color:var(--green);">START</b> enablement audit (90 days), then co-selling SC time, references, battlecards. This is where the reallocated dollars go.</td></tr>
+            <tr style="border-bottom:1px solid var(--line);"><td style="padding:4px 8px; color:var(--brass); font-family:var(--mono); font-size:.62rem; text-transform:uppercase;">CSM coverage</td>
+              <td style="padding:4px 8px; color:var(--ink-soft);"><b style="color:var(--amber);">CHANGE</b> nothing structurally in yr 1 — but partner-led accounts need a named CSM lane (today they inherit whoever; Ex.3's DACH risk concentration is partner-heavy).</td></tr>
+            <tr><td style="padding:4px 8px; color:var(--brass); font-family:var(--mono); font-size:.62rem; text-transform:uppercase;">Pricing / packaging</td>
+              <td style="padding:4px 8px; color:var(--ink-soft);"><b style="color:var(--red);">HOLD</b> — no packaging problem in this data, and a pricing change now would confound the read on whether partner enablement worked.</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="mid-row" style="flex:0.7;">
+        <div class="mid-box" style="flex:1;">
+          <div class="cap">Risk matrix — where this could be wrong (judgment-based, not derived from data)</div>
+          <svg viewBox="0 0 260 120" preserveAspectRatio="xMidYMid meet">
+            <line x1="20" y1="12" x2="20" y2="105" stroke="var(--line)" stroke-width="1"/>
+            <line x1="20" y1="105" x2="240" y2="105" stroke="var(--line)" stroke-width="1"/>
+            <line x1="130" y1="12" x2="130" y2="105" stroke="var(--line)" stroke-width="1" stroke-dasharray="2,2"/>
+            <line x1="20" y1="58" x2="240" y2="58" stroke="var(--line)" stroke-width="1" stroke-dasharray="2,2"/>
+            <text x="20" y="8" class="axislabel">High impact</text>
+            <text x="130" y="117" class="axislabel" text-anchor="middle">Likelihood →</text>
+            <circle cx="110" cy="32" r="9" fill="var(--red)"/><text x="110" y="36" text-anchor="middle" class="valuelabel" fill="#fff" font-size="9">1</text>
+            <circle cx="130" cy="58" r="9" fill="var(--amber)"/><text x="130" y="62" text-anchor="middle" class="valuelabel" fill="#0A0F1C" font-size="9">2</text>
+            <circle cx="170" cy="80" r="9" fill="var(--navy-chart)"/><text x="170" y="84" text-anchor="middle" class="valuelabel" fill="#fff" font-size="9">3</text>
+          </svg>
+        </div>
+        <div class="mid-box" style="flex:1.4; justify-content:center; gap:6px;">
+          <div style="font-size:.72rem; color:var(--ink-soft); line-height:1.4;"><b style="color:var(--red);">1 · Reporting artifact</b> — Ex.1's 220-row attribution mismatch could inflate the channel signal. <i>Know by:</i> corrected attribution shrinks the gap.</div>
+          <div style="font-size:.72rem; color:var(--ink-soft); line-height:1.4;"><b style="color:var(--amber);">2 · Partner-side cause</b> — rep turnover / lost certification, not Tulip's to fix. <i>Know by:</i> asking partner managers directly.</div>
+          <div style="font-size:.72rem; color:var(--ink-soft); line-height:1.4;"><b style="color:#4F8FEF;">3 · ENT fluke</b> — n=59 FY26 closes is thin. <i>Know by:</i> 2 more quarters of ENT closes.</div>
+        </div>
+      </div>
+
+      <div class="gantt-box" style="padding:8px 20px;">
+        <div class="cap">Sequence — 90 days vs. first year</div>
+        <svg viewBox="0 0 1500 92" preserveAspectRatio="xMidYMid meet">
+          <line x1="150" y1="78" x2="1460" y2="78" stroke="var(--line)" stroke-width="1"/>
+          <line x1="150" y1="72" x2="150" y2="78" stroke="var(--line)"/><text x="150" y="90" class="axislabel" text-anchor="middle">Now</text>
+          <line x1="477.5" y1="72" x2="477.5" y2="78" stroke="var(--line)"/><text x="477.5" y="90" class="axislabel" text-anchor="middle">Day 90</text>
+          <line x1="805" y1="72" x2="805" y2="78" stroke="var(--line)"/><text x="805" y="90" class="axislabel" text-anchor="middle">Month 6</text>
+          <line x1="1460" y1="72" x2="1460" y2="78" stroke="var(--line)"/><text x="1460" y="90" class="axislabel" text-anchor="middle">Month 12</text>
+          <rect x="150" y="10" width="327.5" height="16" fill="var(--brass)" rx="2"/>
+          <text x="158" y="7" class="valuelabel" fill="var(--brass)" font-size="9">Partner audit + SDR pause + partner co-marketing starts</text>
+          <rect x="477.5" y="34" width="982.5" height="16" fill="var(--navy-chart)" rx="2"/>
+          <text x="485" y="31" class="valuelabel" fill="var(--navy-chart)" font-size="9">Partner deal support + AE comp change + CSM partner-lane pilot</text>
+          <rect x="150" y="58" width="1310" height="11" fill="none" stroke="var(--ink-soft)" stroke-width="1.5" stroke-dasharray="5,3" rx="2"/>
+          <text x="158" y="55" class="valuelabel" fill="var(--ink-soft)" font-size="9">Pricing / packaging — HOLD until partner diagnosis lands</text>
+        </svg>
+      </div>
+    </div>
+    <div class="takeaway"><b>Fix the <span>channel</span>, protect the <span>motion</span> — this is a reallocation call, not a strategy pivot.</b></div>
+  </div>
+
+  <!-- ============ SLIDE 6: EX 2D VALIDATION PLAN ============ -->
+  <div class="slide" id="slide-5">
+    <div class="head">
+      <div><div class="eyebrow">Exercise 2D · Validation Plan</div><div class="title">How to confirm this before acting on it at full force</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="d-body">
+      <div class="gantt-box">
+        <div class="cap">Validation sequence — weeks from today</div>
+        <svg viewBox="0 0 1500 165" preserveAspectRatio="xMidYMid meet">
+          <line x1="170" y1="146" x2="1460" y2="146" stroke="var(--line)" stroke-width="1"/>
+          <line x1="170" y1="140" x2="170" y2="146" stroke="var(--line)"/><text x="170" y="160" class="axislabel" text-anchor="middle">Today</text>
+          <line x1="313.3" y1="140" x2="313.3" y2="146" stroke="var(--line)"/><text x="313.3" y="160" class="axislabel" text-anchor="middle">Wk 1</text>
+          <line x1="456.7" y1="140" x2="456.7" y2="146" stroke="var(--line)"/><text x="456.7" y="160" class="axislabel" text-anchor="middle">Wk 2</text>
+          <line x1="600" y1="140" x2="600" y2="146" stroke="var(--line)"/><text x="600" y="160" class="axislabel" text-anchor="middle">Wk 3</text>
+          <line x1="743.3" y1="140" x2="743.3" y2="146" stroke="var(--line)"/><text x="743.3" y="160" class="axislabel" text-anchor="middle">Wk 4</text>
+          <line x1="1460" y1="140" x2="1460" y2="146" stroke="var(--line)"/><text x="1420" y="160" class="axislabel" text-anchor="middle">Ongoing →</text>
+
+          <text x="10" y="27" class="axislabel">Reconcile data</text>
+          <rect x="170" y="14" width="143.3" height="18" fill="var(--brass)" rx="2"/>
+          <text x="313.3" y="27" class="valuelabel" fill="var(--brass)" font-size="9">Wk 1</text>
+
+          <text x="10" y="53" class="axislabel">Partner managers</text>
+          <rect x="241.7" y="40" width="215" height="18" fill="var(--navy-chart)" rx="2"/>
+          <text x="456.7" y="53" class="valuelabel" fill="var(--navy-chart)" font-size="9">Wk 1–2</text>
+
+          <text x="10" y="79" class="axislabel">Qualification cut</text>
+          <rect x="456.7" y="66" width="143.3" height="18" fill="var(--steel)" rx="2"/>
+          <text x="600" y="79" class="valuelabel" fill="var(--steel)" font-size="9">Wk 2–3</text>
+
+          <text x="10" y="105" class="axislabel">Pipeline segment mix</text>
+          <rect x="600" y="92" width="143.3" height="18" fill="var(--amber)" rx="2"/>
+          <text x="743.3" y="105" class="valuelabel" fill="var(--amber)" font-size="9">Wk 3–4</text>
+
+          <text x="10" y="131" class="axislabel">ENT quarter check</text>
+          <rect x="743.3" y="118" width="700" height="18" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-dasharray="5,3" rx="2"/>
+          <text x="1090" y="131" class="valuelabel" fill="var(--red)" font-size="9">Through next 2 quarters</text>
+        </svg>
+      </div>
+
+      <div class="legend-row">
+        <div class="legend-item"><span class="dot" style="background:var(--brass);"></span><div><b>Week 1 · Reconcile the channel data — with Partner Ops</b>Pull the 220 attribution-mismatch rows; ask which field drives partner comp; re-run the decomposition on corrected data.</div></div>
+        <div class="legend-item"><span class="dot" style="background:var(--navy-chart);"></span><div><b>Week 1–2 · Partner managers + DMG MORI alliance lead</b>Ask about de-certification, comp-plan changes, or competitive displacement in top accounts.</div></div>
+        <div class="legend-item"><span class="dot" style="background:var(--steel);"></span><div><b>Week 2–3 · Qualification-flag cut — with RevTech/SFDC admin</b>DA / Partner Qualified Opp flags: a gap here is a process fix, not a channel-health fix.</div></div>
+        <div class="legend-item"><span class="dot" style="background:var(--amber);"></span><div><b>Week 3–4 · Pipeline-stage segment mix — with Marketing Ops + SDR lead</b>Confirms if ENT's growing share is upstream targeting or a downstream artifact.</div></div>
+      </div>
+
+      <div class="d-foot"><b>Sequencing logic:</b> reconcile the data before trusting the conclusion, talk to the
+      people closest to the channel before recommending a fix, then confirm the mix-shift questions last — they're
+      the secondary lens, not the primary one (Ex.2A).</div>
+    </div>
+    <div class="takeaway"><b>Four weeks to validate, before the 90-day plan on the previous slide gets funded.</b></div>
+  </div>
+
+  <!-- ============ SLIDE 7: EX 3A CHURN MODEL ============ -->
+  <div class="slide" id="slide-6">
+    <div class="head">
+      <div><div class="eyebrow">Exercise 3A · Customer Model</div><div class="title">In-year churn — low / medium / high, calibrated against 439 already-closed renewals</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body">
+      <div class="reveal-row">
+        <div class="reveal-card">
+          <div class="seg">Open renewal book</div>
+          <div class="nums"><span class="actual" style="color:var(--ink);">$14.3M</span></div>
+          <div class="cap">261 open renewal opps · sized on Renewal ARR per Ex.1 #3</div>
+        </div>
+        <div class="reveal-card headline">
+          <div class="seg">Medium scenario — my best estimate (P50)</div>
+          <div class="nums"><span class="actual">$2.38M</span><span class="arrow" style="font-size:.9rem;">16.6%</span></div>
+          <div class="cap">Compound flag (util &lt;33% OR Health=Critical) at the observed 65.5% flagged-cohort churn rate; 3% floor on everyone else</div>
+        </div>
+        <div class="reveal-card">
+          <div class="seg">⚠ Brief says FY26</div>
+          <div class="nums"><span class="actual" style="color:var(--amber); font-size:1.3rem;">94% is FY27</span></div>
+          <div class="cap">246 of 261 open renewals close in FY27; only 15 stale FY26 stragglers. Forecast covers the actual open book — flagged, not silently reinterpreted</div>
+        </div>
+      </div>
+
+      <div class="mid-row">
+        <div class="mid-box" style="flex:0.9;">
+          <div class="cap">In-year churn scenarios (of the $14.3M open book)</div>
+          <div style="flex:1; position:relative;"><canvas id="churnScenarioChart"></canvas></div>
+        </div>
+        <div class="mid-box" style="flex:1.1;">
+          <div class="cap">Quarterly churn (medium) vs. expansion ARR, FY27</div>
+          <div style="flex:1; position:relative;"><canvas id="quarterlyChart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="mid-row" style="flex:0.8;">
+        <div class="mid-box" style="flex:1.3;">
+          <div class="cap">Calibration — historical churn rate by signal (439 closed renewals)</div>
+          <table style="width:100%; border-collapse:collapse; font-size:.68rem;">
+            <tr style="color:var(--steel); font-family:var(--mono); font-size:.58rem; text-transform:uppercase;"><td style="padding:2px 8px;">Signal</td><td>Churn rate</td><td>n</td><td>Trust it?</td></tr>
+            <tr style="border-top:1px solid var(--line);"><td style="padding:3px 8px; color:var(--ink);">Utilization &lt;33%</td><td style="color:var(--red);">62.5%</td><td style="color:var(--ink-soft);">152</td><td style="color:var(--green);">Yes — near-monotonic, matches the 33% internal threshold</td></tr>
+            <tr><td style="padding:3px 8px; color:var(--ink);">Utilization 70–100%</td><td style="color:var(--green);">0.0%</td><td style="color:var(--ink-soft);">78</td><td style="color:var(--green);">Yes — cleanest signal in the data</td></tr>
+            <tr><td style="padding:3px 8px; color:var(--ink);">Health = Critical</td><td style="color:var(--red);">91.7%</td><td style="color:var(--ink-soft);">109</td><td style="color:var(--green);">Yes</td></tr>
+            <tr><td style="padding:3px 8px; color:var(--ink);">Health = At-Risk</td><td style="color:var(--amber);">0.0%</td><td style="color:var(--ink-soft);">39</td><td style="color:var(--amber);">No — transitional label (re-tagged Critical before churning); floored, not taken at face value</td></tr>
+          </table>
+        </div>
+        <div class="mid-box" style="flex:0.7; justify-content:center;">
+          <div class="cap">Where the model is weak</div>
+          <div style="font-size:.72rem; color:var(--ink-soft); line-height:1.45; margin-top:4px;">Historical churn is <b style="color:var(--ink);">24.6% by count but 14.3% by ARR</b> — churned accounts skew small. Trust the <b style="color:var(--ink);">tier</b> more than the dollar figure on any single account over $100K. Low = health tiers at face value ($1.18M, 8.2%); High = stress case ($3.39M, 23.7%).</div>
+        </div>
+      </div>
+    </div>
+    <div class="takeaway"><b>Committing to <span>$2.38M</span> medium-case churn — with the calibration evidence shown, not asserted.</b></div>
+  </div>
+
+  <!-- ============ SLIDE 8: EX 3B+3C UNSTRUCTURED SIGNALS + CONFLICT ACCOUNTS ============ -->
+  <div class="slide" id="slide-7">
+    <div class="head">
+      <div><div class="eyebrow">Exercise 3B + 3C · Signals &amp; Conflicts</div><div class="title">Five “Healthy” accounts require action once customer language is added to the structured view</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:14px;">
+      <div class="signal-flow" style="flex-shrink:0;">
+        <div class="signal-step"><div class="big">3</div><div class="lbl">Evidence sources</div><p>Health + utilization<br>CSM note<br>Gong highlight</p></div><div class="handoff">→</div>
+        <div class="signal-step"><div class="big">6</div><div class="lbl">Signal categories</div><p>Champion · budget · competitor<br>engagement · M&amp;A · expansion</p></div><div class="handoff">→</div>
+        <div class="signal-step" style="border-color:var(--red);"><div class="big" style="color:var(--red);">5</div><div class="lbl" style="color:var(--red);">Material conflicts</div><p>Structured “Healthy”<br>Customer language says act</p></div>
+      </div>
+      <div class="mid-box" style="flex:1;padding:12px 16px;">
+        <div class="cap">3C · Structured health vs. customer evidence — the red bar is the conclusion-changing signal</div>
+        <div class="conflict-bars" style="margin-top:4px;"><div style="font-family:var(--mono);font-size:.55rem;color:var(--steel);text-transform:uppercase;">Account</div><div style="font-family:var(--mono);font-size:.55rem;color:var(--steel);text-transform:uppercase;">Structured view</div><div style="font-family:var(--mono);font-size:.55rem;color:var(--steel);text-transform:uppercase;">Customer evidence</div><div style="font-family:var(--mono);font-size:.55rem;color:var(--steel);text-transform:uppercase;">Action</div>
+          <div class="acct">Wycliffe · $1.2K</div><div><div class="health-bar" style="width:92%;"></div><span>Healthy</span></div><div><div class="text-bar" style="width:96%;"></div><span>~Even renewal odds · M&amp;A</span></div><div style="color:var(--red);">Exec sponsor</div>
+          <div class="acct">Copperleaf · $1.1K</div><div><div class="health-bar" style="width:88%;"></div><span>Healthy</span></div><div><div class="text-bar" style="width:88%;"></div><span>Downsell + competitor</span></div><div style="color:var(--red);">Save plan</div>
+          <div class="acct">Spruce · $12.3K</div><div><div class="health-bar" style="width:84%;"></div><span>Healthy</span></div><div><div class="text-bar" style="width:82%;"></div><span>Reduce license count</span></div><div style="color:var(--red);">Downsell defense</div>
+          <div class="acct">Pinehurst · $1.1K</div><div><div class="health-bar" style="width:80%;"></div><span>Healthy</span></div><div><div class="text-bar" style="width:78%;"></div><span>Layoffs + unused licenses</span></div><div style="color:var(--red);">Adoption reset</div>
+          <div class="acct">Penwood · $13.7K</div><div><div class="health-bar" style="width:76%;"></div><span>Healthy</span></div><div><div class="text-bar" style="width:74%;"></div><span>Active competitive review</span></div><div style="color:var(--red);">Competitive save</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;flex-shrink:0;"><div class="mid-box" style="padding:10px 14px;"><div class="cap">Control</div><div style="font-size:.67rem;color:var(--ink-soft);">Text never silently overrides structured evidence.</div></div><div class="mid-box" style="padding:10px 14px;"><div class="cap">Weakness</div><div style="font-size:.67rem;color:var(--ink-soft);">Repeated CSM boilerplate lowers confidence.</div></div><div class="mid-box" style="padding:10px 14px;"><div class="cap">Human check</div><div style="font-size:.67rem;color:var(--ink-soft);">Owner confirms current vs. stale before routing.</div></div></div>
+    </div>
+    <div class="takeaway"><b>Customer language changes the operating decision on five accounts; all five move from passive monitoring to named save actions.</b></div>
+  </div>
+
+  <!-- ============ SLIDE 9: EX 3D+3E PUSHBACK + ESCALATION ============ -->
+  <div class="slide" id="slide-8">
+    <div class="head">
+      <div><div class="eyebrow">Exercise 3D + 3E · Executive Routing</div><div class="title">The $2.38M P50 case rests on strong structured signals; ten executive asks convert risk into action</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:12px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1.1fr;gap:12px;flex-shrink:0;">
+        <div class="tool-metric"><div class="v" style="color:var(--red);">91.7%</div><div class="l">Critical churn</div><p>n=109 historical renewals</p></div>
+        <div class="tool-metric"><div class="v" style="color:var(--amber);">62.5%</div><div class="l">Utilization &lt;33%</div><p>n=152 historical renewals</p></div>
+        <div class="tool-metric"><div class="v" style="color:var(--steel);">0.0%</div><div class="l">At-Risk label</div><p>n=39 · not trusted at face value</p></div>
+        <div class="tool-metric" style="border-color:var(--brass);"><div class="v">$2.38M</div><div class="l">P50 commitment</div><p>Blind-test top 10; recalibrate if leaders diverge on &gt;2–3</p></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1;min-height:0;">
+        <div class="mid-box" style="padding:11px 14px;"><div class="cap" style="color:var(--red);">3E · CRO queue · revenue decisions</div><div class="exec-route"><div style="font-family:var(--mono);font-size:.54rem;color:var(--steel);">ACCOUNT</div><div style="font-family:var(--mono);font-size:.54rem;color:var(--steel);">EXPOSURE</div><div style="font-family:var(--mono);font-size:.54rem;color:var(--steel);">PRIMARY RISK</div><div style="font-family:var(--mono);font-size:.54rem;color:var(--steel);">ASK</div>
+          <div class="acct">Thatcher</div><div><div class="risk-meter"><span style="width:100%;"></span></div>$240K</div><div>Champion loss</div><div class="ask">Join renewal call</div>
+          <div class="acct">Knollwood</div><div><div class="risk-meter"><span style="width:98%;"></span></div>$236K</div><div>Budget + adoption</div><div class="ask">Pricing authority</div>
+          <div class="acct">Lakeshore</div><div><div class="risk-meter"><span style="width:57%;"></span></div>$137K</div><div>Budget + champion</div><div class="ask">Exec sponsor</div>
+          <div class="acct">Pinnacle</div><div><div class="risk-meter"><span style="width:37%;"></span></div>$88K</div><div>M&amp;A uncertainty</div><div class="ask">Bridge-term call</div>
+          <div class="acct">Ironwood</div><div><div class="risk-meter"><span style="width:23%;"></span></div>$55K</div><div>Reorganization</div><div class="ask">Blind-test case</div></div></div>
+        <div class="mid-box" style="padding:11px 14px;"><div class="cap" style="color:var(--brass);">3E · CCO queue · operating interventions</div><div class="exec-route"><div style="font-family:var(--mono);font-size:.54rem;color:var(--steel);">SIGNAL</div><div style="font-family:var(--mono);font-size:.54rem;color:var(--steel);">MAGNITUDE</div><div style="font-family:var(--mono);font-size:.54rem;color:var(--steel);">GAP</div><div style="font-family:var(--mono);font-size:.54rem;color:var(--steel);">ASK</div>
+          <div class="acct">DACH</div><div><div class="risk-meter"><span style="width:100%;"></span></div>34% of Critical</div><div>Coverage / macro</div><div class="ask">Diagnose region</div>
+          <div class="acct">Wycliffe</div><div><div class="risk-meter"><span style="width:82%;"></span></div>~50/50 renewal</div><div>Acquirer access</div><div class="ask">Find relationship</div>
+          <div class="acct">Spruce</div><div><div class="risk-meter"><span style="width:76%;"></span></div>Live downsell</div><div>Health missed it</div><div class="ask">Audit health</div>
+          <div class="acct">Champion loss</div><div><div class="risk-meter"><span style="width:62%;"></span></div>7 Critical</div><div>No standard play</div><div class="ask">Launch playbook</div>
+          <div class="acct">CSM notes</div><div><div class="risk-meter"><span style="width:55%;"></span></div>10+ repeats</div><div>Low signal quality</div><div class="ask">Fix workflow</div></div></div>
+      </div>
+    </div>
+    <div class="takeaway"><b>Commit to the P50 case, test the ten largest risks, and route five revenue decisions to the CRO and five operating interventions to the CCO.</b></div>
+  </div>
+
+  <!-- ============ RECOMMENDATIONS ============ -->
+  <div class="slide" id="slide-reco">
+    <div class="head">
+      <div><div class="eyebrow">Executive Recommendation</div><div class="title">Five moves reset the plan, protect the renewal base, and test the partner-channel thesis</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:8px;">
+      <div class="visual-sequence">
+        <div class="rec-node"><div class="circle" style="border-color:var(--green);">R5</div><h4>Repair source data</h4><p>Stage, attribution, ARR, segment, hygiene</p><span class="owner">RevTech</span></div>
+        <div class="rec-node"><div class="circle" style="border-color:var(--red);">R3</div><h4>Reset FY27 plan</h4><p>Replace unsupported segment assumptions</p><span class="owner">CFO · RevOps</span></div>
+        <div class="rec-node"><div class="circle" style="border-color:var(--amber);">R4</div><h4>Launch risk cadence</h4><p>Weekly queue; blind-score largest risks</p><span class="owner">CCO · CS Ops</span></div>
+        <div class="rec-node"><div class="circle">R1</div><h4>Test partner recovery</h4><p>Four-week diagnosis, then 90-day program</p><span class="owner">CRO · Partner Ops</span></div>
+        <div class="rec-node"><div class="circle" style="border-color:var(--steel);">R2</div><h4>Hold direct capacity</h4><p>Freeze direct-only hiring until evidence gate</p><span class="owner">Sales Leadership</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1.05fr .95fr; gap:16px; flex:1; min-height:0;">
+        <div class="mid-box"><div class="cap">Priority map · impact ↑ / evidence readiness →</div><div class="priority-plot"><span class="plot-label" style="left:8px;top:8px;">Higher impact</span><span class="plot-label" style="right:8px;bottom:7px;">More evidence-ready</span><span class="plot-dot" style="left:73%;top:15%;background:var(--red);">R3</span><span class="plot-dot" style="left:65%;top:39%;background:var(--amber);">R4</span><span class="plot-dot" style="left:34%;top:18%;background:var(--brass);">R1</span><span class="plot-dot" style="left:76%;top:67%;background:var(--green);">R5</span><span class="plot-dot" style="left:28%;top:67%;background:#8A94A6;">R2</span></div></div>
+        <div class="mid-box" style="justify-content:center;"><div class="cap" style="color:var(--brass);">Leadership decision</div><div style="font-family:'IBM Plex Serif'; font-size:1.35rem; color:var(--ink); font-weight:700; line-height:1.25; margin:8px 0 14px;">Approve R3–R5 now.<br>Gate R1–R2 on four weeks of partner evidence.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div style="border-left:4px solid var(--green);padding:9px 12px;background:var(--panel-soft);"><b style="color:var(--ink);font-size:.72rem;">Start immediately</b><div style="color:var(--ink-soft);font-size:.63rem;margin-top:4px;">Plan reset · data repair · renewal cadence</div></div><div style="border-left:4px solid var(--amber);padding:9px 12px;background:var(--panel-soft);"><b style="color:var(--ink);font-size:.72rem;">Evidence-gated</b><div style="color:var(--ink-soft);font-size:.63rem;margin-top:4px;">Partner funding · capacity decision</div></div></div></div>
+      </div>
+    </div>
+    <div class="takeaway"><b>Start the plan reset, data repair, and renewal cadence now; release partner spend only after the four-week evidence gate.</b></div>
+  </div>
+
+  <!-- ============ NEXT ACTIONS ============ -->
+  <div class="slide" id="slide-next">
+    <div class="head">
+      <div><div class="eyebrow">Execution Plan · Owner Handoffs</div><div class="title">A 30-day Jira-style delivery plan moves evidence from operators to the Day-30 funding decision</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:10px;padding:16px 34px 8px;">
+      <div class="swimlane">
+        <div class="lane-head">Owner</div><div class="lane-head">Week 1 · Clean</div><div class="lane-head">Week 2 · Test</div><div class="lane-head">Weeks 3–4 · Build</div><div class="lane-head">Day 30 · Decide</div>
+        <div class="lane-owner">Partner Ops</div><div><div class="ticket"><small>GTM-101 · In progress</small><b>Resolve 220 attribution conflicts</b>Declare comp-driving source field</div></div><div><div class="ticket" style="border-color:var(--amber);"><small>GTM-104 · Interview</small><b>Partner root-cause sprint</b>DMG MORI + top SI interviews</div></div><div><div class="ticket" style="border-color:var(--brass);"><small>GTM-107 · Draft</small><b>Recovery playbook</b>Co-sell support + enablement</div></div><div><div class="handoff">→ CRO</div></div>
+        <div class="lane-owner">RevOps + Finance</div><div><div class="ticket"><small>DATA-201 · Ready</small><b>Re-run decomposition</b>Corrected partner attribution</div></div><div><div class="handoff">→</div></div><div><div class="ticket" style="border-color:var(--red);"><small>PLAN-204 · Draft</small><b>Reset FY27 assumptions</b>Evidence-based rates + mix</div></div><div><div class="ticket" style="border-color:var(--green);"><small>DECISION</small><b>Publish decision pack</b>Economics + confidence</div></div>
+        <div class="lane-owner">CS Ops + CSM</div><div><div class="ticket" style="border-color:var(--amber);"><small>CS-301 · Weekly</small><b>Run risk queue</b>Assign Critical / High accounts</div></div><div><div class="ticket" style="border-color:var(--green);"><small>CS-304 · Validate</small><b>Blind-score top 10</b>Compare model vs. leaders</div></div><div><div class="ticket"><small>CS-307 · Calibrate</small><b>Resolve disagreements</b>Current / stale / recovered</div></div><div><div class="handoff">→ CCO</div></div>
+        <div class="lane-owner">CRO + CCO</div><div><div class="ticket" style="border-color:var(--steel);"><small>EXEC-401 · Monitor</small><b>Hold direct hiring</b>Await partner evidence</div></div><div><div class="ticket" style="border-color:var(--red);"><small>EXEC-403 · Escalate</small><b>Join highest-ARR saves</b>Resolve pricing / sponsorship</div></div><div><div class="handoff">Evidence review →</div></div><div><div class="ticket" style="border-color:var(--green);"><small>GO / NO-GO</small><b>Fund or stop</b>90-day partner program</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;flex-shrink:0;"><div class="mid-box" style="padding:9px 13px;"><div class="cap">Definition of done</div><div style="font-size:.67rem;color:var(--ink-soft);">Attribution reconciled · top-10 blind test complete</div></div><div class="mid-box" style="padding:9px 13px;"><div class="cap">Go signal</div><div style="font-size:.67rem;color:var(--ink-soft);">Channel gap persists + cause is fixable</div></div><div class="mid-box" style="padding:9px 13px;"><div class="cap">No-go signal</div><div style="font-size:.67rem;color:var(--ink-soft);">Gap disappears after data correction</div></div></div>
+    </div>
+    <div class="takeaway"><b>Operators create the evidence; RevOps integrates it; CRO and CCO make one explicit Day-30 funding decision.</b></div>
+  </div>
+
+  <!-- ============ EXERCISE 4 ============ -->
+  <div class="slide" id="slide-ex4">
+    <div class="head">
+      <div><div class="eyebrow">Exercise 4 · Churn Tool</div><div class="title">The live tool turns the renewal book into a weekly forecast, action queue, and executive escalation path</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:14px;">
+      <div class="tool-hero">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="mid-box" style="border-left:5px solid var(--green);justify-content:center;"><div class="cap" style="color:var(--green);">Live application</div><div style="font-family:'IBM Plex Serif';font-size:1.45rem;color:var(--ink);font-weight:700;margin:6px 0 8px;">Churn Tool</div><div style="font-size:.78rem;color:var(--ink-soft);line-height:1.45;margin-bottom:15px;">A weekly operating view for renewal exposure, expansion readiness, account evidence, and named next actions.</div><a class="deck-link" href="https://signalops-ai-d1bm.vercel.app/" target="_blank" rel="noopener" style="font-size:.84rem;">Open live tool ↗</a></div>
+          <div class="mid-box"><div class="cap">Monday-morning outcome</div><div style="display:flex;align-items:center;gap:14px;"><div style="font-family:'IBM Plex Serif';font-size:2rem;color:var(--red);font-weight:700;">10</div><div style="font-size:.72rem;color:var(--ink-soft);line-height:1.4;"><b style="color:var(--ink);">Executive decisions routed</b><br>5 CRO revenue asks + 5 CCO operating asks</div></div></div>
+        </div>
+        <div style="background:var(--paper);border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px;"><div><div style="font-family:var(--mono);font-size:.56rem;color:var(--brass);text-transform:uppercase;">Renewal command center</div><div style="font-family:'IBM Plex Serif';font-size:1.05rem;color:var(--ink);font-weight:700;margin-top:3px;">Decision outputs</div></div><div style="font-family:var(--mono);font-size:.6rem;color:var(--green);">FY27 · Live</div></div>
+          <div class="tool-metrics">
+            <div class="tool-metric"><div class="v">$2.38M</div><div class="l">P50 churn</div><p>Operating commitment</p></div>
+            <div class="tool-metric"><div class="v" style="color:var(--red);">$3.1M</div><div class="l">Critical + High ARR</div><p>Named weekly actions</p></div>
+            <div class="tool-metric"><div class="v" style="color:var(--amber);">5</div><div class="l">Conflict accounts</div><p>Text changes conclusion</p></div>
+            <div class="tool-metric"><div class="v" style="color:var(--green);">3</div><div class="l">Scenario views</div><p>Low · P50 · High</p></div>
+          </div>
+          <div class="workflow-rail" style="margin-top:auto;"><div class="wf-node"><div class="icon">1</div><b>Forecast</b><span>Low / P50 / high<br>by quarter</span></div><div class="wf-node"><div class="icon">2</div><b>Explain</b><span>Source-level<br>evidence</span></div><div class="wf-node"><div class="icon">3</div><b>Route</b><span>Owner + action<br>+ timing</span></div><div class="wf-node"><div class="icon">4</div><b>Learn</b><span>Overrides +<br>rule memory</span></div></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0;"><div class="mid-box" style="padding:9px 12px;"><div class="cap">Forecast</div><div style="font-size:.66rem;color:var(--ink-soft);">Annual + quarterly scenarios</div></div><div class="mid-box" style="padding:9px 12px;"><div class="cap">Prioritize</div><div style="font-size:.66rem;color:var(--ink-soft);">Risk and expansion queues</div></div><div class="mid-box" style="padding:9px 12px;"><div class="cap">Defend</div><div style="font-size:.66rem;color:var(--ink-soft);">Formula + source evidence</div></div><div class="mid-box" style="padding:9px 12px;"><div class="cap">Operate</div><div style="font-size:.66rem;color:var(--ink-soft);">Owners, actions, exports</div></div></div>
+    </div>
+    <div class="takeaway"><b>Exercise 4 closes the loop: the forecast becomes a weekly list of accounts, evidence, owners, and decisions.</b></div>
+  </div>
+
+  <!-- ============ AI WORKFLOW SUMMARY ============ -->
+  <div class="slide" id="slide-ai">
+    <div class="head">
+      <div><div class="eyebrow">Required Appendix · AI Workflow</div><div class="title">Python handled profiling; AI accelerated execution; deterministic controls and human review protected judgment</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:18px;justify-content:center;">
+      <div class="workflow-rail"><div class="wf-node"><div class="icon">Py</div><b>Profile</b><span>Google Colab<br>Python</span></div><div class="wf-node"><div class="icon" style="border-color:var(--amber);">C</div><b>Develop</b><span>Claude + ChatGPT<br>Tool build</span></div><div class="wf-node"><div class="icon" style="border-color:var(--green);">ƒ</div><b>Control</b><span>Deterministic scoring<br>Labeled evidence</span></div><div class="wf-node"><div class="icon" style="border-color:var(--red);">H</div><b>Decide</b><span>Human review<br>Final judgment</span></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1.15fr;grid-template-rows:1fr 1fr;gap:16px;flex:1;min-height:0;">
+        <div class="mid-box" style="justify-content:center;border-color:var(--brass);"><div class="cap" style="color:var(--brass);">Tools used</div><div style="font-size:.82rem;color:var(--ink);font-weight:700;margin-top:8px;line-height:1.45;">ChatGPT + Google Colab Python</div><div style="font-size:.68rem;color:var(--ink-soft);margin-top:6px;line-height:1.45;">Data shape and profiling, followed by Claude + ChatGPT for tool development and analysis.</div></div>
+        <div class="mid-box" style="justify-content:center;border-color:var(--red);"><div class="cap" style="color:var(--red);">Where AI fell short</div><div style="font-size:.7rem;color:var(--ink-soft);margin-top:8px;line-height:1.55;"><b style="color:var(--ink);">1 · Instruction adherence</b> — rules had to be restated.<br><b style="color:var(--ink);">2 · Memory</b> — formatting and design choices drifted.<br><b style="color:var(--ink);">3 · Workstream ownership</b> — strong at tasks, weak as a durable partner.</div></div>
+        <div class="mid-box" style="justify-content:center;border-color:var(--green);"><div class="cap" style="color:var(--green);">Controls</div><div style="font-size:.72rem;color:var(--ink);margin-top:8px;line-height:1.55;">Deterministic scoring · labeled evidence · invalid output scores zero · human review required</div></div>
+        <div class="mid-box" style="justify-content:center;border-color:var(--amber);"><div class="cap" style="color:var(--amber);">What I would do differently</div><div style="font-family:'IBM Plex Serif';font-size:1rem;color:var(--ink);font-weight:700;margin-top:8px;line-height:1.4;">Start with Python for profiling. Use AI for execution—not judgment.</div><div style="font-size:.66rem;color:var(--ink-soft);margin-top:6px;">Colab was faster and more reliable for interrogating the source data.</div></div>
+      </div>
+    </div>
+    <div class="takeaway"><b>AI was most useful as an execution layer; Python, deterministic rules, and human review remained the trust layer.</b></div>
+  </div>
+
+  <!-- ============ AI WORKFLOW LOG 1 ============ -->
+  <div class="slide" id="slide-ai-log-1">
+    <div class="head">
+      <div><div class="eyebrow">Required Appendix · AI Workflow Log · 1 of 2</div><div class="title">Five focused prompts moved the work from raw export to operating decision</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:14px;">
+      <div class="visual-sequence" style="padding-top:28px;">
+        <div class="rec-node"><div class="circle">01</div><h4>Interrogate</h4><p>“Identify load-bearing fields, definitional drift, contradictions, missingness, and blocking checks.”</p><span class="owner">Data audit</span></div>
+        <div class="rec-node"><div class="circle" style="border-color:var(--amber);">02</div><h4>Diagnose</h4><p>“Test channel, segment, mix, rate, and process hypotheses; reconcile the total change.”</p><span class="owner">Exercise 2</span></div>
+        <div class="rec-node"><div class="circle" style="border-color:var(--red);">03</div><h4>Forecast</h4><p>“Build low, P50, and high churn plus quarterly churn and expansion; state every formula.”</p><span class="owner">Exercise 3A</span></div>
+        <div class="rec-node"><div class="circle" style="border-color:var(--green);">04</div><h4>Conflict</h4><p>“Find where customer text materially changes the structured conclusion; do not invent facts.”</p><span class="owner">Exercise 3B/C</span></div>
+        <div class="rec-node"><div class="circle" style="border-color:var(--steel);">05</div><h4>Operationalize</h4><p>“Retain source evidence, an owner, a next action, and an auditable decision path.”</p><span class="owner">Exercise 4</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;gap:10px;align-items:center;flex:1;min-height:0;"><div class="mid-box" style="text-align:center;justify-content:center;"><div class="cap" style="color:var(--red);">First draft</div><div style="font-size:.78rem;color:var(--ink);font-weight:700;">Score treated like probability</div></div><div class="handoff">→</div><div class="mid-box" style="text-align:center;justify-content:center;"><div class="cap" style="color:var(--amber);">Challenge</div><div style="font-size:.78rem;color:var(--ink);font-weight:700;">No calibration evidence</div></div><div class="handoff">→</div><div class="mid-box" style="text-align:center;justify-content:center;border-color:var(--green);"><div class="cap" style="color:var(--green);">Rewrite</div><div style="font-size:.78rem;color:var(--ink);font-weight:700;">Priority score, not probability</div></div></div>
+    </div>
+    <div class="takeaway"><b>The highest-value prompting move was narrowing each prompt to one analytical decision and one validation standard.</b></div>
+  </div>
+
+  <!-- ============ AI WORKFLOW LOG 2 ============ -->
+  <div class="slide" id="slide-ai-log-2">
+    <div class="head">
+      <div><div class="eyebrow">Required Appendix · AI Workflow Log · 2 of 2</div><div class="title">The runtime contract makes AI evidence inspectable—and prevents malformed output from moving the forecast</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:18px;justify-content:center;">
+      <div class="signal-flow" style="grid-template-columns:1fr 42px 1fr 42px 1fr 42px 1fr;">
+        <div class="signal-step"><div class="big">Text</div><div class="lbl">Source</div><p>CSM note +<br>Gong highlight</p></div><div class="handoff">→</div>
+        <div class="signal-step"><div class="big">S5</div><div class="lbl">Model</div><p>Temperature 0<br>Prompt v2.0</p></div><div class="handoff">→</div>
+        <div class="signal-step"><div class="big">{ }</div><div class="lbl">Contract</div><p>Strict JSON<br>Evidence + confidence</p></div><div class="handoff">→</div>
+        <div class="signal-step" style="border-color:var(--green);"><div class="big" style="color:var(--green);">✓ / 0</div><div class="lbl" style="color:var(--green);">Gate</div><p>Valid → review<br>Invalid → zero points</p></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.2fr .8fr;gap:16px;flex:1;min-height:0;">
+        <div class="mid-box"><div class="cap">Prompt contract · essential instruction</div><div class="prompt-box" style="font-size:.7rem;flex:1;display:flex;align-items:center;">“Do not infer facts that are not present. Treat resolved or negated statements—‘no retention risk,’ ‘budget approved,’ ‘procurement completed’—as no current risk. Use ambiguous and needs_human_review=true when evidence conflicts or is unclear.”</div></div>
+        <div style="display:grid;grid-template-rows:1fr 1fr;gap:12px;"><div class="mid-box" style="justify-content:center;border-color:var(--red);"><div class="cap" style="color:var(--red);">Caught error</div><div style="font-family:'IBM Plex Serif';font-size:1.05rem;color:var(--ink);font-weight:700;">“Budget approved” ≠ budget risk</div><div style="font-size:.66rem;color:var(--ink-soft);margin-top:5px;">Manual sample review triggered the rewrite.</div></div><div class="mid-box" style="justify-content:center;border-color:var(--amber);"><div class="cap" style="color:var(--amber);">Still weak</div><div style="font-family:'IBM Plex Serif';font-size:1.05rem;color:var(--ink);font-weight:700;">No timestamp = uncertain recency</div><div style="font-size:.66rem;color:var(--ink-soft);margin-top:5px;">Text-only flags remain human-review items.</div></div></div>
+      </div>
+    </div>
+    <div class="takeaway"><b>Invalid AI output cannot change the score; ambiguous evidence cannot bypass human review.</b></div>
+  </div>
+
+  <!-- ============ VERIFICATION ============ -->
+  <div class="slide" id="slide-verification">
+    <div class="head">
+      <div><div class="eyebrow">Exercise 4 · Trust Model</div><div class="title">Three controls make the tool usable in forecast review: reproducible math, inspectable evidence, and bounded automation</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:18px;justify-content:center;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;flex:1;min-height:0;">
+        <div class="mid-box" style="justify-content:center;text-align:center;border-top:5px solid var(--green);"><div style="width:86px;height:86px;border-radius:50%;border:8px solid var(--green);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Serif';font-size:1.35rem;font-weight:700;color:var(--ink);">=</div><div style="font-family:'IBM Plex Serif';font-size:1.1rem;color:var(--ink);font-weight:700;">Reproducible</div><div style="font-size:.7rem;color:var(--ink-soft);line-height:1.45;margin-top:8px;">Same file + fiscal year + rules produces the same score, queue, and scenario math.</div><div style="font-family:var(--mono);font-size:.56rem;color:var(--green);margin-top:12px;">INPUT HASH · RULE VERSION</div></div>
+        <div class="mid-box" style="justify-content:center;text-align:center;border-top:5px solid var(--brass);"><div style="width:86px;height:86px;border-radius:50%;border:8px solid var(--brass);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Serif';font-size:1.35rem;font-weight:700;color:var(--ink);">↗</div><div style="font-family:'IBM Plex Serif';font-size:1.1rem;color:var(--ink);font-weight:700;">Explainable</div><div style="font-size:.7rem;color:var(--ink-soft);line-height:1.45;margin-top:8px;">Every account retains source rows, triggered rules, formulas, and the required action.</div><div style="font-family:var(--mono);font-size:.56rem;color:var(--brass);margin-top:12px;">EVIDENCE · OWNER · ACTION</div></div>
+        <div class="mid-box" style="justify-content:center;text-align:center;border-top:5px solid var(--red);"><div style="width:86px;height:86px;border-radius:50%;border:8px solid var(--red);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Serif';font-size:1.35rem;font-weight:700;color:var(--ink);">H</div><div style="font-family:'IBM Plex Serif';font-size:1.1rem;color:var(--ink);font-weight:700;">Controlled</div><div style="font-size:.7rem;color:var(--ink-soft);line-height:1.45;margin-top:8px;">AI suggestions are labeled; malformed output scores zero; outreach requires approval.</div><div style="font-family:var(--mono);font-size:.56rem;color:var(--red);margin-top:12px;">HUMAN DECISION GATE</div></div>
+      </div>
+      <div class="workflow-rail"><div class="wf-node"><div class="icon">1</div><b>Upload</b><span>Original workbook</span></div><div class="wf-node"><div class="icon">2</div><b>Reconcile</b><span>Rows · ARR · scenarios</span></div><div class="wf-node"><div class="icon">3</div><b>Inspect</b><span>Conflict + audit trail</span></div><div class="wf-node"><div class="icon">4</div><b>Export</b><span>Weekly owner queue</span></div></div>
+    </div>
+    <div class="takeaway"><b>Trust comes from seeing the same result, tracing every decision, and knowing exactly where automation stops.</b></div>
+  </div>
+
+  <!-- ============ DELIVERABLES ============ -->
+  <div class="slide" id="slide-deliverables">
+    <div class="head">
+      <div><div class="eyebrow">Submission Package</div><div class="title">One integrated package connects the executive narrative, analytical evidence, live tool, and operating handoff</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:14px;">
+      <div class="package-map">
+        <div class="package-asset"><div class="n">01–02</div><b>Trust + diagnosis</b><span>Data Confidence Brief<br>Win-rate hypothesis tree<br>Segment planning gap</span></div>
+        <div class="package-center"><div style="font-family:var(--mono);font-size:.6rem;color:var(--brass);text-transform:uppercase;">Integrated submission</div><div class="big" style="margin:10px 0;">Decision deck<br>+ live tool</div><a class="deck-link" href="https://signalops-ai-d1bm.vercel.app/" target="_blank" rel="noopener" style="font-size:.76rem;">Open Churn Tool ↗</a><div style="font-size:.65rem;color:#AEB9C5;line-height:1.4;margin-top:18px;">One narrative<br>One evidence base<br>One operating path</div></div>
+        <div class="package-asset"><div class="n">03</div><b>Forecast + routing</b><span>Low / P50 / high<br>Quarterly churn + expansion<br>CRO / CCO actions</span></div>
+        <div class="package-asset"><div class="n">04</div><b>Reusable workflow</b><span>Live HTML application<br>Rules + evidence + exports<br>Weekly operating guide</span></div>
+        <div class="package-asset"><div class="n">A</div><b>AI appendix</b><span>Prompts + rewrite history<br>Time saved + failure caught<br>Controls + limitations</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0;"><div class="mid-box" style="padding:9px 12px;"><div class="cap">Executive</div><div style="font-size:.65rem;color:var(--ink-soft);">Claim · recommendation · ask</div></div><div class="mid-box" style="padding:9px 12px;"><div class="cap">Analytical</div><div style="font-size:.65rem;color:var(--ink-soft);">Math · source · caveat</div></div><div class="mid-box" style="padding:9px 12px;"><div class="cap">Operational</div><div style="font-size:.65rem;color:var(--ink-soft);">Owner · trigger · action</div></div><div class="mid-box" style="padding:9px 12px;"><div class="cap">Technical</div><div style="font-size:.65rem;color:var(--ink-soft);">Tool · prompt · controls</div></div></div>
+    </div>
+    <div class="takeaway"><b>The reviewer can move from executive claim to source evidence to live operating action without leaving the package.</b></div>
+  </div>
+
+  <!-- ============ APPENDIX ============ -->
+  <div class="slide" id="slide-appendix">
+    <div class="head">
+      <div><div class="eyebrow">Appendix · Methods</div><div class="title">The analytical contract defines the grain, formulas, assumptions, and trust boundaries behind every headline</div></div>
+      <div class="pagenum">Erin Nelson</div>
+    </div>
+    <div class="b2b-body" style="gap:16px;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:1;min-height:0;">
+        <div class="mid-box"><div style="font-family:'IBM Plex Serif';font-size:2rem;color:var(--brass);font-weight:700;">01</div><div class="cap">Grain + definitions</div><div class="prompt-box" style="margin-top:8px;">Win rate = Won ÷ (Won + Lost)</div><div style="font-size:.7rem;color:var(--ink-soft);line-height:1.5;margin-top:12px;"><b style="color:var(--ink);">New business:</b> Initial Deployment<br><b style="color:var(--ink);">Segment:</b> Company Size<br><b style="color:var(--ink);">Channel:</b> Generated By<br><b style="color:var(--ink);">Renewal:</b> Renewal ARR</div></div>
+        <div class="mid-box"><div style="font-family:'IBM Plex Serif';font-size:2rem;color:var(--amber);font-weight:700;">02</div><div class="cap">Model + reconciliation</div><div class="prompt-box" style="margin-top:8px;">Δ win rate = mix + rate + interaction</div><div style="font-size:.7rem;color:var(--ink-soft);line-height:1.5;margin-top:12px;"><b style="color:var(--ink);">Scenarios:</b> account ARR × tier rate<br><b style="color:var(--ink);">P50:</b> calibrated signal rates + floor<br><b style="color:var(--ink);">Quarter:</b> annual accounts allocated by close period<br><b style="color:var(--ink);">Check:</b> components sum to headline</div></div>
+        <div class="mid-box"><div style="font-family:'IBM Plex Serif';font-size:2rem;color:var(--green);font-weight:700;">03</div><div class="cap">Reproducibility</div><div class="prompt-box" style="margin-top:8px;">Same input + rules = same deterministic output</div><div style="font-size:.7rem;color:var(--ink-soft);line-height:1.5;margin-top:12px;"><b style="color:var(--ink);">Run identity:</b> input hash + fiscal year<br><b style="color:var(--ink);">Rule identity:</b> versioned rule set<br><b style="color:var(--ink);">Evidence:</b> source rows retained<br><b style="color:var(--ink);">AI:</b> prompt version + audit record</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:170px repeat(4,1fr);gap:8px;align-items:stretch;flex-shrink:0;"><div style="background:var(--navy);padding:12px;color:#fff;font-family:'IBM Plex Serif';font-weight:700;display:flex;align-items:center;">Trust boundaries</div><div style="background:var(--panel-soft);border-top:4px solid var(--red);padding:10px 12px;"><b style="font-size:.68rem;color:var(--ink);">Score ≠ probability</b><div style="font-size:.6rem;color:var(--ink-soft);margin-top:4px;">Ranking only</div></div><div style="background:var(--panel-soft);border-top:4px solid var(--amber);padding:10px 12px;"><b style="font-size:.68rem;color:var(--ink);">Exposure ≠ churn</b><div style="font-size:.6rem;color:var(--ink-soft);margin-top:4px;">Scenario weighting required</div></div><div style="background:var(--panel-soft);border-top:4px solid var(--brass);padding:10px 12px;"><b style="font-size:.68rem;color:var(--ink);">Text may be stale</b><div style="font-size:.6rem;color:var(--ink-soft);margin-top:4px;">Owner confirms recency</div></div><div style="background:var(--panel-soft);border-top:4px solid var(--green);padding:10px 12px;"><b style="font-size:.68rem;color:var(--ink);">Small n is visible</b><div style="font-size:.6rem;color:var(--ink-soft);margin-top:4px;">Caveat before action</div></div></div>
+    </div>
+    <div class="takeaway"><b>Every headline can be traced to a definition, formula, source population, and explicit limitation.</b></div>
+  </div>
+</div>
+
+<div class="strategy-popover" id="strategyPopover" aria-live="polite">
+  <button type="button" id="strategyClose" aria-label="Close strategic insight">×</button>
+  <div class="sp-label">Strategic insight</div>
+  <div class="sp-title" id="strategyTitle"></div>
+  <div class="sp-body" id="strategyBody"></div>
+  <div class="sp-question" id="strategyQuestion"></div>
+</div>
+<div class="insight-hint">Hover for context · click to hold insight</div>
+
+<div class="navbar">
+  <button id="prevBtn">‹</button>
+  <div class="dots" id="dots"></div>
+  <div class="lbl" id="slideLabel"></div>
+  <button id="nextBtn">›</button>
+</div>
+
+<script>
+// Keep the executive answer, recommendation, and action plan together before the evidence section.
+const deckStage = document.querySelector('.deck-stage');
+const firstEvidence = document.getElementById('slide-1');
+deckStage.insertBefore(document.getElementById('slide-reco'), firstEvidence);
+deckStage.insertBefore(document.getElementById('slide-next'), firstEvidence);
+const slides = document.querySelectorAll('.slide');
+const dotsWrap = document.getElementById('dots');
+const labelMap = {
+  'slide-0':'Title','slide-agenda':'Executive Overview','slide-exec':'Main Takeaways',
+  'slide-reco':'Recommendation','slide-next':'Next Actions','slide-1':'01 · Data Confidence',
+  'slide-2':'02A · Hypothesis Tree','slide-3':'02B · Planning Gap','slide-4':'02C · GTM POV',
+  'slide-5':'02D · Validation','slide-6':'03A · Churn Model','slide-7':'03B/C · Signals',
+  'slide-8':'03D/E · Escalation','slide-ex4':'04 · Churn Tool','slide-ai':'AI Workflow',
+  'slide-ai-log-1':'AI Log · Prompts','slide-ai-log-2':'AI Log · Controls',
+  'slide-verification':'Verification','slide-deliverables':'Deliverables','slide-appendix':'Methods'
+};
+const labels = Array.from(slides, s=>labelMap[s.id]||s.id);
+let current = 0;
+slides.forEach((s,i)=>{ const d=document.createElement('div'); d.className='dot'+(i===0?' on':''); d.onclick=()=>go(i); dotsWrap.appendChild(d); });
+function fitScale(){
+  const scale = Math.min((window.innerWidth-30)/1600, (window.innerHeight-76)/900, 1);
+  document.querySelectorAll('.slide').forEach(s=>s.style.setProperty('--z', scale));
+}
+function go(i){
+  current = (i+slides.length)%slides.length;
+  slides.forEach((s,idx)=>s.classList.toggle('active', idx===current));
+  document.querySelectorAll('.dot').forEach((d,idx)=>d.classList.toggle('on', idx===current));
+  document.getElementById('slideLabel').textContent = labels[current];
+  if (slides[current].id === 'slide-3') initEx2BCharts();
+  if (slides[current].id === 'slide-6') initEx3Charts();
+}
+function goToId(id){
+  const i=Array.from(slides).findIndex(s=>s.id===id);
+  if(i>=0) go(i);
+}
+window.goToId=goToId;
+
+// Living-deck insight layer: hover for context; click non-navigation elements to pin.
+const strategyPopover=document.getElementById('strategyPopover');
+const strategyTitle=document.getElementById('strategyTitle');
+const strategyBody=document.getElementById('strategyBody');
+const strategyQuestion=document.getElementById('strategyQuestion');
+let insightPinned=false;
+let insightHideTimer;
+function showInsight(item,pin=false){
+  clearTimeout(insightHideTimer);
+  insightPinned=pin||insightPinned;
+  strategyTitle.textContent=item.title;
+  strategyBody.textContent=item.body;
+  strategyQuestion.innerHTML='<b>Leadership question</b><br>'+item.question;
+  strategyPopover.classList.add('show');
+}
+function hideInsight(force=false){
+  if(force) insightPinned=false;
+  if(!insightPinned) strategyPopover.classList.remove('show');
+}
+document.getElementById('strategyClose').onclick=()=>hideInsight(true);
+function attachInsights(selector,items,{click=true}={}){
+  document.querySelectorAll(selector).forEach((el,i)=>{
+    const item=items[i]; if(!item) return;
+    el.classList.add('insight-target');
+    el.setAttribute('aria-label',(el.getAttribute('aria-label')||'')+' Strategic insight available.');
+    el.addEventListener('mouseenter',()=>showInsight(item,false));
+    el.addEventListener('mouseleave',()=>{insightHideTimer=setTimeout(()=>hideInsight(false),220);});
+    if(click){
+      el.tabIndex=0; el.setAttribute('role','button');
+      el.addEventListener('click',e=>{e.stopPropagation(); insightPinned=true; showInsight(item,true);});
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();insightPinned=true;showInsight(item,true);}});
+    }
+  });
+}
+strategyPopover.addEventListener('mouseenter',()=>clearTimeout(insightHideTimer));
+strategyPopover.addEventListener('mouseleave',()=>{insightHideTimer=setTimeout(()=>hideInsight(false),220);});
+
+attachInsights('#slide-agenda .exercise-tile',[
+  {title:'Exercise 1 · Establish the trust boundary',body:'Resolve definition, attribution, completeness, and time-period issues before using the workbook for target setting or performance claims.',question:'Which defects change a decision, and which can be documented without blocking the analysis?'},
+  {title:'Exercise 2 · Separate rate from mix',body:'The core diagnosis is channel conversion deterioration. Segment mix is a secondary lens; unsupported planning assumptions amplify the perceived miss.',question:'Will leadership fund a partner recovery test before adding direct capacity?'},
+  {title:'Exercise 3 · Route risk, not just score it',body:'Scenario math, calibration, text conflicts, and executive queues turn churn analysis into owned intervention.',question:'Which accounts require CRO authority versus CCO operating action this week?'},
+  {title:'Exercise 4 · Make the decision repeatable',body:'The live tool preserves evidence, deterministic rules, named owners, and exportable weekly actions across workbook uploads.',question:'Can another operator reproduce the same queue and explain every flag?'},
+],{click:false});
+
+attachInsights('#slide-exec .exec-proof',[
+  {title:'Root cause · partner conversion',body:'FY25 to FY26 partner conversion fell from 30.5% to 14.8% while direct improved from 4.4% to 7.5%. Partner closed-deal volume also fell from 59 to 27, so the diagnosis is both rate and volume.',question:'What evidence would overturn the decision to hold direct-only headcount?'},
+  {title:'Planning consequence · reset the baseline',body:'The 35% Mid-Market assumption was not supported by the observed 9.6% rate. The $1.46M two-year gap is the cost of applying the unsupported assumption to the submitted segment model, not a claim that Sales literally lost that amount.',question:'Which planning inputs must be independently validated before they enter FY27 targets?'},
+  {title:'Immediate exposure · route the P50 case',body:'The $2.38M case is 16.6% of the $14.3M open renewal book and is calibrated against 439 closed renewals. Tiering is more reliable than the dollar estimate for any single large account.',question:'Which five CRO and five CCO decisions must be owned in the next weekly review?'},
+]);
+
+attachInsights('#slide-reco .rec-node',[
+  {title:'R5 · Repair source data first',body:'Fix stage, attribution, ARR, segment, and hygiene fields so plan and performance reporting share one decision-grade definition layer.',question:'Who owns the source-of-truth decision, and when will downstream models be rerun?'},
+  {title:'R3 · Reset the FY27 baseline',body:'The Mid-Market plan assumed 35% conversion against an observed 8.2%. Resetting targets prevents a measurement error from becoming a staffing decision.',question:'Which planning inputs require evidence before they enter the next operating plan?'},
+  {title:'R4 · Run a weekly risk cadence',body:'Blind-score the largest risks, compare leader judgment, and record overrides. The cadence is the calibration mechanism—not merely a reporting meeting.',question:'What disagreement threshold triggers a rule change rather than an account exception?'},
+  {title:'R1 · Test partner recovery',body:'Use a four-week root-cause sprint to define a 90-day recovery program with conversion and sourced-pipeline gates.',question:'What evidence would justify releasing partner spend?'},
+  {title:'R2 · Hold direct capacity',body:'Do not solve an unproven channel problem with permanent headcount. Preserve the option until partner evidence is clear.',question:'What result would overturn the hiring hold?'},
+]);
+
+attachInsights('#slide-3 canvas',[
+  {title:'Assumption gap—not merely sales underperformance',body:'The large Mid-Market delta compares the plan with actual conversion. It shows that the planning baseline was unsupported, not that $1.46M literally disappeared.',question:'Should FY27 targets be re-baselined before quota and capacity decisions are finalized?'},
+  {title:'Mix is a secondary explanation',body:'Enterprise became a larger share, but mix alone does not reconcile the total win-rate decline. Channel-level rate deterioration remains the primary driver.',question:'Which segment and channel cuts must be isolated before changing coverage?'},
+  {title:'Translate the assumption into dollars',body:'The 29-deal gap at the observed average won-deal size quantifies the planning consequence in a population-consistent way.',question:'What planning control prevents unsupported rates from entering next year’s model?'},
+]);
+
+attachInsights('#slide-6 canvas',[
+  {title:'Scenarios are decision bounds',body:'Low, P50, and high cases are deterministic operating scenarios—not calibrated probabilities. Use the range to size intervention capacity and downside tolerance.',question:'What commitment can leadership make now, and what downside requires contingency funding?'},
+  {title:'Risk materializes late—but action cannot',body:'Medium-case churn concentrates in Q4 while expansion is front-loaded. Early intervention protects the installed base before the renewal wall arrives.',question:'Which Q4 renewals need executive action two quarters earlier?'},
+]);
+
+attachInsights('#slide-7 .signal-step',[
+  {title:'Triangulate three evidence sources',body:'Structured health, utilization, and customer language answer different questions. Agreement increases confidence; disagreement creates a review queue.',question:'Which source is authoritative when evidence conflicts?'},
+  {title:'Use a controlled signal taxonomy',body:'Six categories constrain extraction and make output auditable across champion, budget, competitor, engagement, M&A, and expansion evidence.',question:'Which signal changes the intervention rather than merely the score?'},
+  {title:'Conflicts are the highest-value review set',body:'Five accounts look acceptable in structured fields while customer language indicates material risk. These are precisely where human review earns its cost.',question:'What action changes because text materially changed the conclusion?'},
+]);
+
+attachInsights('#slide-8 .tool-metric',[
+  {title:'Critical health is strongly predictive',body:'A 91.7% historical churn rate makes Critical a useful escalation trigger, subject to sample and process consistency.',question:'Has the Critical definition remained stable enough to apply prospectively?'},
+  {title:'Low utilization is a meaningful behavioral signal',body:'Utilization below 33% carries a 62.5% historical churn rate and should trigger adoption recovery—not generic outreach.',question:'Which product workflows must recover for the account to exit the queue?'},
+  {title:'Do not trust the At-Risk label at face value',body:'The observed 0% historical churn rate suggests label timing, workflow, or definition issues. Treat it as a data-quality signal until repaired.',question:'Is the label identifying risk, recording intervention, or being applied after recovery?'},
+  {title:'P50 is an operating commitment',body:'The $2.38M case is defensible only if leaders blind-test the largest risks and recalibrate when disagreements exceed the documented threshold.',question:'Who owns the forecast override and the evidence required to approve it?'},
+]);
+
+attachInsights('#slide-8 .exec-route .acct',[
+  {title:'Thatcher · CRO authority',body:'Largest named exposure with champion loss. Executive presence is valuable because the intervention requires relationship authority, not another task reminder.',question:'Who can replace the lost champion before the renewal decision?'},
+  {title:'Knollwood · Commercial and adoption reset',body:'Budget pressure plus weak adoption requires coordinated pricing authority and a measurable recovery plan.',question:'What concession is conditional on verified adoption milestones?'},
+  {title:'Lakeshore · Rebuild sponsorship',body:'Budget and champion risk combine into a decision-access problem. The immediate objective is a credible executive sponsor.',question:'Which leader can create access to the economic buyer?'},
+  {title:'Pinnacle · Preserve optionality',body:'M&A uncertainty makes a bridge term more useful than a standard renewal motion.',question:'What contract structure protects ARR while ownership resolves?'},
+  {title:'Ironwood · Use as a calibration case',body:'Lower exposure but ambiguous reorganization evidence makes this a strong blind-test account for model-versus-leader comparison.',question:'Does leadership independently reach the same risk conclusion?'},
+  {title:'DACH · Diagnose the concentration',body:'The region represents 34% of Critical exposure. Determine whether the driver is coverage, macro conditions, partner execution, or data practice.',question:'Is this a regional operating issue or a portfolio composition effect?'},
+  {title:'Wycliffe · Relationship recovery',body:'Acquirer access is the constraint. The intervention is relationship mapping, not generic adoption messaging.',question:'Who can secure access inside the acquiring organization?'},
+  {title:'Spruce · Repair the health model',body:'A live downsell missed by structured health indicates the health workflow is lagging the customer reality.',question:'Which missing field or timing rule allowed the account to remain healthy?'},
+  {title:'Champion-loss playbook',body:'Seven Critical accounts share the same failure mode. Standardize replacement mapping, executive sponsorship, and time-to-new-champion measures.',question:'What trigger launches the play before renewal risk becomes irreversible?'},
+  {title:'CSM-note workflow',body:'Repeated low-quality notes reduce both human and AI signal quality. Require dated evidence, actor, business impact, and next commitment.',question:'What minimum note standard makes the signal usable in a weekly decision?'},
+]);
+
+attachInsights('#slide-ex4 .tool-metric',[
+  {title:'P50 churn',body:'The central operating forecast connects scenario assumptions to a reviewable account queue.',question:'Which overrides would materially change the $2.38M commitment?'},
+  {title:'Critical + High ARR',body:'This is the weekly intervention surface, not a passive portfolio statistic.',question:'Does every dollar have an owner, action, and next review date?'},
+  {title:'Conflict accounts',body:'Text-versus-structure disagreement is prioritized because it exposes blind spots in existing health operations.',question:'Which conflict changes the executive route?'},
+  {title:'Scenario views',body:'Low, P50, and high cases bound the decision while keeping formulas inspectable.',question:'What new evidence should move an account between cases?'},
+]);
+
+attachInsights('#slide-ex4 .wf-node',[
+  {title:'Forecast',body:'Calculate low, P50, and high churn plus quarterly timing with deterministic formulas.',question:'Can the scenario be reproduced from the uploaded workbook?'},
+  {title:'Explain',body:'Retain source evidence so each risk flag can be challenged without reverse-engineering a black box.',question:'What exact evidence caused the flag?'},
+  {title:'Route',body:'Pair the reason with a named owner, action, and timing so analysis enters the operating system.',question:'Who has authority to complete the next action?'},
+  {title:'Learn',body:'Record overrides and outcomes so rules improve without silently changing historical logic.',question:'Which override becomes a rule change, and who approves it?'},
+]);
+
+attachInsights('#slide-ai .wf-node',[
+  {title:'Profile with Python',body:'Google Colab was faster and more reliable for shape, missingness, reconciliation, and repeated calculations.',question:'Which analytical steps should never depend on conversational memory?'},
+  {title:'Use AI for execution',body:'Claude and ChatGPT accelerated tool development, interface iteration, and first-pass analysis.',question:'Where is AI saving time without acquiring decision authority?'},
+  {title:'Control the output',body:'Deterministic scoring, labeled evidence, and zero scoring for invalid output constrain model variance.',question:'Can a reviewer trace every point back to source evidence?'},
+  {title:'Keep judgment human',body:'AI struggled with instruction adherence, memory, and sustained workstream ownership. Human review remains required.',question:'Which decision would be unsafe to delegate?'},
+]);
+
+attachInsights('#slide-deliverables .package-asset',[
+  {title:'Trust + diagnosis',body:'The Data Confidence Brief and win-rate analysis establish what can be trusted and what drove the change.',question:'Which finding changes the leadership decision?'},
+  {title:'Forecast + routing',body:'Scenario math, calibration, conflicts, and executive queues translate risk into intervention.',question:'Who acts Monday morning?'},
+  {title:'Reusable workflow',body:'The live application applies the same rules and evidence model to the original workbook and future compatible uploads.',question:'Can another RevOps operator run it without interpretation drift?'},
+  {title:'AI appendix',body:'Prompts, failures, controls, and limitations make the development process inspectable rather than sanitized.',question:'Where did human challenge materially improve the result?'},
+]);
+
+let ex3ChartsReady = false;
+function initEx3Charts(){
+  if (ex3ChartsReady) return;
+  ex3ChartsReady = true;
+
+  new Chart(document.getElementById('churnScenarioChart'), {
+    type: 'bar',
+    data: { labels: ['Low\n$1.18M · 8.2%','Medium\n$2.38M · 16.6%','High\n$3.39M · 23.7%'],
+      datasets: [{ data:[1177719, 2379019, 3391056], backgroundColor:['#34D399','#F0B429','#F2545B'], borderRadius:4, barPercentage:0.55 }] },
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label:(ctx)=>'$'+ctx.parsed.y.toLocaleString()+' expected churn ARR' } } },
+      scales:{ y:{ title:{display:true,text:'Churn ARR ($)', color:'#8A94A6', font:{size:10}}, grid:{color:'#223047'},
+                   ticks:{color:'#8A94A6', font:{size:10}, callback:v=>'$'+(v/1e6).toFixed(1)+'M'} },
+               x:{ grid:{display:false}, ticks:{color:'#E8EEF7', font:{size:10}} } } }
+  });
+
+  new Chart(document.getElementById('quarterlyChart'), {
+    type: 'bar',
+    data: { labels: ['FY27 Q1','FY27 Q2','FY27 Q3','FY27 Q4'],
+      datasets: [
+        { label:'Expected churn ARR (medium)', data:[72900, 225804, 556247, 1597030], backgroundColor:'#F2545B', borderRadius:3 },
+        { label:'Expansion ARR (booked + AE-weighted open)', data:[1866678, 1335709, 461645, 192885], backgroundColor:'#34D399', borderRadius:3 }
+      ]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top', labels:{ color:'#E8EEF7', boxWidth:11, font:{size:9.5} } },
+        tooltip:{ callbacks:{ label:(ctx)=>ctx.dataset.label+': $'+ctx.parsed.y.toLocaleString() } } },
+      scales:{ y:{ title:{display:true,text:'ARR ($)', color:'#8A94A6', font:{size:10}}, grid:{color:'#223047'},
+                   ticks:{color:'#8A94A6', font:{size:10}, callback:v=>'$'+(v/1e3).toFixed(0)+'K'} },
+               x:{ grid:{display:false}, ticks:{color:'#E8EEF7', font:{size:10, weight:600}} } } }
+  });
+}
+
+let ex2bChartsReady = false;
+function initEx2BCharts(){
+  if (ex2bChartsReady) return;
+  ex2bChartsReady = true;
+  Chart.defaults.font.family = "'IBM Plex Sans', Arial, sans-serif";
+  Chart.defaults.color = '#8A94A6';
+
+  new Chart(document.getElementById('rateChart'), {
+    type: 'bar',
+    data: { labels: ['SME','MM','ENT'],
+      datasets: [
+        { label:'Assumed', data:[10,35,15], backgroundColor:'#5B6B85', borderRadius:4, barPercentage:0.6 },
+        { label:'FY26 Actual', data:[7.7,8.2,10.2], backgroundColor:'#F2545B', borderRadius:4, barPercentage:0.6 }
+      ]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top', labels:{ color:'#E8EEF7', boxWidth:11, font:{size:10} } },
+        tooltip:{ callbacks:{ label:(ctx)=>ctx.dataset.label+': '+ctx.parsed.y+'%' } } },
+      scales:{ y:{ title:{display:true,text:'Win rate (%)', color:'#8A94A6', font:{size:10}}, grid:{color:'#223047'}, ticks:{color:'#8A94A6', font:{size:10}} },
+               x:{ grid:{display:false}, ticks:{color:'#E8EEF7', font:{size:11, weight:600}} } } }
+  });
+
+  new Chart(document.getElementById('mixChart'), {
+    type: 'bar',
+    data: { labels: ['SME','MM','ENT'],
+      datasets: [
+        { label:'Assumed', data:[50,35,15], backgroundColor:'#5B6B85', borderRadius:4 },
+        { label:'FY26 Actual', data:[32.5,30.6,36.9], backgroundColor:'#22D3EE', borderRadius:4 }
+      ]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top', labels:{ color:'#E8EEF7', boxWidth:11, font:{size:10} } },
+        tooltip:{ callbacks:{ label:(ctx)=>ctx.dataset.label+': '+ctx.parsed.y+'%' } } },
+      scales:{ y:{ title:{display:true,text:'Mix share (%)', color:'#8A94A6', font:{size:10}}, grid:{color:'#223047'}, ticks:{color:'#8A94A6', font:{size:10}} },
+               x:{ grid:{display:false}, ticks:{color:'#E8EEF7', font:{size:11, weight:600}} } } }
+  });
+
+  new Chart(document.getElementById('revenueChart'), {
+    type: 'bar',
+    data: { labels: ['MM deals won today','MM deals won at assumed rate'],
+      datasets: [{ data:[11,40], backgroundColor:['#5B6B85','#34D399'], borderRadius:4, barThickness:36 }] },
+    options: { indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label:(ctx)=>ctx.parsed.x+' deals ($'+(ctx.parsed.x*49957).toLocaleString()+' at $49,957 avg deal size)' } } },
+      scales:{ x:{ title:{display:true,text:'Number of deals (out of 115)', color:'#8A94A6', font:{size:10}}, grid:{color:'#223047'}, ticks:{color:'#8A94A6', font:{size:10}} },
+               y:{ grid:{display:false}, ticks:{color:'#E8EEF7', font:{size:10.5}} } } }
+  });
+}
+document.getElementById('prevBtn').onclick=()=>go(current-1);
+document.getElementById('nextBtn').onclick=()=>go(current+1);
+window.addEventListener('keydown', e=>{ if(e.key==='ArrowRight') go(current+1); if(e.key==='ArrowLeft') go(current-1); });
+window.addEventListener('resize', fitScale);
+let idleTimer;
+const nav = document.querySelector('.navbar');
+function wake(){ nav.style.opacity=1; clearTimeout(idleTimer); idleTimer=setTimeout(()=>{ nav.style.opacity=0.15; }, 2500); }
+['mousemove','keydown','touchstart'].forEach(ev=>window.addEventListener(ev, wake));
+nav.addEventListener('mouseenter', ()=>{ nav.style.opacity=1; clearTimeout(idleTimer); });
+nav.addEventListener('mouseleave', wake);
+wake();
+document.querySelectorAll('.slide').forEach((sl,i)=>{
+  const pn = sl.querySelector('.pagenum');
+  if(pn) pn.textContent = 'Erin Nelson · ' + String(i+1).padStart(2,'0') + ' / ' + slides.length;
+});
+fitScale(); go(0);
+</script>
+
+</body>
+</html>
