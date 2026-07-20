@@ -1,0 +1,6 @@
+# The supplied take-home dataset must not be committed.
+*.xlsx
+*.xls
+*.csv
+.DS_Store
+node_modules/
