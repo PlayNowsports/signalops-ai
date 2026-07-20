@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Reusable RevOps churn and expansion triage with deterministic scoring, validation, and persistent rule memory.">
+  <title>SignalOps AI — Renewal Command Center</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard" aria-label="SignalOps AI home">
+        <span class="brand-mark">S</span>
+        <span><strong>SignalOps</strong><small>AI Renewal OS</small></span>
+      </a>
+      <nav id="nav">
+        <button class="nav-item active" data-view="dashboard"><span>⌁</span> Command center</button>
+        <button class="nav-item" data-view="accounts"><span>◎</span> Account queue</button>
+        <button class="nav-item" data-view="rules"><span>◇</span> Rule memory</button>
+        <button class="nav-item" data-view="quality"><span>✓</span> Data quality</button>
+        <button class="nav-item" data-view="runs"><span>↻</span> Run history</button>
+        <button class="nav-item" data-view="howto"><span>?</span> How to run</button>
+      </nav>
+      <div class="sidebar-foot">
+        <span class="status-dot"></span>
+        <div><strong>Browser-only</strong><small>Data never leaves this device</small></div>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">REVOPS CONTROL PLANE</p>
+          <h1 id="page-title">Renewal command center</h1>
+        </div>
+        <div class="top-actions">
+          <span id="file-badge" class="file-badge">No dataset loaded</span>
+          <label class="button secondary" for="file-input">Upload XLSX / CSV</label>
+          <input id="file-input" type="file" accept=".xlsx,.xls,.csv" hidden>
+          <button id="export-button" class="button primary" disabled>Export weekly queue</button>
+        </div>
+      </header>
+
+      <section id="dashboard" class="view active">
+        <div id="empty-state" class="empty-state">
+          <div class="upload-icon">⇧</div>
+          <p class="eyebrow">START A REPRODUCIBLE RUN</p>
+          <h2>Turn a fresh Salesforce export into a weekly action queue.</h2>
+          <p>Upload the provided workbook. SignalOps validates the schema, applies the saved rule set, reads structured and text evidence, and produces account-level risk and expansion actions.</p>
+          <label class="button primary large" for="file-input">Choose the provided dataset</label>
+          <div class="trust-row"><span>✓ Local processing</span><span>✓ Versioned rules</span><span>✓ Deterministic output</span></div>
+        </div>
+
+        <div id="dashboard-content" class="hidden">
+          <div id="run-banner" class="run-banner"></div>
+          <div class="metric-grid">
+            <article class="metric-card danger"><span>Critical ARR</span><strong id="critical-arr">—</strong><small id="critical-count">—</small></article>
+            <article class="metric-card warning"><span>At-risk ARR</span><strong id="risk-arr">—</strong><small id="risk-count">—</small></article>
+            <article class="metric-card positive"><span>Expansion-ready ARR</span><strong id="expansion-arr">—</strong><small id="expansion-count">—</small></article>
+            <article class="metric-card neutral"><span>Data confidence</span><strong id="confidence">—</strong><small id="quality-count">—</small></article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel wide">
+              <div class="panel-head"><div><p class="eyebrow">PRIORITIZED OUTPUT</p><h2>Accounts requiring action</h2></div><button class="text-button" data-jump="accounts">View full queue →</button></div>
+              <div id="top-accounts" class="account-list"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><div><p class="eyebrow">PORTFOLIO SHAPE</p><h2>Renewal ARR by tier</h2></div></div>
+              <div id="tier-chart" class="tier-chart"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><div><p class="eyebrow">MODEL EVIDENCE</p><h2>Top triggered signals</h2></div></div>
+              <div id="signal-chart" class="signal-chart"></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="accounts" class="view">
+        <div class="toolbar panel">
+          <input id="account-search" type="search" placeholder="Search account, owner, signal…">
+          <select id="tier-filter"><option value="all">All tiers</option><option>Critical</option><option>High</option><option>Monitor</option><option>Healthy</option><option>Expansion</option></select>
+          <select id="owner-filter"><option value="all">All owners</option></select>
+          <span id="queue-count" class="muted">0 accounts</span>
+        </div>
+        <div class="panel table-panel">
+          <div class="table-wrap"><table><thead><tr><th>Priority</th><th>Account</th><th>Owner</th><th>Renewal ARR</th><th>Score</th><th>Evidence</th><th>Next action</th><th></th></tr></thead><tbody id="accounts-body"></tbody></table></div>
+        </div>
+      </section>
+
+      <section id="rules" class="view">
+        <div class="section-intro">
+          <div><p class="eyebrow">PERSISTENT DECISION LOGIC</p><h2>Rule memory</h2><p>Rules are stored in this browser, versioned on every change, and can be exported for team review or imported next quarter.</p></div>
+          <div class="top-actions"><button id="import-rules" class="button secondary">Import rules</button><input id="rules-input" type="file" accept=".json" hidden><button id="export-rules" class="button secondary">Export rules</button><button id="new-rule" class="button primary">Create rule</button></div>
+        </div>
+        <div class="rule-summary"><span><strong id="active-rule-count">0</strong> active rules</span><span><strong id="rule-version">v1</strong> current version</span><span><strong id="last-rule-change">Default</strong> last change</span></div>
+        <div id="rule-list" class="rule-list"></div>
+      </section>
+
+      <section id="quality" class="view">
+        <div class="section-intro"><div><p class="eyebrow">FAIL LOUDLY</p><h2>Data quality gate</h2><p>The run separates blocking schema problems from row-level warnings. Findings are visible and exportable; nothing is silently repaired.</p></div><button id="export-quality" class="button secondary" disabled>Export findings</button></div>
+        <div id="quality-summary" class="quality-summary"></div>
+        <div class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>Severity</th><th>Check</th><th>Rows</th><th>What it means</th><th>Action</th></tr></thead><tbody id="quality-body"></tbody></table></div></div>
+      </section>
+
+      <section id="runs" class="view">
+        <div class="section-intro"><div><p class="eyebrow">AUDIT TRAIL</p><h2>Run history</h2><p>Each completed run records file identity, row count, rule version, output counts, and timestamp. Raw customer data is not retained.</p></div><button id="clear-runs" class="button danger-button">Clear history</button></div>
+        <div id="run-list" class="run-list"></div>
+      </section>
+
+      <section id="howto" class="view">
+        <div class="howto-grid">
+          <article class="panel howto-main">
+            <p class="eyebrow">ONE-PAGE OPERATING GUIDE</p><h2>Weekly renewal and expansion triage</h2>
+            <div class="steps">
+              <div><b>1</b><span><strong>Export</strong><small>RevOps exports the current Salesforce opportunity book as XLSX or CSV. Keep the original field names.</small></span></div>
+              <div><b>2</b><span><strong>Upload and validate</strong><small>The file stays in the browser. Blocking schema issues stop the run; row-level contradictions become explicit findings.</small></span></div>
+              <div><b>3</b><span><strong>Review the queue</strong><small>RevOps reviews Critical and High accounts, evidence, and proposed owner/action. No score should be used without its evidence.</small></span></div>
+              <div><b>4</b><span><strong>Route and export</strong><small>Export the weekly CSV. CSM owns adoption/health actions, AE owns commercial actions, and leadership resolves coverage or exception decisions.</small></span></div>
+              <div><b>5</b><span><strong>Learn deliberately</strong><small>Change rules through Rule Memory, record the reason, export the rule pack, and compare outcomes next quarter.</small></span></div>
+            </div>
+          </article>
+          <aside class="panel guide-card"><h3>Operating contract</h3><dl><dt>Runner</dt><dd>RevOps analyst</dd><dt>Consumers</dt><dd>CRO, Sales leaders, CSM leaders, AEs, CSMs</dd><dt>Cadence</dt><dd>Weekly; full recalibration quarterly</dd><dt>Decisions</dt><dd>Escalations, save plans, expansion outreach, forecast overrides</dd><dt>Inputs</dt><dd>Fresh Salesforce opportunity export</dd><dt>Outputs</dt><dd>Ranked queue, quality report, rule pack, run log</dd></dl></aside>
+          <aside class="panel limits-card"><h3>Do not trust it for</h3><ul><li>Automatic churn probability or financial forecast accuracy</li><li>Interpreting missing notes as positive customer sentiment</li><li>Replacing CSM or AE judgment on account context</li><li>Sending customer communication without human approval</li><li>Comparing segments without reviewing classification drift</li></ul></aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="rule-dialog">
+    <form id="rule-form" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">RULE MEMORY</p><h2 id="rule-dialog-title">Create rule</h2></div><button type="button" class="icon-button" id="close-dialog">×</button></div>
+      <input id="rule-id" type="hidden">
+      <div class="form-grid">
+        <label class="full">Rule name<input id="rule-name" required maxlength="80"></label>
+        <label>Use case<select id="rule-usecase"><option value="risk">Retention risk</option><option value="expansion">Expansion</option></select></label>
+        <label>Field<select id="rule-field"></select></label>
+        <label>Operator<select id="rule-operator"><option value="lt">less than</option><option value="lte">less than or equal</option><option value="gt">greater than</option><option value="gte">greater than or equal</option><option value="eq">equals</option><option value="neq">does not equal</option><option value="contains">text contains</option><option value="regex">regex matches</option><option value="blank">is blank</option><option value="notblank">is not blank</option></select></label>
+        <label>Comparison value<input id="rule-value" placeholder="e.g. 0.33 or budget|procurement"></label>
+        <label>Score points<input id="rule-points" type="number" min="1" max="100" required></label>
+        <label>Owner<select id="rule-owner"><option>CSM</option><option>AE</option><option>RevOps</option><option>Sales Leader</option></select></label>
+        <label class="full">Evidence label<input id="rule-label" required maxlength="100" placeholder="Shown in the account queue"></label>
+        <label class="full">Recommended action<textarea id="rule-action" required maxlength="240"></textarea></label>
+        <label class="full">Reason for change<textarea id="rule-reason" required maxlength="240" placeholder="Creates an audit entry and new version"></textarea></label>
+        <label class="toggle full"><input id="rule-active" type="checkbox" checked><span>Rule active</span></label>
+      </div>
+      <div class="dialog-actions"><button type="button" class="button secondary" id="cancel-dialog">Cancel</button><button type="submit" class="button primary">Save new version</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="account-dialog"><div id="account-detail"></div></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" integrity="sha256-yVBhl8r4CaB1tt7h2g02+xnacVj/6KiOewyWxdhiPJk=" crossorigin="anonymous"></script>
+  <script src="app.js"></script>
+</body>
+</html>
