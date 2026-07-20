@@ -77,6 +77,28 @@
 #ai-connect-form{padding:24px}
 #ai-dialog-status.connected{color:var(--green);font-weight:800}
 #ai-dialog-status.failed{color:var(--red);font-weight:800}
+.ai-insight-trigger{display:inline-flex;align-items:center;gap:4px;border:1px solid #bfd4cc;border-radius:999px;background:#f5faf8;color:var(--green);padding:5px 8px;font:800 9px inherit;cursor:pointer;white-space:nowrap;transition:.15s}
+.ai-insight-trigger:hover,.ai-insight-trigger:focus{background:#e8f5ef;border-color:var(--green2);transform:translateY(-1px);outline:0}
+.ai-insight-point{position:relative}
+.ai-insight-point>.ai-insight-trigger{position:absolute;right:9px;top:8px;opacity:0;z-index:3}
+.ai-insight-point:hover>.ai-insight-trigger,.ai-insight-point:focus-within>.ai-insight-trigger{opacity:1}
+tr.ai-insight-point td:last-child{position:relative;padding-right:78px}
+tr.ai-insight-point td:last-child>.ai-insight-trigger{position:absolute;right:6px;top:50%;transform:translateY(-50%);opacity:.42}
+tr.ai-insight-point:hover td:last-child>.ai-insight-trigger,tr.ai-insight-point:focus-within td:last-child>.ai-insight-trigger{opacity:1}
+.account-row.ai-insight-point{padding-right:92px}.mini-item.ai-insight-point{padding-right:86px}.bar-row.ai-insight-point,.signal-row.ai-insight-point,.quarter-row.ai-insight-point{padding-right:82px}
+#ai-insight-dialog{width:min(780px,calc(100vw - 30px))}
+.ai-insight-shell{padding:24px}
+.ai-insight-source{background:#f7faf8;border:1px solid var(--line);border-radius:8px;padding:11px 13px;margin:12px 0}
+.ai-insight-source span,.ai-insight-output span{display:block;color:var(--green);font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+.ai-insight-source p{margin:5px 0 0;font-size:10px;line-height:1.45;color:var(--muted);max-height:88px;overflow:auto;white-space:pre-line}
+.ai-insight-loading{border-left:4px solid var(--green2);background:#edf8f3;padding:15px;margin:14px 0;font:600 12px/1.5 inherit;color:var(--green)}
+.ai-insight-headline{border-left:4px solid var(--amber);padding:10px 14px;background:#fffaf1;margin:14px 0}
+.ai-insight-headline h3{font:500 22px/1.2 Georgia,serif;margin:5px 0;color:var(--ink)}
+.ai-insight-headline p{margin:0;color:#52615d;font-size:11px;line-height:1.5}
+.ai-insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ai-insight-grid>div{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:#fff}
+.ai-insight-grid p,.ai-insight-grid ul{margin:6px 0 0;color:#465852;font-size:11px;line-height:1.5}.ai-insight-grid ul{padding-left:17px}
+.ai-insight-output.hidden,.ai-insight-loading.hidden{display:none}
 #email-body{min-height:190px;line-height:1.5}
 .email-attachment{margin-top:14px;border:1px solid var(--line);border-radius:8px;background:#f7faf8;padding:12px 14px;font-size:11px;color:var(--muted)}
 .email-attachment strong{color:var(--ink)}
@@ -92,6 +114,8 @@
   .utility-button{min-width:auto}
   #email-dialog .dialog-actions{flex-wrap:wrap}
   #ai-connect-dialog .dialog-actions{flex-wrap:wrap}
+  .ai-insight-grid{grid-template-columns:1fr}
+  .ai-insight-point>.ai-insight-trigger{opacity:.72}
 }
 
   </style>
@@ -398,9 +422,23 @@
   </dialog>
 
   <dialog id="account-dialog"><div id="account-detail"></div></dialog>
+  <dialog id="ai-insight-dialog">
+    <div class="ai-insight-shell">
+      <div class="dialog-head"><div><p class="eyebrow">POINT-OF-DECISION ANALYSIS</p><h2 id="ai-insight-title">AI insight</h2><p class="muted">Grounded in the selected data point and the current validated run.</p></div><button type="button" class="icon-button" id="close-ai-insight">×</button></div>
+      <div class="ai-insight-source"><span>Source context</span><p id="ai-insight-context"></p></div>
+      <div id="ai-insight-loading" class="ai-insight-loading">Analyzing this data point…</div>
+      <div id="ai-insight-output" class="ai-insight-output hidden">
+        <div class="ai-insight-headline"><span>TAKEAWAY</span><h3 id="ai-insight-headline"></h3><p id="ai-insight-takeaway"></p></div>
+        <div class="ai-insight-grid"><div><span>DRIVERS</span><ul id="ai-insight-drivers"></ul></div><div><span>ACTION</span><p><b id="ai-insight-owner"></b> · <span id="ai-insight-action"></span></p></div><div><span>VERIFY BEFORE ACTING</span><p id="ai-insight-verify"></p></div><div><span>CONFIDENCE &amp; LIMIT</span><p><b id="ai-insight-confidence"></b> · <span id="ai-insight-limitation"></span></p></div></div>
+      </div>
+      <p id="ai-insight-status" class="muted" aria-live="polite"></p>
+      <div class="dialog-actions"><button type="button" class="button secondary" id="cancel-ai-insight">Close</button><button type="button" class="button primary" id="refresh-ai-insight">Regenerate insight</button></div>
+      <div class="privacy-note">Only the selected displayed context and bounded account evidence are sent to Claude. This insight cannot change a score, forecast, rule, or customer communication.</div>
+    </div>
+  </dialog>
   <dialog id="ai-connect-dialog">
     <form id="ai-connect-form" method="dialog">
-      <div class="dialog-head"><div><p class="eyebrow">OPTIONAL TEXT EXTRACTION</p><h2>Connect Claude</h2><p class="muted">Available before or after a workbook upload. The key stays in browser memory for this session only.</p></div><button type="button" class="icon-button" id="close-ai-connect">×</button></div>
+      <div class="dialog-head"><div><p class="eyebrow">REQUIRED AI CONNECTION</p><h2>Connect Claude</h2><p class="muted">Available before or after a workbook upload. The key stays in browser memory for this session only.</p></div><button type="button" class="icon-button" id="close-ai-connect">×</button></div>
       <div class="form-grid">
         <label class="full">Anthropic API key<input id="ai-dialog-key" type="password" autocomplete="off" placeholder="sk-ant-api03-…"></label>
         <label class="full">Claude model<input id="ai-dialog-model" value="claude-sonnet-5"></label>
@@ -474,9 +512,10 @@
     {id:'adoption',name:'Adoption reset',channel:'CSM action',text:'Launch a 30-day adoption reset for {{account}}: {{reason}}. Baseline usage, name the blocked workflow, and set a weekly target.'},
     {id:'executive',name:'Executive sponsor',channel:'Leadership ask',text:'Request executive sponsor support for {{account}}: {{reason}}. Secure one decision, one owner, and one deadline.'}
   ];
-  let state = { rows: [], accounts: [], quality: [], fileName: '', fileHash: '', headers: [], runAt: null, aiResults: [], aiRun: null, selectedFY:null, dashboardTab:'decision', signalInbox:[], aiConnected:false };
+  let state = { rows: [], accounts: [], quality: [], fileName: '', fileHash: '', headers: [], runAt: null, aiResults: [], aiRun: null, selectedFY:null, dashboardTab:'decision', signalInbox:[], aiConnected:false, insightCache:{} };
   let aiAbort = null;
   const AI_PROMPT_VERSION = 'churn-expansion-extraction-v3.1';
+  const AI_INSIGHT_PROMPT_VERSION = 'data-point-insight-v1.0';
   const SCENARIOS = {
     Critical:{low:.45,medium:.65,high:.80}, High:{low:.20,medium:.40,high:.60},
     Monitor:{low:.05,medium:.15,high:.30}, Healthy:{low:.01,medium:.04,high:.10},
@@ -672,7 +711,7 @@
     });return buckets;
   }
 
-  function renderAll(){renderDashboard();renderPortfolioContext();renderAccounts();renderTriggers();renderRules();renderQuality();renderRuns();renderAIResults();}
+  function renderAll(){renderDashboard();renderPortfolioContext();renderAccounts();renderTriggers();renderRules();renderQuality();renderRuns();renderAIResults();decorateAIInsightPoints();}
   function renderDashboard(){
     if(!state.accounts.length)return; const counts=countTiers();
     $('run-banner').innerHTML=`<strong>${state.selectedFY==='all'?'All fiscal years':'FY'+String(state.selectedFY).slice(-2)}</strong> · run <strong>${esc(state.fileHash)}</strong> · rule set <strong>v${ruleMeta.version}</strong> · ${number(state.rows.length)} rows → ${number(state.accounts.length)} accounts. Same file, year, and rules = same queue.`;
@@ -695,9 +734,9 @@
     $('cro-list').innerHTML=miniList(state.accounts.filter(a=>a.tier!=='Healthy').sort((a,b)=>priority(b)-priority(a)||b.renewalArr-a.renewalArr).slice(0,5),a=>`${a.actionOwner}: ${a.action}`,'No commercial escalations.');
     $('cco-list').innerHTML=miniList(state.accounts.filter(a=>a.tier!=='Healthy').sort((a,b)=>b.risk-a.risk||b.renewalArr-a.renewalArr).slice(0,5),a=>`CSM leadership: validate ${a.evidence[0]?.label||'the risk signal'} and commit the next customer milestone.`,'No customer escalations.');
   }
-  function renderOperationalQueue(){const risk=$('dash-risk-filter').value,type=$('dash-type-filter').value;const list=state.accounts.filter(a=>a.tier!=='Healthy'&&(risk==='all'||a.tier===risk)&&(type==='all'||a.segment===type)).slice(0,8);$('top-accounts').innerHTML=list.map(a=>`<div class="account-row"><span class="risk-pip ${a.tier.toLowerCase()}"></span><div><strong>${esc(a.name)}</strong><small><b>${esc(a.actionOwner)}:</b> ${esc(a.action)}</small><small>${esc(a.evidence[0]?.label||'No triggered rule')}</small></div><span class="arr">${money(a.renewalArr)}<small>${a.tier} · ${a.risk||a.expansion}</small></span></div>`).join('')||'<p class="muted">No accounts match these filters.</p>';}
+  function renderOperationalQueue(){const risk=$('dash-risk-filter').value,type=$('dash-type-filter').value;const list=state.accounts.filter(a=>a.tier!=='Healthy'&&(risk==='all'||a.tier===risk)&&(type==='all'||a.segment===type)).slice(0,8);$('top-accounts').innerHTML=list.map(a=>`<div class="account-row" data-ai-account="${esc(a.id)}"><span class="risk-pip ${a.tier.toLowerCase()}"></span><div><strong>${esc(a.name)}</strong><small><b>${esc(a.actionOwner)}:</b> ${esc(a.action)}</small><small>${esc(a.evidence[0]?.label||'No triggered rule')}</small></div><span class="arr">${money(a.renewalArr)}<small>${a.tier} · ${a.risk||a.expansion}</small></span></div>`).join('')||'<p class="muted">No accounts match these filters.</p>';decorateAIInsightPoints();}
   const metricValue=(v,kind='percent')=>v===null||v===undefined?'<span class="coverage">Not mapped</span>':kind==='percent'?`${Math.abs(v)<=1?Math.round(v*100):Math.round(v)}%`:number(v);
-  function renderBehaviorHealth(){const list=state.accounts.filter(a=>a.tier!=='Healthy').slice(0,12);$('behavior-body').innerHTML=list.map(a=>`<tr><td><strong>${esc(a.name)}</strong></td><td>${esc(a.segment)}</td><td class="behavior-cell">${metricValue(a.featureDepth)}</td><td class="behavior-cell">${metricValue(a.multiUser)}</td><td class="behavior-cell">${metricValue(a.highValueActions,'number')}</td><td class="behavior-cell">${metricValue(a.utilization)}</td><td class="evidence"><strong>${esc(a.action)}</strong><small>${a.usageDelta===null||a.usageDelta===undefined?'Usage change not mapped':`Usage ${a.usageDelta>0?'+':''}${a.usageDelta}%`}</small></td></tr>`).join('')||'<tr><td colspan="7" class="muted">No at-risk cohort for this fiscal year.</td></tr>';}
+  function renderBehaviorHealth(){const list=state.accounts.filter(a=>a.tier!=='Healthy').slice(0,12);$('behavior-body').innerHTML=list.map(a=>`<tr data-ai-account="${esc(a.id)}"><td><strong>${esc(a.name)}</strong></td><td>${esc(a.segment)}</td><td class="behavior-cell">${metricValue(a.featureDepth)}</td><td class="behavior-cell">${metricValue(a.multiUser)}</td><td class="behavior-cell">${metricValue(a.highValueActions,'number')}</td><td class="behavior-cell">${metricValue(a.utilization)}</td><td class="evidence"><strong>${esc(a.action)}</strong><small>${a.usageDelta===null||a.usageDelta===undefined?'Usage change not mapped':`Usage ${a.usageDelta>0?'+':''}${a.usageDelta}%`}</small></td></tr>`).join('')||'<tr><td colspan="7" class="muted">No at-risk cohort for this fiscal year.</td></tr>';decorateAIInsightPoints();}
   function renderPortfolioContext(){
     if(!state.rows.length)return;
     const renewals=state.rows.filter(r=>/subscription renewal|renewal/.test(normalize(val(r,'recordType'))+' '+normalize(val(r,'dealType')))),closed=renewals.filter(r=>['won','lost'].includes(normalize(val(r,'outcome'))));
@@ -721,7 +760,7 @@
     const search=normalize($('account-search').value),tier=$('tier-filter').value,segment=$('segment-filter').value,owner=$('owner-filter').value;
     const list=state.accounts.filter(a=>(tier==='all'||a.tier===tier)&&(segment==='all'||a.segment===segment)&&(owner==='all'||a.owner===owner)&&(!search||normalize(a.name+' '+a.owner+' '+a.evidence.map(e=>e.label).join(' ')).includes(search)));
     $('queue-count').textContent=number(list.length)+' accounts';
-    $('accounts-body').innerHTML=list.map(a=>`<tr><td><span class="tier ${a.tier}">${a.tier}</span></td><td><strong>${esc(a.name)}</strong><br><small class="muted">${esc(a.segment)} · ${esc(a.confidence)} confidence</small></td><td>${esc(a.owner)}</td><td>${money(a.renewalArr)}</td><td><strong>${a.tier==='Expansion'?a.expansion:a.risk}</strong><br><small class="muted">risk ${a.risk} / expand ${a.expansion}</small></td><td class="evidence">${esc(a.evidence.slice(0,2).map(e=>e.label).join(' · ')||'No triggered rule')}</td><td class="evidence"><strong>${esc(a.actionOwner)}:</strong> ${esc(a.action)}</td><td><button class="row-action" data-account="${esc(a.id)}">Inspect →</button></td></tr>`).join('')||'<tr><td colspan="8" class="muted">Upload a dataset or change the filters.</td></tr>';
+    $('accounts-body').innerHTML=list.map(a=>`<tr data-ai-account="${esc(a.id)}"><td><span class="tier ${a.tier}">${a.tier}</span></td><td><strong>${esc(a.name)}</strong><br><small class="muted">${esc(a.segment)} · ${esc(a.confidence)} confidence</small></td><td>${esc(a.owner)}</td><td>${money(a.renewalArr)}</td><td><strong>${a.tier==='Expansion'?a.expansion:a.risk}</strong><br><small class="muted">risk ${a.risk} / expand ${a.expansion}</small></td><td class="evidence">${esc(a.evidence.slice(0,2).map(e=>e.label).join(' · ')||'No triggered rule')}</td><td class="evidence"><strong>${esc(a.actionOwner)}:</strong> ${esc(a.action)}</td><td><button class="row-action" data-account="${esc(a.id)}">Inspect →</button></td></tr>`).join('')||'<tr><td colspan="8" class="muted">Upload a dataset or change the filters.</td></tr>';decorateAIInsightPoints();
   }
   function renderRules(){
     $('active-rule-count').textContent=rules.filter(r=>r.active).length;$('rule-version').textContent='v'+ruleMeta.version;$('last-rule-change').textContent=ruleMeta.changedAt?new Date(ruleMeta.changedAt).toLocaleDateString():'Default';
@@ -731,7 +770,7 @@
   function renderQuality(){
     const counts={blocker:0,warning:0,info:0};state.quality.forEach(q=>counts[q.severity]+=q.count);
     $('quality-summary').innerHTML=['blocker','warning','info'].map(s=>`<div class="quality-card ${s}"><strong>${number(counts[s])}</strong><span>${s==='blocker'?'blocking instances':s==='warning'?'warning instances':'information instances'}</span></div>`).join('');
-    $('quality-body').innerHTML=state.quality.map(q=>`<tr><td><span class="severity ${q.severity}">${q.severity}</span></td><td><strong>${esc(q.name)}</strong></td><td>${number(q.count)}</td><td>${esc(q.meaning)}</td><td>${esc(q.action)}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">Upload a dataset to run validation.</td></tr>';
+    $('quality-body').innerHTML=state.quality.map(q=>`<tr><td><span class="severity ${q.severity}">${q.severity}</span></td><td><strong>${esc(q.name)}</strong></td><td>${number(q.count)}</td><td>${esc(q.meaning)}</td><td>${esc(q.action)}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">Upload a dataset to run validation.</td></tr>';decorateAIInsightPoints();
   }
   function renderRuns(){
     $('run-list').innerHTML=runHistory.map(r=>`<article class="run-card"><div><h3>${esc(r.fileName)}</h3><small>${new Date(r.at).toLocaleString()} · hash ${esc(r.fileHash)}</small></div><div class="run-stat"><span>Rows</span><strong>${number(r.rows)}</strong></div><div class="run-stat"><span>Rules</span><strong>v${r.ruleVersion}</strong></div><div class="run-stat"><span>Critical / high</span><strong>${r.critical} / ${r.high}</strong></div><div class="run-stat"><span>Expansion</span><strong>${r.expansion}</strong></div></article>`).join('')||'<div class="empty-state"><h2>No completed runs yet.</h2><p>Upload the supplied workbook to create the first audit entry.</p></div>';
@@ -740,7 +779,7 @@
   function showAccount(id){
     const a=state.accounts.find(x=>x.id===id);if(!a)return;
     const review=reviews[a.id]||{decision:'Pending review',note:''};
-    $('account-detail').innerHTML=`<div class="account-detail"><button class="icon-button close-detail" onclick="document.getElementById('account-dialog').close()">×</button><div class="detail-head"><div><p class="eyebrow">ACCOUNT DECISION DRAWER</p><h2>${esc(a.name)}</h2><span class="tier ${a.tier}">${a.tier}</span><div class="source-strip"><span class="source-chip">Rows ${a.rows.join(', ')}</span><span class="source-chip">${esc(a.confidence)} confidence</span>${a.ai?`<span class="source-chip">AI ${Math.round(a.ai.confidence*100)}%</span>`:''}</div></div><div><strong>${money(a.renewalArr)}</strong><br><small class="muted">renewal ARR</small></div></div><div class="decision-callout"><span>Required next action · ${esc(a.actionOwner)}</span><strong>${esc(a.action)}</strong></div><div class="drawer-review"><select id="review-decision"><option${review.decision==='Pending review'?' selected':''}>Pending review</option><option${review.decision==='Accept action'?' selected':''}>Accept action</option><option${review.decision==='Override risk'?' selected':''}>Override risk</option><option${review.decision==='Defer'?' selected':''}>Defer</option></select><input id="review-note" value="${esc(review.note)}" placeholder="Reason or reviewer note"><button class="button primary" data-save-review="${esc(a.id)}">Save review</button></div><div class="detail-grid"><div class="detail-block"><h3>Structured + behavioral</h3><p><b>Owner:</b> ${esc(a.owner)}</p><p><b>Risk / expansion:</b> ${a.risk} / ${a.expansion}</p><p><b>Health:</b> ${esc(a.health)}</p><p><b>Utilization:</b> ${a.utilization===null?'Not mapped':metricValue(a.utilization)}</p><p><b>Adoption depth:</b> ${a.featureDepth===null?'Not mapped':metricValue(a.featureDepth)}</p></div><div class="detail-block"><h3>Text extraction</h3>${a.ai?`<p><b>Category:</b> ${esc(a.ai.risk_category)}</p><p><b>Evidence:</b> ${esc(a.ai.evidence_text||a.ai.reasoning)}</p><p><b>Conflict:</b> ${a.ai.conflict?'Yes — review required':'No detected conflict'}</p>`:'<p class="muted">AI extraction has not been run for this account.</p>'}</div><div class="detail-block full"><h3>Triggered evidence</h3><div class="evidence-list">${a.evidence.map(e=>`<div class="evidence-item"><b>${esc(e.label)} · ${e.points} pts</b><span>${esc(e.usecase)} · ${esc(e.owner)} · ${esc(e.opportunity||'Account evidence')}</span></div>`).join('')||'<span class="muted">No rule evidence.</span>'}</div></div></div></div>`;
+    $('account-detail').innerHTML=`<div class="account-detail" data-ai-account="${esc(a.id)}"><button class="icon-button close-detail" onclick="document.getElementById('account-dialog').close()">×</button><div class="detail-head"><div><p class="eyebrow">ACCOUNT DECISION DRAWER</p><h2>${esc(a.name)}</h2><span class="tier ${a.tier}">${a.tier}</span><div class="source-strip"><span class="source-chip">Rows ${a.rows.join(', ')}</span><span class="source-chip">${esc(a.confidence)} confidence</span>${a.ai?`<span class="source-chip">AI ${Math.round(a.ai.confidence*100)}%</span>`:''}</div></div><div><strong>${money(a.renewalArr)}</strong><br><small class="muted">renewal ARR</small></div></div><div class="decision-callout"><span>Required next action · ${esc(a.actionOwner)}</span><strong>${esc(a.action)}</strong></div><div class="drawer-review"><select id="review-decision"><option${review.decision==='Pending review'?' selected':''}>Pending review</option><option${review.decision==='Accept action'?' selected':''}>Accept action</option><option${review.decision==='Override risk'?' selected':''}>Override risk</option><option${review.decision==='Defer'?' selected':''}>Defer</option></select><input id="review-note" value="${esc(review.note)}" placeholder="Reason or reviewer note"><button class="button primary" data-save-review="${esc(a.id)}">Save review</button></div><div class="detail-grid"><div class="detail-block"><h3>Structured + behavioral</h3><p><b>Owner:</b> ${esc(a.owner)}</p><p><b>Risk / expansion:</b> ${a.risk} / ${a.expansion}</p><p><b>Health:</b> ${esc(a.health)}</p><p><b>Utilization:</b> ${a.utilization===null?'Not mapped':metricValue(a.utilization)}</p><p><b>Adoption depth:</b> ${a.featureDepth===null?'Not mapped':metricValue(a.featureDepth)}</p></div><div class="detail-block"><h3>Text extraction</h3>${a.ai?`<p><b>Category:</b> ${esc(a.ai.risk_category)}</p><p><b>Evidence:</b> ${esc(a.ai.evidence_text||a.ai.reasoning)}</p><p><b>Conflict:</b> ${a.ai.conflict?'Yes — review required':'No detected conflict'}</p>`:'<p class="muted">AI extraction has not been run for this account.</p>'}</div><div class="detail-block full"><h3>Triggered evidence</h3><div class="evidence-list">${a.evidence.map(e=>`<div class="evidence-item"><b>${esc(e.label)} · ${e.points} pts</b><span>${esc(e.usecase)} · ${esc(e.owner)} · ${esc(e.opportunity||'Account evidence')}</span></div>`).join('')||'<span class="muted">No rule evidence.</span>'}</div></div></div></div>`;decorateAIInsightPoints();
     $('account-dialog').showModal();
   }
   function saveReview(id){captureUndo('account review');reviews[id]={decision:$('review-decision').value,note:$('review-note').value.trim(),at:new Date().toISOString()};localStorage.setItem(STORAGE.reviews,JSON.stringify(reviews));toast('Account review saved');}
@@ -909,6 +948,61 @@
     catch(error){button.textContent='Test connection';button.disabled=false;status.className='failed';status.textContent='Connection failed: '+error.message;setAIConnectionState('failed','AI connection failed');toast('Claude connection failed');}
   }
   async function testAIConnection(){const key=$('anthropic-key').value.trim(),model=$('anthropic-model').value.trim(),row=state.rows.find(isCurrentOpenRenewal);if(key.length<10)return toast('Enter a valid Anthropic API key');if(!row)return toast('Upload a workbook with an eligible renewal');$('test-ai').disabled=true;$('ai-status').textContent='Testing…';setAIConnectionState('testing','Testing AI connection…');try{const result=await callClaude(row,key,model,new AbortController().signal);$('ai-status').textContent=`Connected · ${result.risk_category}`;$('ai-connect-button').textContent='Manage AI key';setAIConnectionState('connected','AI connected successfully');toast('Claude connection and response schema verified');}catch(error){$('ai-status').textContent='Connection failed';setAIConnectionState('failed','AI connection failed');toast(error.message);}finally{$('test-ai').disabled=false;}}
+
+  const AI_INSIGHT_SYSTEM_PROMPT=`You are a skeptical senior Revenue Operations analyst. Analyze only the supplied validated dashboard context. Explain the selected data point for an operator deciding what to do next. Never invent a trend, benchmark, causal claim, customer commitment, or missing value. Separate observed evidence from interpretation. If the evidence cannot support a strong conclusion, say so directly. Return ONLY JSON with exactly these keys: {"headline":"short answer-first finding","takeaway":"one direct sentence explaining why the point matters","drivers":["up to three source-grounded drivers"],"action":"one specific internal next action","owner":"one of RevOps, CSM, AE, CS Leader, Sales Leader, CRO, CCO","verify":"one concrete check required before acting","confidence":"high, medium, or low","limitation":"one honest reason this insight may be wrong or incomplete"}. Do not recommend automatic forecast changes or customer communication.`;
+  const AI_INSIGHT_OWNERS=['RevOps','CSM','AE','CS Leader','Sales Leader','CRO','CCO'];
+  let currentInsightContext=null;
+  function decorateAIInsightPoints(){
+    if(typeof document==='undefined')return;
+    const selectors=['.scenario-card','.metric-card','.context-kpi','.account-row','.bar-row','.signal-row','.quarter-row','.cal-table tbody tr','.mini-item','#behavior-body tr','#accounts-body tr','.quality-card','#quality-body tr','.forecast-panel','.behavior-panel','.portfolio-health-panel','.task-panel','.contract-list','.account-detail'];
+    document.querySelectorAll(selectors.join(',')).forEach(root=>{
+      if(root.matches('.muted')||root.querySelector(':scope > .ai-insight-trigger')||root.querySelector(':scope > td:last-child > .ai-insight-trigger'))return;
+      root.classList.add('ai-insight-point');root.dataset.aiPoint=root.dataset.aiPoint||inferInsightType(root);
+      const button=document.createElement('button');button.type='button';button.className='ai-insight-trigger';button.innerHTML='◇ AI insight';button.title='Get a grounded AI interpretation of this data point';
+      if(root.tagName==='TR'&&root.lastElementChild)root.lastElementChild.appendChild(button);else root.appendChild(button);
+    });
+  }
+  function inferInsightType(root){
+    if(root.dataset.aiAccount)return'account';if(root.classList.contains('scenario-card'))return'churn scenario';if(root.classList.contains('metric-card')||root.classList.contains('context-kpi'))return'KPI';if(root.classList.contains('quarter-row'))return'quarter forecast';if(root.closest('#calibration-table'))return'calibration';if(root.closest('#quality-body')||root.classList.contains('quality-card'))return'data quality';if(root.classList.contains('bar-row'))return'portfolio breakdown';if(root.classList.contains('signal-row'))return'triggered signal';if(root.closest('table'))return'account or cohort row';return'dashboard section';
+  }
+  function insightPointText(root){
+    const clone=root.cloneNode(true);clone.querySelectorAll('.ai-insight-trigger,button,select,input,textarea').forEach(el=>el.remove());return String(clone.innerText||clone.textContent||'').replace(/\s+/g,' ').trim().slice(0,3500);
+  }
+  function buildInsightContext(root){
+    const accountId=root.dataset.aiAccount||root.closest('[data-ai-account]')?.dataset.aiAccount||'',account=state.accounts.find(a=>a.id===accountId),counts=countTiers();
+    const context={prompt_version:AI_INSIGHT_PROMPT_VERSION,data_point_type:root.dataset.aiPoint||inferInsightType(root),displayed_value:insightPointText(root),run:{file:state.fileName,input_hash:state.fileHash,forecast_year:state.selectedFY==='all'?'all':state.selectedFY,rule_version:ruleMeta.version,rows:state.rows.length,accounts:state.accounts.length},portfolio:{critical_accounts:counts.Critical||0,high_accounts:counts.High||0,expansion_accounts:counts.Expansion||0,p50_churn_arr:scenarioForecast('medium')}};
+    if(account)context.account={name:account.name,segment:account.segment,owner:account.owner,renewal_arr:account.renewalArr,new_arr:account.newArr,tier:account.tier,risk_score:account.risk,expansion_score:account.expansion,health:account.health,utilization:account.utilization,feature_adoption_depth:account.featureDepth,multi_user_stability:account.multiUser,high_value_actions:account.highValueActions,usage_change:account.usageDelta,evidence:account.evidence.slice(0,6).map(e=>({label:e.label,points:e.points,owner:e.owner,action:e.action})),ai_evidence:account.ai?{category:account.ai.risk_category,evidence:account.ai.evidence_text,confidence:account.ai.confidence,freshness:account.ai.signal_freshness}:null};
+    return context;
+  }
+  function insightCacheKey(context){let hash=2166136261,text=JSON.stringify(context);for(let i=0;i<text.length;i++){hash^=text.charCodeAt(i);hash=Math.imul(hash,16777619);}return AI_INSIGHT_PROMPT_VERSION+'-'+(hash>>>0).toString(16);}
+  function normalizeInsight(parsed){
+    if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))throw new Error('AI insight was not a JSON object');
+    const result={headline:String(parsed.headline||''),takeaway:String(parsed.takeaway||''),drivers:Array.isArray(parsed.drivers)?parsed.drivers.map(String).filter(Boolean).slice(0,3):[],action:String(parsed.action||''),owner:String(parsed.owner||''),verify:String(parsed.verify||''),confidence:String(parsed.confidence||'').toLowerCase(),limitation:String(parsed.limitation||'')};
+    if(!result.headline||!result.takeaway||!result.drivers.length||!result.action||!AI_INSIGHT_OWNERS.includes(result.owner)||!result.verify||!['high','medium','low'].includes(result.confidence)||!result.limitation)throw new Error('AI insight failed schema validation');return result;
+  }
+  async function callInsightClaude(context,key,model,signal){
+    const userContent='Analyze this selected dashboard data point:\n'+JSON.stringify(context);
+    const base={model,max_tokens:750,system:AI_INSIGHT_SYSTEM_PROMPT,messages:[{role:'user',content:userContent}]};
+    const firstRaw=responseText(await anthropicMessage(base,key,signal));
+    try{return{...normalizeInsight(extractJSONObject(firstRaw)),repair_attempted:false};}
+    catch{
+      const repair={...base,messages:[{role:'user',content:userContent},{role:'assistant',content:firstRaw||'{}'},{role:'user',content:'Return one corrected JSON object only. Include every required key, 1-3 string drivers, an allowed owner, and high, medium, or low confidence.'}]};
+      const repairedRaw=responseText(await anthropicMessage(repair,key,signal));
+      try{return{...normalizeInsight(extractJSONObject(repairedRaw)),repair_attempted:true};}catch{throw new Error('Claude insight could not be repaired to the required schema');}
+    }
+  }
+  function renderAIInsight(result){
+    $('ai-insight-headline').textContent=result.headline;$('ai-insight-takeaway').textContent=result.takeaway;$('ai-insight-drivers').innerHTML=result.drivers.map(driver=>`<li>${esc(driver)}</li>`).join('');$('ai-insight-owner').textContent=result.owner;$('ai-insight-action').textContent=result.action;$('ai-insight-verify').textContent=result.verify;$('ai-insight-confidence').textContent=result.confidence.toUpperCase();$('ai-insight-limitation').textContent=result.limitation;$('ai-insight-loading').classList.add('hidden');$('ai-insight-output').classList.remove('hidden');$('ai-insight-status').textContent=`${AI_INSIGHT_PROMPT_VERSION}${result.repair_attempted?' · response repaired':''} · insight is advisory only`;
+  }
+  async function runAIInsight(force=false){
+    if(!currentInsightContext)return;const key=$('anthropic-key').value.trim()||$('setup-key').value.trim(),model=$('anthropic-model').value.trim();if(!state.aiConnected||key.length<10)return toast('Test the AI connection before requesting insight');
+    const cacheKey=insightCacheKey(currentInsightContext);if(!force&&state.insightCache[cacheKey])return renderAIInsight(state.insightCache[cacheKey]);
+    $('ai-insight-loading').classList.remove('hidden');$('ai-insight-output').classList.add('hidden');$('ai-insight-status').textContent='Grounding the response in the selected source context…';$('refresh-ai-insight').disabled=true;
+    try{const result=await callInsightClaude(currentInsightContext,key,model,new AbortController().signal);state.insightCache[cacheKey]=result;renderAIInsight(result);}catch(error){$('ai-insight-loading').classList.add('hidden');$('ai-insight-status').textContent='Insight failed: '+error.message;toast(error.message);}finally{$('refresh-ai-insight').disabled=false;}
+  }
+  function openAIInsight(button){
+    if(!state.aiConnected)return toast('Test the AI connection before requesting insight');const root=button.closest('.ai-insight-point');if(!root)return;currentInsightContext=buildInsightContext(root);const label=root.querySelector('h2,h3,strong,span')?.textContent?.trim()||'Selected data point';$('ai-insight-title').textContent='AI insight · '+label.slice(0,90);$('ai-insight-context').textContent=`${currentInsightContext.data_point_type}\n${currentInsightContext.displayed_value}`;$('ai-insight-output').classList.add('hidden');$('ai-insight-loading').classList.remove('hidden');$('ai-insight-status').textContent='';$('ai-insight-dialog').showModal();runAIInsight(false);
+  }
   function submissionMarkdown(){const c=countTiers();return `# Churn Tool — Submission Brief\n\n## Run evidence\n- File: ${state.fileName||'Not loaded'}\n- Input hash: ${state.fileHash||'Not available'}\n- Forecast year: ${state.selectedFY==='all'?'All':`FY${String(state.selectedFY).slice(-2)}`}\n- Rows: ${state.rows.length}\n- Accounts: ${state.accounts.length}\n- Critical / High / Expansion: ${c.Critical||0} / ${c.High||0} / ${c.Expansion||0}\n- Low / P50 / High churn ARR: ${scenarioForecast('low').toFixed(2)} / ${scenarioForecast('medium').toFixed(2)} / ${scenarioForecast('high').toFixed(2)}\n- Rule version: ${ruleMeta.version}\n- AI prompt version: ${AI_PROMPT_VERSION}\n- AI rows processed: ${state.aiResults.length}\n\n## Executive decision\nRun Churn Tool weekly as a governed triage layer before forecast calls. It produces a validated action queue and scenario forecast; forecast owners retain approval.\n\n## CRO pushback response\n**What is true:** CSM notes can be stale, cautious, and inconsistent; a negative note is not a churn outcome.\n\n**Where I agree and disagree:** Text-only concern should not automatically move committed churn ARR. But when unresolved customer language agrees with low utilization, critical health, pipeline status, or a recorded churn reason, ignoring it would make the forecast less defensible.\n\n**How we settle it:** Retain every flag, leadership override, cited phrase, and final outcome for two forecast cycles. Measure observed churn and forecast error by tier, plus false positives for text-only versus combined signals. CSM leadership classifies the five largest disagreements as current, resolved, or stale.\n\n**Commitment:** Keep the current medium/P50 case. Combined structured and unresolved text evidence remains in the forecast; text-only accounts remain human-review items. Recalibrate the tier rate only when back-testing supports the change.\n\n## Operating model\nRevOps runs and calibrates. CSM validates adoption signals. AE owns commercial actions. CRO and CCO resolve the five highest-leverage escalations. Weekly run, monthly override review, quarterly recalibration.\n\n## 90 days\n1. Days 1–30: shadow forecast calls and baseline false positives.\n2. Days 31–60: route actions and add a controlled AI proxy.\n3. Days 61–90: recalibrate rates and decide production rollout.\n\n## Known limits\nMissing behavior fields are not inferred. AI can misread stale or negated notes. No customer communication or forecast override is automatic.\n`;}
   function exportBrief(){const content=submissionMarkdown();queueEmail({subject:'Churn Tool submission brief',body:'Leadership,\n\nAttached is the current Churn Tool submission brief, including the executive decision, operating model, controls, limits, and 90-day rollout.',attachmentName:'churn-tool-submission-brief.md',attachmentContent:content,attachmentType:'text/markdown'});}
   function exportDemo(){const date=new Date().toISOString().slice(0,10),content=submissionMarkdown()+'\n## Demo timestamp\n'+new Date().toISOString()+'\n';queueEmail({subject:`Churn Tool demo record · ${date}`,body:'Review team,\n\nAttached is the reproducible demo record for the current Churn Tool run, including file identity, rule version, output counts, controls, and timestamp.',attachmentName:`churn-tool-demo-record-${date}.md`,attachmentContent:content,attachmentType:'text/markdown'});}
@@ -927,6 +1021,7 @@
     $('anthropic-key').addEventListener('input',e=>{const key=e.target.value;$('setup-key').value=key;setAIConnectionState(key.trim().length>=10?'pending':'idle',key.trim().length>=10?'AI key not tested':'AI not connected');});
     $('ai-connect-button').addEventListener('click',openAIConnect);$('close-ai-connect').addEventListener('click',()=>$('ai-connect-dialog').close());$('cancel-ai-connect').addEventListener('click',()=>$('ai-connect-dialog').close());
     $('ai-dialog-key').addEventListener('input',e=>{const key=e.target.value;$('setup-key').value=key;$('anthropic-key').value=key;$('test-ai-connect').disabled=key.trim().length<10;$('test-ai-connect').textContent='Test connection';setAIConnectionState(key.trim().length>=10?'pending':'idle',key.trim().length>=10?'AI key not tested':'AI not connected');});$('ai-dialog-model').addEventListener('input',e=>{$('anthropic-model').value=e.target.value;setAIConnectionState('pending','AI configuration not tested');});$('test-ai-connect').addEventListener('click',testPersistentAIConnection);
+    document.addEventListener('click',e=>{const button=e.target.closest('.ai-insight-trigger');if(button){e.preventDefault();e.stopPropagation();openAIInsight(button);}});$('close-ai-insight').addEventListener('click',()=>$('ai-insight-dialog').close());$('cancel-ai-insight').addEventListener('click',()=>$('ai-insight-dialog').close());$('refresh-ai-insight').addEventListener('click',()=>runAIInsight(true));
     document.querySelectorAll('[data-report-issue]').forEach(button=>button.addEventListener('click',reportIssue));
     $('fiscal-year').addEventListener('change',e=>{state.selectedFY=e.target.value==='all'?'all':Number(e.target.value);state.quality=validateData(state.rows,state.headers);state.accounts=buildAccounts(state.rows);if(state.aiResults.length)applyAIResults();renderAll();toast('Forecast population changed to '+(state.selectedFY==='all'?'all fiscal years':'FY'+String(state.selectedFY).slice(-2)));});
     $('dash-risk-filter').addEventListener('change',renderOperationalQueue);$('dash-type-filter').addEventListener('change',renderOperationalQueue);
@@ -960,7 +1055,8 @@
     setRules(nextRules) { rules = JSON.parse(JSON.stringify(nextRules)); },
     defaults: JSON.parse(JSON.stringify(DEFAULT_RULES)),
     extractJSONObject,
-    normalizeAIResult
+    normalizeAIResult,
+    normalizeInsight
   };
   if (typeof document !== 'undefined') { bind(); renderAll(); }
 })();
