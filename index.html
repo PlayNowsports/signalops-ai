@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Reusable RevOps churn and expansion triage with deterministic scoring, validation, and persistent rule memory.">
-  <title>SignalOps AI — Renewal Command Center</title>
+  <title>Churn Tool — Tulip Renewal Decision System</title>
   <style>
 :root{--ink:#10231f;--muted:#64736f;--line:#dfe7e3;--paper:#f4f7f5;--white:#fff;--green:#146c55;--green2:#1c8a6b;--mint:#dff3e9;--red:#b43d3d;--redbg:#fae8e6;--amber:#a86913;--amberbg:#fff1d7;--blue:#315e8b;--bluebg:#e8f0fa;--shadow:0 12px 34px rgba(28,50,43,.08);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper)}*{box-sizing:border-box}body{margin:0}.shell{min-height:100vh;display:grid;grid-template-columns:248px 1fr}.sidebar{position:sticky;top:0;height:100vh;background:#0f2923;color:#d9e8e2;padding:28px 18px 20px;display:flex;flex-direction:column}.brand{display:flex;gap:12px;align-items:center;color:#fff;text-decoration:none;padding:0 10px 26px}.brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#60c49e;color:#0f2923;font-weight:900;font-size:20px}.brand strong,.brand small{display:block}.brand strong{font-size:17px}.brand small{font-size:11px;color:#99b7ad;margin-top:2px;letter-spacing:.06em}.sidebar nav{display:grid;gap:5px}.nav-item{border:0;background:transparent;color:#a9c2b9;padding:11px 12px;border-radius:9px;text-align:left;font:inherit;cursor:pointer;display:flex;gap:11px;align-items:center}.nav-item span{width:20px;text-align:center;font-size:17px}.nav-item:hover,.nav-item.active{background:#1d3c34;color:#fff}.sidebar-foot{margin-top:auto;border-top:1px solid #2c4a42;padding:18px 10px 0;display:flex;gap:10px;align-items:flex-start}.sidebar-foot strong,.sidebar-foot small{display:block}.sidebar-foot strong{font-size:12px}.sidebar-foot small{font-size:10px;color:#8dab9f;margin-top:3px}.status-dot{width:8px;height:8px;border-radius:50%;background:#63d3a7;margin-top:4px;box-shadow:0 0 0 4px rgba(99,211,167,.1)}main{min-width:0;padding:0 34px 60px}.topbar{height:112px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);gap:24px}.eyebrow{font-size:10px;letter-spacing:.14em;font-weight:800;color:var(--green);margin:0 0 7px}.topbar h1{font-family:Georgia,serif;font-size:27px;margin:0;font-weight:500}.top-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}.button{border:1px solid transparent;border-radius:8px;padding:10px 14px;font:700 12px/1 inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}.button.primary{background:var(--green);color:#fff}.button.primary:hover{background:#0f5845}.button.secondary{background:#fff;border-color:#cdd9d4;color:var(--ink)}.button:disabled{opacity:.45;cursor:not-allowed}.button.large{padding:14px 20px;font-size:13px}.danger-button{background:#fff;border-color:#ecc7c3;color:var(--red)}.file-badge{font-size:11px;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.view{display:none;padding-top:28px}.view.active{display:block}.hidden{display:none!important}.empty-state{min-height:610px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;max-width:750px;margin:auto;padding:40px}.upload-icon{display:grid;place-items:center;width:76px;height:76px;border-radius:22px;background:var(--mint);color:var(--green);font-size:34px;margin-bottom:25px}.empty-state h2,.section-intro h2,.panel h2{font-family:Georgia,serif;font-weight:500}.empty-state h2{font-size:35px;line-height:1.16;margin:0;max-width:650px}.empty-state>p:not(.eyebrow){color:var(--muted);line-height:1.65;max-width:630px;margin:18px 0 25px}.trust-row{display:flex;gap:24px;margin-top:26px;font-size:11px;color:var(--muted)}.run-banner{border:1px solid #c4dfd3;background:#edf8f3;border-radius:9px;padding:11px 15px;margin-bottom:18px;font-size:12px;color:#275847}.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.metric-card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--line);border-radius:10px;padding:18px;box-shadow:0 3px 12px rgba(20,40,34,.03)}.metric-card>span{display:block;font-size:11px;color:var(--muted);font-weight:700}.metric-card strong{display:block;font-family:Georgia,serif;font-size:27px;margin:10px 0 4px;font-weight:500}.metric-card small{color:var(--muted)}.metric-card.danger{border-top-color:var(--red)}.metric-card.warning{border-top-color:#d08b20}.metric-card.positive{border-top-color:var(--green2)}.metric-card.neutral{border-top-color:#7d928a}.dashboard-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-top:14px}.panel{background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 18px rgba(20,40,34,.04);padding:20px}.panel.wide{grid-row:span 2}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:16px}.panel h2{font-size:20px;margin:0}.text-button{border:0;background:none;color:var(--green);font-weight:800;font-size:11px;cursor:pointer}.account-list{display:grid}.account-row{display:grid;grid-template-columns:9px 1fr auto;gap:13px;align-items:center;padding:14px 0;border-top:1px solid #edf1ef}.account-row:first-child{border-top:0}.risk-pip{width:7px;height:36px;border-radius:5px}.risk-pip.critical{background:var(--red)}.risk-pip.high{background:#d28417}.risk-pip.monitor{background:#6b85a1}.risk-pip.expansion{background:var(--green2)}.risk-pip.healthy{background:#9aacA5}.account-row strong,.account-row small{display:block}.account-row small{color:var(--muted);font-size:10px;margin-top:4px}.account-row .arr{text-align:right;font:600 13px Georgia,serif}.tier-chart{display:grid;gap:12px}.bar-row{display:grid;grid-template-columns:70px 1fr 72px;gap:9px;align-items:center;font-size:11px}.bar-track{height:9px;background:#edf1ef;border-radius:9px;overflow:hidden}.bar-fill{height:100%;border-radius:9px}.bar-row b{text-align:right;font-weight:700}.signal-chart{display:grid;gap:13px}.signal-row{display:grid;grid-template-columns:1fr auto;gap:5px;font-size:11px}.signal-row .bar-track{grid-column:1/3}.section-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:20px}.section-intro h2{font-size:30px;margin:0}.section-intro p:not(.eyebrow){color:var(--muted);font-size:12px;max-width:650px;line-height:1.5;margin:7px 0 0}.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;padding:13px}.toolbar input,.toolbar select,.form-grid input,.form-grid select,.form-grid textarea{border:1px solid #cfdad5;border-radius:7px;background:#fff;padding:10px 11px;font:12px inherit;color:var(--ink)}.toolbar input{min-width:310px}.toolbar .muted{margin-left:auto}.muted{color:var(--muted);font-size:11px}.table-panel{padding:0;overflow:hidden}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:11px}th{text-align:left;color:#6b7975;text-transform:uppercase;letter-spacing:.07em;font-size:9px;padding:12px 14px;border-bottom:1px solid var(--line);background:#f9fbfa;white-space:nowrap}td{padding:13px 14px;border-bottom:1px solid #edf1ef;vertical-align:top}tbody tr:hover{background:#fbfdfc}.tier{display:inline-flex;padding:4px 7px;border-radius:5px;font-weight:800;font-size:9px;text-transform:uppercase}.tier.Critical{background:var(--redbg);color:var(--red)}.tier.High{background:var(--amberbg);color:var(--amber)}.tier.Monitor{background:var(--bluebg);color:var(--blue)}.tier.Expansion{background:var(--mint);color:var(--green)}.tier.Healthy{background:#edf1ef;color:#60716b}.evidence{max-width:260px;color:#556560}.row-action{border:0;background:none;color:var(--green);cursor:pointer;font-weight:800}.rule-summary{display:flex;gap:40px;background:#18332c;color:#d8e9e2;padding:16px 20px;border-radius:9px;margin-bottom:14px}.rule-summary span{font-size:10px;color:#9fb8af}.rule-summary strong{display:block;color:#fff;font:500 18px Georgia,serif;margin-bottom:2px}.rule-list{display:grid;gap:9px}.rule-card{display:grid;grid-template-columns:auto 1fr auto;gap:15px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:9px;padding:15px 17px}.rule-card.inactive{opacity:.58}.rule-usecase{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-weight:900}.rule-usecase.risk{background:var(--redbg);color:var(--red)}.rule-usecase.expansion{background:var(--mint);color:var(--green)}.rule-card h3{font-size:13px;margin:0}.rule-card p{font-size:10px;color:var(--muted);margin:4px 0 0}.rule-card .rule-meta{display:flex;gap:8px;align-items:center}.chip{padding:4px 7px;border-radius:5px;background:#edf2f0;font-size:9px;color:#53635e}.rule-actions{display:flex;gap:5px}.icon-button{border:0;background:transparent;font-size:20px;cursor:pointer;color:var(--muted)}.quality-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}.quality-card{padding:16px;border-radius:9px;border:1px solid var(--line);background:#fff}.quality-card strong{display:block;font:500 24px Georgia,serif}.quality-card span{font-size:10px;color:var(--muted)}.quality-card.blocker{border-left:4px solid var(--red)}.quality-card.warning{border-left:4px solid #d28417}.quality-card.info{border-left:4px solid var(--green)}.run-list{display:grid;gap:10px}.run-card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:16px;display:grid;grid-template-columns:1fr repeat(4,auto);gap:25px;align-items:center}.run-card h3{font-size:13px;margin:0 0 3px}.run-card small{color:var(--muted)}.run-stat span,.run-stat strong{display:block}.run-stat span{font-size:9px;color:var(--muted);text-transform:uppercase}.run-stat strong{font-size:13px;margin-top:3px}.howto-grid{display:grid;grid-template-columns:1.55fr .8fr;gap:14px}.howto-main{grid-row:span 2}.howto-main>h2{font-size:29px}.steps{display:grid;margin-top:20px}.steps>div{display:grid;grid-template-columns:34px 1fr;gap:13px;padding:16px 0;border-top:1px solid var(--line)}.steps b{display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:var(--mint);color:var(--green)}.steps strong,.steps small{display:block}.steps small{color:var(--muted);line-height:1.5;margin-top:4px}.guide-card h3,.limits-card h3{margin-top:0}.guide-card dl{display:grid;grid-template-columns:80px 1fr;gap:10px;font-size:11px}.guide-card dt{color:var(--muted)}.guide-card dd{margin:0;font-weight:600}.limits-card{background:#fffaf1;border-color:#f0dfbb}.limits-card ul{padding-left:18px;font-size:11px;color:#645c4d;line-height:1.65;margin-bottom:0}dialog{border:0;border-radius:12px;padding:0;box-shadow:0 28px 80px rgba(7,30,23,.3);width:min(690px,calc(100vw - 30px));color:var(--ink)}dialog::backdrop{background:rgba(9,28,23,.55);backdrop-filter:blur(2px)}#rule-form{padding:24px}.dialog-head{display:flex;justify-content:space-between;align-items:flex-start}.dialog-head h2{font-family:Georgia,serif;margin:0;font-weight:500}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:20px}.form-grid label{font-size:10px;font-weight:800;color:#52615d;display:grid;gap:6px}.form-grid .full{grid-column:1/3}.form-grid textarea{min-height:70px;resize:vertical}.toggle{display:flex!important;grid-template-columns:auto 1fr!important;align-items:center;justify-content:start}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}#account-dialog{width:min(780px,calc(100vw - 30px))}.account-detail{padding:24px}.detail-head{display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding-bottom:16px}.detail-head h2{font-family:Georgia,serif;font-weight:500;margin:4px 0}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}.detail-block{border:1px solid var(--line);border-radius:8px;padding:14px}.detail-block h3{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:0 0 10px}.evidence-list{display:grid;gap:8px}.evidence-item{background:#f7faf8;border-radius:6px;padding:9px;font-size:11px}.evidence-item b{display:block;margin-bottom:3px}.close-detail{position:absolute;right:14px;top:12px}#toast{position:fixed;right:25px;bottom:25px;background:#102c24;color:#fff;border-radius:8px;padding:12px 16px;font-size:11px;box-shadow:var(--shadow);transform:translateY(100px);opacity:0;transition:.2s;z-index:10}#toast.show{transform:translateY(0);opacity:1}.severity{font-weight:800;text-transform:uppercase;font-size:9px}.severity.blocker{color:var(--red)}.severity.warning{color:var(--amber)}.severity.info{color:var(--green)}@media(max-width:1050px){.shell{grid-template-columns:78px 1fr}.sidebar{padding-left:10px;padding-right:10px}.brand span:last-child,.nav-item:not(.active){font-size:0}.nav-item{justify-content:center}.nav-item.active{font-size:0}.nav-item span{font-size:18px}.sidebar-foot{display:none}.metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.shell{display:block}.sidebar{position:static;width:100%;height:auto;flex-direction:row;align-items:center;padding:10px;overflow:auto}.brand{padding:0 10px 0 0}.brand span:last-child{display:none}.sidebar nav{display:flex}.nav-item{white-space:nowrap}.sidebar-foot{display:none}main{padding:0 14px 40px}.topbar{height:auto;padding:18px 0;align-items:flex-start;flex-direction:column}.top-actions{justify-content:flex-start}.metric-grid,.dashboard-grid,.quality-summary,.howto-grid,.detail-grid{grid-template-columns:1fr}.panel.wide,.howto-main{grid-row:auto}.toolbar{flex-wrap:wrap}.toolbar input{min-width:100%;width:100%}.section-intro{align-items:flex-start;flex-direction:column}.rule-card{grid-template-columns:auto 1fr}.rule-actions{grid-column:2}.rule-summary{overflow:auto}.run-card{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.trust-row{flex-direction:column;gap:8px}}
 
@@ -12,41 +12,47 @@
   <style>
     .scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}.scenario-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;box-shadow:0 4px 18px rgba(20,40,34,.04)}.scenario-card span{font-size:9px;letter-spacing:.12em;font-weight:900}.scenario-card strong{display:block;font:500 27px Georgia,serif;margin:8px 0 4px}.scenario-card small{color:var(--muted)}.scenario-card.low{border-left:4px solid #6b85a1}.scenario-card.medium{border-left:4px solid #d28417;background:#fffaf1}.scenario-card.high{border-left:4px solid var(--red)}.forecast-panel{grid-column:1/3;grid-row:auto!important}.quarter-chart{display:grid;gap:10px}.quarter-row{display:grid;grid-template-columns:55px 1fr 95px 95px;gap:10px;align-items:center;font-size:11px}.dual-track{height:14px;background:#eef2f0;border-radius:7px;overflow:hidden;display:flex}.dual-churn{height:100%;background:var(--red)}.dual-expansion{height:100%;background:var(--green2)}.quarter-row b{text-align:right}.mini-list{display:grid}.mini-item{padding:10px 0;border-top:1px solid #edf1ef}.mini-item:first-child{border-top:0}.mini-item strong,.mini-item small{display:block}.mini-item small{margin-top:3px;color:var(--muted);line-height:1.4}.cal-table{width:100%;font-size:10px}.cal-table td,.cal-table th{padding:7px}.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.ai-grid h3{margin-top:0}.field-label{display:grid;gap:6px;font-size:10px;font-weight:800;color:var(--muted);margin:12px 0}.field-label input,.field-label select{width:100%;padding:10px;border:1px solid #cfdad5;border-radius:7px;font:12px inherit}.privacy-note{background:#fff6e5;border:1px solid #ead5ad;border-radius:7px;padding:10px;font-size:10px;line-height:1.5;margin:12px 0}.contract-list{display:grid;grid-template-columns:110px 1fr;gap:9px;font-size:11px}.contract-list dt{color:var(--muted)}.contract-list dd{margin:0;font-weight:600}.ai-progress{height:9px;background:#edf1ef;border-radius:9px;overflow:hidden;margin-top:20px}.ai-progress>div{width:0;height:100%;background:var(--green2);transition:.2s}.ai-results-panel{margin-top:14px}.ai-flag{font-weight:800}.ai-flag.yes{color:var(--red)}.ai-flag.no{color:var(--green)}.panel-tools{display:flex;gap:8px;align-items:center}.panel-tools select{border:1px solid #d7dfdc;background:#fff;border-radius:7px;padding:7px 9px;font:700 10px inherit;color:var(--ink)}.behavior-panel{grid-column:1/3;grid-row:auto!important}.behavior-cell strong,.behavior-cell small{display:block}.behavior-cell small{color:var(--muted);margin-top:3px}.coverage{font-size:9px;color:var(--muted)}.trigger-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.trigger-card{border-top:3px solid #c5d1cc}.trigger-card textarea{width:100%;min-height:105px;border:0;background:#f7f8f6;border-radius:7px;padding:11px;font:11px/1.55 inherit;color:var(--ink);resize:vertical}.trigger-preview{font:500 14px/1.5 Georgia,serif;margin:14px 0;color:#263c35}.trigger-actions{display:flex;justify-content:space-between;gap:8px}.brief-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}.brief-block h3{margin:0 0 10px;font-size:13px}.brief-block ul,.brief-block ol{margin:0;padding-left:18px;font-size:11px;line-height:1.65;color:#4d5f59}.brief-block p{font-size:11px;line-height:1.6;color:#4d5f59}.brief-block.wide{grid-column:1/3}.compact-copy{background:#f7f8f6;border-left:3px solid #d9a441;padding:12px 14px;font-size:11px;line-height:1.6}.fy-control{display:flex;align-items:center;gap:6px}.fy-control label{font-size:9px;font-weight:900;letter-spacing:.09em;color:var(--muted)}.fy-control select{border:1px solid #cdd9d4;border-radius:7px;background:#fff;padding:9px;font:700 11px inherit}.submission-actions{display:flex;gap:8px;flex-wrap:wrap}.status-checklist{display:grid;gap:8px}.status-check{display:grid;grid-template-columns:18px 1fr;gap:8px;font-size:11px}.status-check b{color:var(--green)}.status-check.pending b{color:var(--amber)}details.prompt-details{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}details.prompt-details summary{cursor:pointer;font-size:10px;font-weight:800;color:var(--green)}details.prompt-details pre{white-space:pre-wrap;background:#f6f7f5;padding:10px;border-radius:7px;font:9px/1.5 ui-monospace,monospace;max-height:180px;overflow:auto}@media(max-width:760px){.scenario-grid,.ai-grid,.trigger-grid,.brief-grid{grid-template-columns:1fr}.brief-block.wide,.behavior-panel{grid-column:auto}.forecast-panel{grid-column:auto}.quarter-row{grid-template-columns:45px 1fr 70px}.quarter-row .expansion-value{display:none}.panel-tools{align-items:stretch;flex-direction:column}}
   </style>
+  <style>
+    .topbar{position:sticky;top:0;z-index:8;background:rgba(244,247,245,.96);backdrop-filter:blur(12px)}
+    .scenario-grid{margin-top:0}.secondary-metrics{margin-top:12px}.secondary-metrics .metric-card{padding:13px 15px}.secondary-metrics .metric-card strong{font-size:21px;margin:7px 0 2px}
+    .dashboard-grid{grid-template-columns:1.25fr 1fr}.task-panel,.forecast-panel,.behavior-panel{grid-column:1/3!important;grid-row:auto!important}.task-panel{order:-3}.forecast-panel{order:-2}.behavior-panel{order:-1}.task-panel .account-row{grid-template-columns:8px 1fr 110px;padding:16px 0}.task-panel .account-row small{font-size:11px;line-height:1.45}.task-panel .risk-pip{height:48px}
+    .combined-mount,.audit-mount{margin-top:30px;padding-top:28px;border-top:1px solid var(--line)}.combined-mount>.section-intro,.audit-mount>.section-intro{margin-bottom:16px}.audit-mount .view,.combined-mount .view{display:block;padding-top:0}
+    #account-dialog{height:100vh;max-height:100vh;margin:0 0 0 auto;border-radius:14px 0 0 14px;width:min(720px,calc(100vw - 28px))}#account-dialog .account-detail{min-height:100vh;padding:28px 30px}.decision-callout{background:#f4f1e8;border-left:4px solid #bd8a32;border-radius:7px;padding:14px 16px;margin:16px 0}.decision-callout span{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.09em;font-weight:900}.decision-callout strong{display:block;font:500 17px/1.45 Georgia,serif;margin-top:5px}.source-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.source-chip{background:#edf2f0;color:#50625c;padding:5px 7px;border-radius:5px;font-size:9px}.drawer-review{display:grid;grid-template-columns:150px 1fr;gap:9px;margin-top:12px}.drawer-review select,.drawer-review input{border:1px solid #cfdad5;border-radius:7px;padding:9px;font:11px inherit}
+    @media(max-width:760px){.task-panel,.forecast-panel,.behavior-panel{grid-column:auto!important}.topbar{position:static}.secondary-metrics{grid-template-columns:1fr 1fr}.drawer-review{grid-template-columns:1fr}}
+  </style>
+  <style>
+    .dashboard-tabs{display:inline-flex;gap:3px;background:#e8eeeb;border-radius:9px;padding:3px;margin-bottom:12px}.dashboard-tab{border:0;background:transparent;color:#65746f;border-radius:7px;padding:8px 13px;font:800 10px/1 inherit;cursor:pointer}.dashboard-tab.active{background:#fff;color:var(--ink);box-shadow:0 1px 5px rgba(24,45,38,.1)}.decision-chain{display:flex;align-items:center;gap:9px;color:#687670;font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}.decision-chain b{color:#b4c0bb}.secondary-metrics{margin-top:0}.dashboard-grid>[data-dashboard-scope="context"]{order:0}.dashboard-grid.context-mode{grid-template-columns:1fr 1fr}.dashboard-grid.context-mode .behavior-panel,.dashboard-grid.context-mode .portfolio-health-panel{grid-column:1/3!important;grid-row:auto!important}.dashboard-grid.decision-mode{grid-template-columns:1.25fr 1fr}.context-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line)}.context-kpi{padding:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:98px}.context-kpi span,.context-kpi small{display:block;color:var(--muted);font-size:9px}.context-kpi strong{display:block;font:500 21px Georgia,serif;margin:8px 0 4px}.context-chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:24px}.context-chart-grid h3{font-size:13px;margin:0 0 14px}.full-response{font-size:10px;line-height:1.55;color:#4d5f59}.full-response p{margin:10px 0}
+    @media(max-width:760px){.dashboard-tabs{display:flex}.dashboard-tab{flex:1}.decision-chain{overflow:auto}.dashboard-grid.context-mode,.dashboard-grid.decision-mode{grid-template-columns:1fr}.dashboard-grid.context-mode .behavior-panel,.dashboard-grid.context-mode .portfolio-health-panel{grid-column:auto!important}.context-kpi-grid{grid-template-columns:1fr 1fr}.context-chart-grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
   <div class="shell">
     <aside class="sidebar">
-      <a class="brand" href="#dashboard" aria-label="SignalOps AI home">
-        <span class="brand-mark">S</span>
-        <span><strong>SignalOps</strong><small>AI Renewal OS</small></span>
+      <a class="brand" href="#dashboard" aria-label="Churn Tool home">
+        <span class="brand-mark">C</span>
+        <span><strong>Churn Tool</strong><small>Renewal Decision OS</small></span>
       </a>
       <nav id="nav">
         <button class="nav-item active" data-view="dashboard"><span>⌁</span> Command center</button>
-        <button class="nav-item" data-view="accounts"><span>◎</span> Account queue</button>
-        <button class="nav-item" data-view="triggers"><span>↗</span> Trigger library</button>
-        <button class="nav-item" data-view="ai"><span>✦</span> AI extraction</button>
-        <button class="nav-item" data-view="rules"><span>◇</span> Rule memory</button>
-        <button class="nav-item" data-view="quality"><span>✓</span> Data quality</button>
-        <button class="nav-item" data-view="health"><span>◆</span> Portfolio health</button>
-        <button class="nav-item" data-view="runs"><span>↻</span> Run history</button>
-        <button class="nav-item" data-view="brief"><span>▤</span> Submission brief</button>
-        <button class="nav-item" data-view="howto"><span>?</span> How to run</button>
+        <button class="nav-item" data-view="accounts"><span>◎</span> Accounts</button>
+        <button class="nav-item" data-view="rules"><span>◇</span> Rules &amp; triggers</button>
+        <button class="nav-item" data-view="ai"><span>✓</span> Data &amp; AI audit</button>
+        <button class="nav-item" data-view="brief"><span>▤</span> Handoff</button>
       </nav>
       <div class="sidebar-foot">
         <span class="status-dot"></span>
-        <div><strong>Local by default</strong><small>Only mapped notes leave when AI is run</small></div>
+        <div><strong>Ready</strong><small>Upload a CRM export to begin</small></div>
       </div>
     </aside>
 
     <main>
       <header class="topbar">
         <div>
-          <p class="eyebrow">REVOPS CONTROL PLANE</p>
-          <h1 id="page-title">Renewal command center</h1>
+          <p class="eyebrow">TULIP RENEWAL OPERATIONS</p>
+          <h1 id="page-title">Command center</h1>
         </div>
         <div class="top-actions">
           <div class="fy-control"><label for="fiscal-year">FORECAST YEAR</label><select id="fiscal-year" disabled><option value="all">All FYs</option></select></div>
-          <input id="topbar-key" type="password" placeholder="sk-ant-… (for AI extraction)" style="padding:9px 10px;border:1px solid #cdd9d4;border-radius:8px;font:11px inherit;width:200px;color:var(--ink)">
           <span id="file-badge" class="file-badge">No dataset loaded</span>
           <label class="button secondary" for="file-input">Upload XLSX / CSV</label>
           <input id="file-input" type="file" accept=".xlsx,.xls,.csv" hidden>
@@ -56,67 +62,101 @@
 
       <section id="dashboard" class="view active">
         <div id="empty-state" class="empty-state">
-          <div class="upload-icon">⇧</div>
-          <p class="eyebrow">START A REPRODUCIBLE RUN</p>
-          <h2>Turn an Excel or CSV export into a weekly churn action queue.</h2>
-          <p>Upload any workbook containing a customer/account column. SignalOps selects the most relevant sheet, maps common business column names, validates the data, and produces account-level churn and expansion actions.</p>
-          <label class="button primary large" for="file-input">Choose Excel or CSV file</label>
-          <div class="trust-row"><span>✓ Local processing</span><span>✓ Versioned rules</span><span>✓ Deterministic output</span></div>
+          <div class="upload-icon" style="font-family:Georgia,serif;font-size:28px">C</div>
+          <h2>Churn Tool — Tulip</h2>
+          <p style="color:var(--muted);max-width:480px;margin:10px 0 0;line-height:1.6;font-size:13px">Upload your Salesforce opportunity export to generate the weekly renewal action queue. The tool scores every open renewal, flags risk and expansion, and routes actions to the right owner.</p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:28px 0;text-align:left">
+            <div style="background:#fff;border:1px solid var(--line);border-radius:9px;padding:18px">
+              <strong style="font-size:13px">1. Upload your data</strong>
+              <p style="font-size:11px;color:var(--muted);margin:6px 0 0;line-height:1.5">Export opportunities from Salesforce as .xlsx or .csv. Keep the original column names.</p>
+              <label class="button primary" for="file-input" style="margin-top:12px;display:inline-flex">Choose file</label>
+            </div>
+            <div style="background:#fff;border:1px solid var(--line);border-radius:9px;padding:18px">
+              <strong style="font-size:13px">2. Connect text extraction <span style="font-size:10px;color:var(--muted);font-weight:400">(optional)</span></strong>
+              <p style="font-size:11px;color:var(--muted);margin:6px 0 0;line-height:1.5">To read CSM notes and Gong highlights, paste a Claude API key:</p>
+              <ol style="font-size:10px;color:var(--muted);margin:6px 0 0;padding-left:16px;line-height:1.6">
+                <li>Go to <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--green);font-weight:700">console.anthropic.com</a></li>
+                <li>Create Key → copy it</li>
+                <li>Paste below</li>
+              </ol>
+              <input id="setup-key" type="password" placeholder="sk-ant-api03-..." style="margin-top:8px;padding:9px 10px;border:1px solid var(--line);border-radius:7px;font:11px inherit;width:100%">
+              <div style="display:flex;gap:6px;margin-top:6px"><button class="button primary" id="setup-key-test" style="padding:8px 12px;font-size:11px;flex:1" disabled>Test connection</button></div>
+              <div id="setup-key-status" style="font-size:11px;min-height:16px;margin-top:4px"></div>
+              <p style="font-size:9px;color:#8d9590;margin:4px 0 0">Key stays in browser memory only. Your account, your usage.</p>
+            </div>
+          </div>
         </div>
 
         <div id="dashboard-content" class="hidden">
           <div id="run-banner" class="run-banner"></div>
-          <div class="metric-grid">
+          <div class="dashboard-tabs" role="tablist" aria-label="Dashboard views"><button class="dashboard-tab active" data-dashboard-tab="decision" role="tab" aria-selected="true">Decision outputs</button><button class="dashboard-tab" data-dashboard-tab="context" role="tab" aria-selected="false">Portfolio context</button></div>
+          <div class="decision-chain" data-dashboard-scope="decision"><span>Upload</span><b>→</b><span>Validate</span><b>→</b><span>Score</span><b>→</b><span>Rank</span><b>→</b><span>Route</span><b>→</b><span>Act</span></div>
+          <div class="scenario-grid" data-dashboard-scope="decision">
+            <article class="scenario-card low"><span>LOW CASE</span><strong id="churn-low">—</strong><small>Conservative in-year churn ARR</small></article>
+            <article class="scenario-card medium"><span>MEDIUM / P50</span><strong id="churn-medium">—</strong><small>Best-estimate in-year churn ARR</small></article>
+            <article class="scenario-card high"><span>HIGH CASE</span><strong id="churn-high">—</strong><small>Downside in-year churn ARR</small></article>
+          </div>
+
+          <div class="metric-grid secondary-metrics" data-dashboard-scope="context">
             <article class="metric-card danger"><span>Critical ARR</span><strong id="critical-arr">—</strong><small id="critical-count">—</small></article>
             <article class="metric-card warning"><span>At-risk ARR</span><strong id="risk-arr">—</strong><small id="risk-count">—</small></article>
             <article class="metric-card positive"><span>Expansion-ready ARR</span><strong id="expansion-arr">—</strong><small id="expansion-count">—</small></article>
             <article class="metric-card neutral"><span>Data confidence</span><strong id="confidence">—</strong><small id="quality-count">—</small></article>
           </div>
 
-          <div class="scenario-grid">
-            <article class="scenario-card low"><span>LOW CASE</span><strong id="churn-low">—</strong><small>Conservative in-year churn ARR</small></article>
-            <article class="scenario-card medium"><span>MEDIUM / P50</span><strong id="churn-medium">—</strong><small>Best-estimate in-year churn ARR</small></article>
-            <article class="scenario-card high"><span>HIGH CASE</span><strong id="churn-high">—</strong><small>Downside in-year churn ARR</small></article>
-          </div>
-
           <div class="dashboard-grid">
-            <article class="panel wide">
+            <article class="panel wide task-panel" data-dashboard-scope="decision">
               <div class="panel-head"><div><p class="eyebrow">1 · SO WHAT?</p><h2>Operational task queue</h2></div><div class="panel-tools"><select id="dash-risk-filter" aria-label="Filter by risk"><option value="all">All risk</option><option value="Critical">Critical</option><option value="High">High</option><option value="Monitor">Monitor</option></select><select id="dash-type-filter" aria-label="Filter by account type"><option value="all">All account types</option></select><button class="text-button" data-jump="accounts">Full queue →</button></div></div>
               <div id="top-accounts" class="account-list"></div>
             </article>
-            <article class="panel">
+            <article class="panel" data-dashboard-scope="context">
               <div class="panel-head"><div><p class="eyebrow">PORTFOLIO SHAPE</p><h2>Renewal ARR by tier</h2></div></div>
               <div id="tier-chart" class="tier-chart"></div>
             </article>
-            <article class="panel">
+            <article class="panel" data-dashboard-scope="context">
               <div class="panel-head"><div><p class="eyebrow">MODEL EVIDENCE</p><h2>Top triggered signals</h2></div></div>
               <div id="signal-chart" class="signal-chart"></div>
             </article>
-            <article class="panel behavior-panel">
+            <article class="panel behavior-panel" data-dashboard-scope="context">
               <div class="panel-head"><div><p class="eyebrow">2 · WHY?</p><h2>Behavioral cohort health</h2></div><span class="coverage">Missing behavioral fields are shown—not inferred.</span></div>
               <div class="table-wrap"><table><thead><tr><th>Account</th><th>Account type</th><th>Adoption depth</th><th>Multi-user stability</th><th>High-value actions</th><th>Utilization</th><th>Operational trigger</th></tr></thead><tbody id="behavior-body"></tbody></table></div>
             </article>
-            <article class="panel wide forecast-panel">
+            <article class="panel wide portfolio-health-panel" data-dashboard-scope="context">
+              <div class="panel-head"><div><p class="eyebrow">SECONDARY INDICATORS</p><h2>Portfolio operating context</h2></div><span class="coverage">Descriptive context—not used to set the churn forecast.</span></div>
+              <div class="context-kpi-grid">
+                <div class="context-kpi"><span>Directional NDR</span><strong id="kpi-ndr">—</strong><small id="kpi-ndr-note">Closed-renewal proxy</small></div>
+                <div class="context-kpi"><span>Contraction proxy</span><strong id="kpi-contraction">—</strong><small id="kpi-contraction-note">Booking below renewal ARR</small></div>
+                <div class="context-kpi"><span>ARR concentration</span><strong id="kpi-concentration">—</strong><small id="kpi-concentration-note">Top 10 account share</small></div>
+                <div class="context-kpi"><span>Dark accounts</span><strong id="kpi-dark">—</strong><small id="kpi-dark-note">No CSM note or Gong</small></div>
+                <div class="context-kpi"><span>Conflict rate</span><strong id="kpi-conflict">—</strong><small id="kpi-conflict-note">Healthy but text/rules disagree</small></div>
+                <div class="context-kpi"><span>Stalled renewals</span><strong id="kpi-stalled">—</strong><small id="kpi-stalled-note">Open more than 90 days</small></div>
+                <div class="context-kpi"><span>Evidence coverage</span><strong id="kpi-coverage">—</strong><small id="kpi-coverage-note">Critical/high with evidence</small></div>
+                <div class="context-kpi"><span>Rule fire rate</span><strong id="kpi-firerate">—</strong><small id="kpi-firerate-note">Accounts with a signal</small></div>
+              </div>
+              <div class="context-chart-grid"><div><p class="eyebrow">SEGMENT VIEW</p><h3>Risk exposure by segment</h3><div id="segment-churn-chart" class="tier-chart"></div></div><div><p class="eyebrow">CHANNEL VIEW</p><h3>Partner versus direct risk</h3><div id="channel-chart" class="tier-chart"></div></div></div>
+            </article>
+            <article class="panel wide forecast-panel" data-dashboard-scope="decision">
               <div class="panel-head"><div><p class="eyebrow">FORECAST OUTPUT</p><h2>Quarterly churn and expansion</h2></div><span class="chip">Medium / P50 case</span></div>
               <div id="quarter-chart" class="quarter-chart"></div>
             </article>
-            <article class="panel">
+            <article class="panel" data-dashboard-scope="decision">
               <div class="panel-head"><div><p class="eyebrow">HISTORICAL CHECK</p><h2>Calibration by tier</h2></div></div>
               <div id="calibration-table"></div>
             </article>
-            <article class="panel">
+            <article class="panel" data-dashboard-scope="decision">
               <div class="panel-head"><div><p class="eyebrow">STRUCTURED ↔ TEXT</p><h2>Conflict accounts</h2></div><button class="text-button" data-jump="accounts">Inspect →</button></div>
               <div id="conflict-list" class="mini-list"></div>
             </article>
-            <article class="panel">
+            <article class="panel" data-dashboard-scope="decision">
               <div class="panel-head"><div><p class="eyebrow">CRO THIS WEEK</p><h2>Commercial escalations</h2></div></div>
               <div id="cro-list" class="mini-list"></div>
             </article>
-            <article class="panel">
+            <article class="panel" data-dashboard-scope="decision">
               <div class="panel-head"><div><p class="eyebrow">CCO THIS WEEK</p><h2>Customer escalations</h2></div></div>
               <div id="cco-list" class="mini-list"></div>
             </article>
-            <article class="panel wide">
+            <article class="panel wide" data-dashboard-scope="decision">
               <div class="panel-head"><div><p class="eyebrow">CHECKABLE MATH</p><h2>Forecast formulas and assumptions</h2></div><span class="chip">Rule versioned</span></div>
               <dl class="contract-list"><dt>Churn case</dt><dd>Σ account Renewal ARR × tier scenario rate</dd><dt>Medium rates</dt><dd>Critical 65% · High 40% · Monitor 15% · Healthy/Expansion 4%</dd><dt>Quarter</dt><dd>Account close/renewal date mapped to fiscal Q1 Feb–Apr, Q2 May–Jul, Q3 Aug–Oct, Q4 Nov–Jan</dd><dt>Expansion</dt><dd>Σ Expansion/New ARR × source probability; 50% fallback when probability is absent</dd><dt>Calibration</dt><dd>Observed lost renewal count ÷ all historical closed renewals, recalculated by current tier rules</dd></dl>
             </article>
@@ -130,7 +170,7 @@
       </section>
 
       <section id="ai" class="view">
-        <div class="section-intro"><div><p class="eyebrow">STRUCTURED + UNSTRUCTURED</p><h2>Claude signal extraction</h2><p>Claude reads only the mapped CSM note and Gong highlight for each selected renewal. Its output is schema-validated, recorded with a prompt version, and added as evidence—not accepted as ground truth.</p></div><span id="ai-status" class="file-badge">Not run</span></div>
+        <div class="section-intro"><div><p class="eyebrow">STRUCTURED + TEXT</p><h2>Data quality and text extraction</h2><p>Text extraction reads the CSM note and Gong highlight for each renewal. Output is schema-validated, recorded with a prompt version, and added as evidence — not accepted as ground truth.</p></div><span id="ai-status" class="file-badge">Not run</span></div>
         <div class="ai-grid">
           <article class="panel">
             <h3>Connection</h3>
@@ -151,6 +191,8 @@
           </article>
         </div>
         <article class="panel ai-results-panel"><div class="panel-head"><div><p class="eyebrow">RUN AUDIT</p><h2>AI extraction results</h2></div><button id="export-ai" class="button secondary" disabled>Export AI audit</button></div><div class="table-wrap"><table><thead><tr><th>Account</th><th>Category</th><th>Risk</th><th>Expansion</th><th>Confidence</th><th>Evidence</th><th>Status</th></tr></thead><tbody id="ai-results-body"><tr><td colspan="7" class="muted">No AI run yet.</td></tr></tbody></table></div></article>
+        <div id="quality-mount" class="audit-mount"></div>
+        <div id="runs-mount" class="audit-mount"></div>
       </section>
 
       <section id="accounts" class="view">
@@ -173,38 +215,13 @@
         </div>
         <div class="rule-summary"><span><strong id="active-rule-count">0</strong> active rules</span><span><strong id="rule-version">v1</strong> current version</span><span><strong id="last-rule-change">Default</strong> last change</span></div>
         <div id="rule-list" class="rule-list"></div>
+        <div id="trigger-library-mount" class="combined-mount"></div>
       </section>
 
       <section id="quality" class="view">
         <div class="section-intro"><div><p class="eyebrow">FAIL LOUDLY</p><h2>Data quality gate</h2><p>The run separates blocking schema problems from row-level warnings. Findings are visible and exportable; nothing is silently repaired.</p></div><button id="export-quality" class="button secondary" disabled>Export findings</button></div>
         <div id="quality-summary" class="quality-summary"></div>
         <div class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>Severity</th><th>Check</th><th>Rows</th><th>What it means</th><th>Action</th></tr></thead><tbody id="quality-body"></tbody></table></div></div>
-      </section>
-
-      <section id="health" class="view">
-        <div class="section-intro"><div><p class="eyebrow">OPERATIONAL DEPTH</p><h2>Portfolio health metrics</h2><p>Secondary indicators for ongoing portfolio management. These don't drive the weekly queue — they inform quarterly calibration, coverage reviews, and board reporting.</p></div></div>
-        <div class="metric-grid">
-          <article class="metric-card neutral"><span>Net dollar retention</span><strong id="kpi-ndr">—</strong><small id="kpi-ndr-note">Upload data to calculate</small></article>
-          <article class="metric-card warning"><span>Contraction rate</span><strong id="kpi-contraction">—</strong><small id="kpi-contraction-note">Renewed at lower ARR</small></article>
-          <article class="metric-card neutral"><span>ARR concentration</span><strong id="kpi-concentration">—</strong><small id="kpi-concentration-note">Top 10 accounts' share</small></article>
-          <article class="metric-card neutral"><span>Dark accounts</span><strong id="kpi-dark">—</strong><small id="kpi-dark-note">No CSM note + no Gong</small></article>
-        </div>
-        <div class="metric-grid" style="margin-top:14px">
-          <article class="metric-card neutral"><span>Conflict rate</span><strong id="kpi-conflict">—</strong><small id="kpi-conflict-note">Healthy but rules disagree</small></article>
-          <article class="metric-card neutral"><span>Stalled renewals</span><strong id="kpi-stalled">—</strong><small id="kpi-stalled-note">Open >90d, no stage move</small></article>
-          <article class="metric-card neutral"><span>Coverage ratio</span><strong id="kpi-coverage">—</strong><small id="kpi-coverage-note">Critical+High with evidence</small></article>
-          <article class="metric-card neutral"><span>Rule fire rate</span><strong id="kpi-firerate">—</strong><small id="kpi-firerate-note">Accounts with ≥1 signal</small></article>
-        </div>
-        <div class="dashboard-grid" style="margin-top:14px">
-          <article class="panel">
-            <div class="panel-head"><div><p class="eyebrow">SEGMENT VIEW</p><h2>Churn exposure by segment</h2></div></div>
-            <div id="segment-churn-chart" class="tier-chart"></div>
-          </article>
-          <article class="panel">
-            <div class="panel-head"><div><p class="eyebrow">CHANNEL VIEW</p><h2>Partner vs direct retention</h2></div></div>
-            <div id="channel-chart" class="tier-chart"></div>
-          </article>
-        </div>
       </section>
 
       <section id="runs" class="view">
@@ -215,12 +232,12 @@
       <section id="brief" class="view">
         <div class="section-intro"><div><p class="eyebrow">HANDOFF + EXECUTIVE CASE</p><h2>Submission brief</h2><p>The operating case, pushback response, rollout plan, workflow log, and demo record travel with the tool.</p></div><div class="submission-actions"><button id="export-demo" class="button secondary" disabled>Export demo record</button><button id="export-brief" class="button primary">Export submission brief</button></div></div>
         <div class="brief-grid">
-          <article class="panel brief-block"><h3>Executive memo</h3><p><strong>Decision:</strong> run SignalOps weekly as a governed triage layer before forecast calls. It converts one CRM export into a validated risk queue, three churn scenarios, quarterly exposure, and named executive actions. It does not replace the forecast owner.</p><p><strong>Expected outcome:</strong> shorter account-review preparation, earlier save-plan ownership, and an auditable record of why an account moved. Measure adoption by weekly run completion, action acceptance, false-positive review, and forecast error by tier.</p></article>
-          <article class="panel brief-block"><h3>CRO pushback response</h3><div class="compact-copy">You are right that CSM language is noisy and recovery is possible. I will not treat concern words as churn. I will keep the P50 forecast where structured deterioration and unresolved text agree; text-only flags stay in human review. We settle the disagreement by back-testing the flagged cohort against closed outcomes, tracking overrides, and measuring error by tier. Until that evidence supports a change, the medium case remains the operating commitment.</div></article>
+          <article class="panel brief-block"><h3>Executive memo</h3><p><strong>Decision:</strong> run Churn Tool weekly as a governed triage layer before forecast calls. It converts one CRM export into a validated risk queue, three churn scenarios, quarterly exposure, and named executive actions. It does not replace the forecast owner.</p><p><strong>Expected outcome:</strong> shorter account-review preparation, earlier save-plan ownership, and an auditable record of why an account moved. Measure adoption by weekly run completion, action acceptance, false-positive review, and forecast error by tier.</p></article>
+          <article class="panel brief-block"><h3>CRO pushback response</h3><div class="compact-copy">You are right that CSM language is noisy and recovery is possible. I will not treat concern words as churn. I will keep the P50 forecast where structured deterioration and unresolved text agree; text-only flags stay in human review. We settle the disagreement by back-testing the flagged cohort against closed outcomes, tracking overrides, and measuring error by tier. Until that evidence supports a change, the medium case remains the operating commitment.</div><details class="prompt-details"><summary>Read the full response</summary><div class="full-response"><p><strong>What is true in the critique.</strong> CSM notes are written for customer management, not statistical forecasting. They can be stale, cautious, inconsistent across CSMs, or describe an issue that has already been resolved. Tulip has also recovered difficult renewals before, so a negative note is not the same thing as a churn outcome.</p><p><strong>Where I agree and disagree.</strong> I agree that text-only concern should not automatically move committed churn ARR. I disagree that the noise makes the text disposable. When an unresolved customer statement agrees with low utilization, critical health, a pipeline forecast, or a recorded churn reason, ignoring it would create a more optimistic—but less defensible—forecast.</p><p><strong>How we settle it.</strong> For the next two forecast cycles, RevOps will retain every model flag, CRO/CSM override, cited evidence, and final outcome. We will measure observed churn by tier, false-positive rates for text-only versus combined signals, and forecast error by segment and stage. CSM leaders will review the five largest disagreements weekly and classify each note as current, resolved, or stale.</p><p><strong>Forecast commitment.</strong> I am keeping the current medium/P50 case as the operating forecast. Accounts with combined structured and unresolved text evidence remain in the forecast; text-only accounts remain review items until confirmed. If back-testing shows the combined-signal tier materially overstates churn, I will lower the scenario rate at the next monthly calibration—not override individual accounts until the total looks better.</p></div></details></article>
           <article class="panel brief-block"><h3>Operating model</h3><ul><li><strong>RevOps:</strong> upload, validate, publish queue, monitor calibration.</li><li><strong>CSM:</strong> confirm adoption and customer-context signals.</li><li><strong>AE:</strong> own commercial save and expansion actions.</li><li><strong>CRO/CCO:</strong> resolve the five highest-leverage escalations.</li><li><strong>Cadence:</strong> weekly run; monthly override review; quarterly rule calibration.</li></ul></article>
           <article class="panel brief-block"><h3>First 90 days</h3><ol><li><strong>Days 1–30:</strong> shadow forecast calls, baseline false positives, lock metric definitions.</li><li><strong>Days 31–60:</strong> route accepted actions, add backend AI proxy, monitor completion and error.</li><li><strong>Days 61–90:</strong> recalibrate scenario rates, publish governance owner, decide production rollout.</li></ol></article>
           <article class="panel brief-block"><h3>Demo evidence</h3><div class="status-checklist"><div class="status-check"><b>✓</b><span>Actual supplied workbook fixture tested.</span></div><div class="status-check"><b>✓</b><span>Deterministic rules, formulas, exports, and run hash captured.</span></div><div class="status-check pending"><b>○</b><span>Run “Test connection” with a throwaway Anthropic key and capture a screenshot/Loom.</span></div><div class="status-check pending"><b>○</b><span>Export the demo record after the live AI run.</span></div></div></article>
-          <article class="panel brief-block"><h3>AI workflow log</h3><ul><li><strong>Model:</strong> Claude Sonnet 5 via Messages API.</li><li><strong>Time saved:</strong> roughly 90 minutes across schema review, rule scaffolding, and UI iteration; calculations were independently fixture-tested.</li><li><strong>Suspect output caught:</strong> negated risk language could be marked active; the prompt now treats resolved and negated statements as no current risk.</li><li><strong>Control:</strong> temperature 0, strict schema, invalid output scores zero, prompt version recorded.</li><li><strong>Current weakness:</strong> AI cannot reliably separate stale risk from current risk when notes have no timestamp.</li></ul></article>
+          <article class="panel brief-block"><h3>AI workflow log</h3><ul><li><strong>Model:</strong> Claude Sonnet 4.6 via Messages API.</li><li><strong>Time saved:</strong> roughly 90 minutes across schema review, rule scaffolding, and UI iteration; calculations were independently fixture-tested.</li><li><strong>Suspect output caught:</strong> negated risk language could be marked active; the prompt now treats resolved and negated statements as no current risk.</li><li><strong>Control:</strong> strict schema, invalid output scores zero, prompt version recorded.</li><li><strong>Current weakness:</strong> cannot reliably separate stale risk from current risk when notes have no timestamp.</li></ul></article>
           <article class="panel brief-block wide"><h3>Prompts that did the work</h3><details class="prompt-details"><summary>View four prompts verbatim</summary><pre>1. Inspect the supplied CRM export and data dictionary. Identify load-bearing fields, definitional drift, contradictions, missingness, and checks that must block or warn before any churn forecast is produced.
 
 2. Design a deterministic account-level churn and expansion scoring model that combines structured health, utilization, renewal fields, CSM notes, Gong highlights, and recorded churn reasons. Every score must retain source evidence, an owner, and a recommended action.
@@ -230,6 +247,7 @@
 4. Review structured-versus-unstructured conflicts. Find accounts where customer text materially changes the structured conclusion, explain the conflict in one sentence, and route a specific action to the correct owner without inventing facts.</pre></details></article>
           <article class="panel brief-block wide"><h3>Assignment completion checklist</h3><div class="status-checklist"><div class="status-check"><b>✓</b><span>FY selector includes explicit FY26 assignment mode.</span></div><div class="status-check"><b>✓</b><span>Low / P50 / high forecast, quarterly churn and expansion, calibration, conflicts, CRO and CCO lists.</span></div><div class="status-check"><b>✓</b><span>One-page how-to, executive case, operating model, 90-day plan, and workflow log included.</span></div><div class="status-check pending"><b>○</b><span>Only external step remaining: record visible demo evidence after entering temporary credentials.</span></div></div></article>
         </div>
+        <div id="handoff-guide-mount" class="combined-mount"></div>
       </section>
 
       <section id="howto" class="view">
@@ -276,11 +294,11 @@
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" integrity="sha256-yVBhl8r4CaB1tt7h2g02+xnacVj/6KiOewyWxdhiPJk=" crossorigin="anonymous"></script>
   <script>
-/* SignalOps AI v1.0 — deterministic, browser-only RevOps triage */
+/* Churn Tool v1.0 — deterministic RevOps decision routing */
 (function () {
   'use strict';
 
-  const STORAGE = { rules: 'signalops.rules.v1', meta: 'signalops.rules.meta.v1', runs: 'signalops.runs.v1', triggers:'signalops.triggers.v1' };
+  const STORAGE = { rules: 'signalops.rules.v1', meta: 'signalops.rules.meta.v1', runs: 'signalops.runs.v1', triggers:'signalops.triggers.v1', reviews:'signalops.reviews.v1' };
   const FIELD_ALIASES = {
     account: ['Account Name','Account','Customer Name','Customer','Company Name','Company'], owner: ['Opportunity Owner','Owner','Account Owner','Sales Rep','AE','CSM Owner'], opportunity: ['Opportunity Name','Opportunity','Deal Name'],
     recordType: ['Opportunity Record Type','Record Type','Opportunity Type'], dealType: ['Deal Type','Type','Motion'], stage: ['Stage','Stage Name','Opportunity Stage','Status'],
@@ -323,7 +341,7 @@
     {id:'adoption',name:'Adoption reset',channel:'CSM action',text:'Launch a 30-day adoption reset for {{account}}: {{reason}}. Baseline usage, name the blocked workflow, and set a weekly target.'},
     {id:'executive',name:'Executive sponsor',channel:'Leadership ask',text:'Request executive sponsor support for {{account}}: {{reason}}. Secure one decision, one owner, and one deadline.'}
   ];
-  let state = { rows: [], accounts: [], quality: [], fileName: '', fileHash: '', headers: [], runAt: null, aiResults: [], aiRun: null, selectedFY:null };
+  let state = { rows: [], accounts: [], quality: [], fileName: '', fileHash: '', headers: [], runAt: null, aiResults: [], aiRun: null, selectedFY:null, dashboardTab:'decision' };
   let aiAbort = null;
   const AI_PROMPT_VERSION = 'churn-expansion-extraction-v2.0';
   const SCENARIOS = {
@@ -335,6 +353,7 @@
   let ruleMeta = loadJson(STORAGE.meta, { version: 1, changedAt: null, history: [] });
   let runHistory = loadJson(STORAGE.runs, []);
   let triggers = loadJson(STORAGE.triggers, DEFAULT_TRIGGERS);
+  let reviews = loadJson(STORAGE.reviews, {});
 
   function rule(id,name,usecase,field,operator,value,points,label,owner,action) {
     return { id,name,usecase,field,operator,value,points,label,owner,action,active:true,createdAt:'2026-07-19T00:00:00.000Z',updatedAt:'2026-07-19T00:00:00.000Z',reason:'Default rule derived from the supplied Tulip context and data dictionary.' };
@@ -360,9 +379,10 @@
   function switchView(id) {
     document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
     document.querySelectorAll('.nav-item').forEach(v=>v.classList.toggle('active',v.dataset.view===id));
-    const titles={dashboard:'Renewal command center',triggers:'Action trigger library',ai:'AI signal extraction',accounts:'Account action queue',rules:'Rule memory',quality:'Data quality gate',health:'Portfolio health',runs:'Run history',brief:'Submission brief',howto:'How to run'};
+    const titles={dashboard:'Command center',triggers:'Rules & action triggers',ai:'Data & text extraction',accounts:'Account action queue',rules:'Rules & action triggers',quality:'Data & text extraction',runs:'Data & text extraction',brief:'Handoff',howto:'Handoff'};
     $('page-title').textContent=titles[id]; location.hash=id;
   }
+  function setDashboardTab(tab){state.dashboardTab=tab==='context'?'context':'decision';document.querySelectorAll('[data-dashboard-scope]').forEach(el=>el.classList.toggle('hidden',el.dataset.dashboardScope!==state.dashboardTab));document.querySelectorAll('[data-dashboard-tab]').forEach(b=>{const active=b.dataset.dashboardTab===state.dashboardTab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));});const grid=document.querySelector('.dashboard-grid');if(grid){grid.classList.toggle('context-mode',state.dashboardTab==='context');grid.classList.toggle('decision-mode',state.dashboardTab==='decision');}}
 
   async function handleFile(file) {
     if (!file) return;
@@ -379,14 +399,38 @@
       }
       if (!rows.length) throw new Error('The first sheet has no data rows.');
       state.headers=Object.keys(rows[0]); state.rows=rows;
-      const fiscalYears=[...new Set(rows.map(r=>{let fy=num(val(r,'closeFY'));if(fy)return fy;const fp=String(val(r,'fiscalPeriod')||val(r,'closeFYQ')||'');const m=fp.match(/FY\s*(\d{2,4})/i);if(m){const yr=Number(m[1]);return yr<100?2000+yr:yr}return null}).filter(Boolean))].sort((a,b)=>a-b);state.selectedFY=fiscalYears.includes(2027)?2027:fiscalYears.includes(2026)?2026:(fiscalYears.at(-1)||null);renderFiscalYears(fiscalYears);
+      const fiscalYears=[...new Set(rows.map(r=>{let fy=num(val(r,'closeFY'));if(fy)return fy;const fp=String(val(r,'fiscalPeriod')||'');const m=fp.match(/FY\s*(\d{2,4})/i);if(m){const yr=Number(m[1]);return yr<100?2000+yr:yr}return null}).filter(Boolean))].sort((a,b)=>a-b);state.selectedFY=fiscalYears.includes(2027)?2027:fiscalYears.includes(2026)?2026:(fiscalYears.at(-1)||null);renderFiscalYears(fiscalYears);
       state.quality=validateData(rows,state.headers);
       const blockers=state.quality.filter(q=>q.severity==='blocker');
       if (blockers.length) { state.accounts=[]; renderAll(); switchView('quality'); throw new Error('Run stopped: '+blockers.length+' blocking schema issue'+(blockers.length===1?'':'s')+'.'); }
       state.accounts=buildAccounts(rows); state.runAt=new Date(); state.aiResults=[];state.aiRun=null;recordRun(); renderAll();
       $('empty-state').classList.add('hidden'); $('dashboard-content').classList.remove('hidden'); $('export-button').disabled=false; $('export-quality').disabled=false;
-      $('file-badge').textContent=file.name;$('run-ai').disabled=false;$('test-ai').disabled=false;$('export-demo').disabled=false; switchView('dashboard'); toast('Run complete: '+number(rows.length)+' rows analyzed');
+      $('file-badge').textContent=file.name;$('run-ai').disabled=false;$('test-ai').disabled=false;$('export-demo').disabled=false; switchView('dashboard'); toast('Structured scoring complete');
+      const existingKey=($('setup-key')?$('setup-key').value:'')|| $('anthropic-key').value.trim();
+      if(existingKey.length>=10){
+        $('anthropic-key').value=existingKey;
+        toast('Testing text extraction connection…');
+        try{await testAIConnection();toast('✓ Successfully connected — go to Data & text extraction to run')}
+        catch(e){toast('✗ Key failed: '+e.message+' — check key in Data & text extraction')}
+      } else{showKeyPrompt()}
     } catch (error) { $('file-badge').textContent=state.fileName||'No dataset loaded'; toast(error.message||'Could not read this file'); renderQuality(); }
+  }
+
+  function showKeyPrompt(){
+    const old=document.getElementById('key-prompt');if(old)old.remove();
+    const banner=document.createElement('div');banner.id='key-prompt';banner.className='run-banner';
+    banner.style.cssText='background:#fff6e5;border-color:#ead5ad;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start';
+    banner.innerHTML=`<div style="flex:1;min-width:260px"><strong style="color:#a86913;font-size:13px">Text extraction available</strong><p style="font-size:11px;color:#64736f;margin:6px 0 0;line-height:1.6">To read CSM notes and Gong highlights, connect a Claude API key:</p><ol style="font-size:11px;color:#64736f;margin:6px 0 0;padding-left:18px;line-height:1.7"><li>Go to <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--green);font-weight:700">console.anthropic.com/settings/keys</a></li><li>Click <strong>Create Key</strong> → copy it</li><li>Paste below and click <strong>Test</strong></li></ol><p style="font-size:9px;color:#8d9590;margin:6px 0 0">Key stays in browser memory. Your account, your usage.</p></div><div style="display:flex;flex-direction:column;gap:6px;min-width:240px"><input id="prompt-key-input" type="password" placeholder="sk-ant-api03-..." style="padding:10px;border:1px solid #ead5ad;border-radius:7px;font:12px inherit;width:100%"><div style="display:flex;gap:6px"><button class="button primary" id="prompt-key-test" style="flex:1">Test & connect</button><button class="button secondary" id="prompt-key-skip">Skip</button></div><div id="prompt-key-status" style="font-size:11px;min-height:16px"></div></div>`;
+    $('dashboard-content').insertBefore(banner,$('dashboard-content').children[1]);
+    $('prompt-key-test').addEventListener('click',async()=>{
+      const key=$('prompt-key-input').value.trim();if(key.length<10){$('prompt-key-status').textContent='Key too short';$('prompt-key-status').style.color='#b43d3d';return}
+      $('anthropic-key').value=key;$('prompt-key-status').textContent='Testing…';$('prompt-key-status').style.color='#a86913';$('prompt-key-test').disabled=true;
+      try{await testAIConnection();$('prompt-key-status').innerHTML='<strong style="color:#146c55">✓ Successfully connected.</strong> Go to Data & text extraction to run.';banner.style.background='#edf8f3';banner.style.borderColor='#c4dfd3';setTimeout(()=>{banner.style.transition='opacity .3s';banner.style.opacity='0';setTimeout(()=>banner.remove(),300)},4000)}
+      catch(e){$('prompt-key-status').innerHTML='<strong style="color:#b43d3d">✗ Failed:</strong> '+esc(e.message);$('prompt-key-status').style.color='#b43d3d'}
+      finally{$('prompt-key-test').disabled=false}
+    });
+    $('prompt-key-input').addEventListener('keydown',e=>{if(e.key==='Enter')$('prompt-key-test').click()});
+    $('prompt-key-skip').addEventListener('click',()=>{banner.remove();toast('Skipped — structured scoring only. Add a key in Data & text extraction later.')});
   }
   async function digest(buffer) { try { const hash=await crypto.subtle.digest('SHA-256',buffer); return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,12); } catch { return 'unavailable'; } }
   function renderFiscalYears(years){const select=$('fiscal-year');select.innerHTML=years.map(y=>`<option value="${y}">FY${String(y).slice(-2)}</option>`).join('')+'<option value="all">All FYs</option>';select.value=state.selectedFY||'all';select.disabled=false;}
@@ -448,8 +492,7 @@
     const isOpen=outcome? !['won','lost','closed won','closed lost','churned'].includes(outcome) : !/closed won|closed lost|churned/.test(stage);
     const motion=normalize(val(row,'recordType'))+' '+normalize(val(row,'dealType'));
     const isRenewal=motion.trim()?/subscription renewal|renewal|retention|churn|contract/.test(motion):true;
-    let closeFY=num(val(row,'closeFY'));
-    if(!closeFY){const fp=String(val(row,'fiscalPeriod')||val(row,'closeFYQ')||'');const m=fp.match(/FY\s*(\d{2,4})/i);if(m){const yr=Number(m[1]);closeFY=yr<100?2000+yr:yr}}
+    const closeFY=num(val(row,'closeFY'));
     const matchesFY=state.selectedFY===null||state.selectedFY==='all'||(closeFY!==null&&closeFY===Number(state.selectedFY));
     return isOpen&&isRenewal&&matchesFY;
   }
@@ -496,60 +539,7 @@
     });return buckets;
   }
 
-  function renderAll(){renderDashboard();renderAccounts();renderTriggers();renderRules();renderQuality();renderRuns();renderAIResults();renderHealth();}
-  function renderHealth(){
-    if(!state.accounts.length)return;
-    // NDR
-    const closedRenewals=state.rows.filter(r=>/subscription renewal|renewal/.test(normalize(val(r,'recordType'))+' '+normalize(val(r,'dealType')))&&['won','lost'].includes(normalize(val(r,'outcome'))));
-    const wonArr=closedRenewals.filter(r=>normalize(val(r,'outcome'))==='won').reduce((s,r)=>s+(num(val(r,'renewalArr'))||0),0);
-    const totalArr=closedRenewals.reduce((s,r)=>s+(num(val(r,'renewalArr'))||0),0);
-    const ndr=totalArr>0?wonArr/totalArr:null;
-    $('kpi-ndr').textContent=ndr!==null?(ndr*100).toFixed(1)+'%':'—';
-    $('kpi-ndr-note').textContent=ndr!==null?money(wonArr)+' retained of '+money(totalArr):'No closed renewals';
-    if(ndr!==null){const c=$('kpi-ndr').closest('.metric-card');c.className='metric-card '+(ndr<.85?'danger':ndr<.95?'warning':'positive')}
-    // Contraction
-    const wonCount=closedRenewals.filter(r=>normalize(val(r,'outcome'))==='won').length;
-    const contracted=closedRenewals.filter(r=>{const b=num(val(r,'totalBooking'))||0,a=num(val(r,'renewalArr'))||0;return normalize(val(r,'outcome'))==='won'&&b>0&&a>0&&b<a*.85}).length;
-    $('kpi-contraction').textContent=wonCount>0?Math.round(contracted/wonCount*100)+'%':'—';
-    $('kpi-contraction-note').textContent=contracted+' of '+wonCount+' won renewals contracted';
-    // Concentration
-    const sorted=[...state.accounts].sort((a,b)=>b.renewalArr-a.renewalArr);
-    const top10=sorted.slice(0,10).reduce((s,a)=>s+a.renewalArr,0),total=state.accounts.reduce((s,a)=>s+a.renewalArr,0);
-    const conc=total>0?top10/total:0;
-    $('kpi-concentration').textContent=(conc*100).toFixed(0)+'%';
-    $('kpi-concentration-note').textContent='Top 10 = '+money(top10)+' of '+money(total);
-    if(conc>.4)$('kpi-concentration').closest('.metric-card').className='metric-card danger';else if(conc>.25)$('kpi-concentration').closest('.metric-card').className='metric-card warning';
-    // Dark
-    const dark=state.accounts.filter(a=>{const rows=state.rows.filter((_,i)=>a.rows.includes(i+2));return rows.every(r=>!val(r,'note')&&!val(r,'gong'))});
-    $('kpi-dark').textContent=dark.length;$('kpi-dark-note').textContent=money(dark.reduce((s,a)=>s+a.renewalArr,0))+' ARR with no text signals';
-    if(dark.length>5)$('kpi-dark').closest('.metric-card').className='metric-card danger';
-    // Conflict
-    const healthy=state.accounts.filter(a=>normalize(a.health)==='healthy'),conflicted=healthy.filter(a=>a.risk>=20);
-    $('kpi-conflict').textContent=healthy.length>0?Math.round(conflicted.length/healthy.length*100)+'%':'—';
-    $('kpi-conflict-note').textContent=conflicted.length+' of '+healthy.length+' "Healthy" flagged by rules';
-    if(conflicted.length>3)$('kpi-conflict').closest('.metric-card').className='metric-card warning';
-    // Stalled
-    const stalled=state.accounts.filter(a=>{const rows=state.rows.filter((_,i)=>a.rows.includes(i+2));return rows.some(r=>{const age=num(val(r,'age'))||num(val(r,'recalAge'))||0;return age>90&&/open|at risk|1 at risk|2 open/.test(normalize(val(r,'stage')))})});
-    $('kpi-stalled').textContent=stalled.length;$('kpi-stalled-note').textContent=money(stalled.reduce((s,a)=>s+a.renewalArr,0))+' ARR stalled >90d';
-    if(stalled.length>3)$('kpi-stalled').closest('.metric-card').className='metric-card warning';
-    // Coverage
-    const urgent=state.accounts.filter(a=>a.tier==='Critical'||a.tier==='High'),covered=urgent.filter(a=>a.evidence.length>0);
-    $('kpi-coverage').textContent=urgent.length>0?Math.round(covered.length/urgent.length*100)+'%':'—';
-    $('kpi-coverage-note').textContent=covered.length+' of '+urgent.length+' have triggered evidence';
-    // Fire rate
-    const fired=state.accounts.filter(a=>a.evidence.length>0);
-    $('kpi-firerate').textContent=state.accounts.length>0?Math.round(fired.length/state.accounts.length*100)+'%':'—';
-    $('kpi-firerate-note').textContent=fired.length+' of '+state.accounts.length+' accounts signaled';
-    // Segment churn chart
-    const segs={};state.accounts.forEach(a=>{const s=a.segment||'Unknown';if(!segs[s])segs[s]={total:0,atRisk:0};segs[s].total+=a.renewalArr;if(['Critical','High'].includes(a.tier))segs[s].atRisk+=a.renewalArr});
-    const segMax=Math.max(...Object.values(segs).map(s=>s.total),1);
-    $('segment-churn-chart').innerHTML=Object.entries(segs).sort((a,b)=>b[1].atRisk-a[1].atRisk).map(([seg,d])=>`<div class="bar-row"><span>${esc(seg)}</span><div class="bar-track" style="position:relative"><div class="bar-fill" style="width:${d.total/segMax*100}%;background:#d9dfdc;border-radius:9px"></div><div class="bar-fill" style="width:${d.atRisk/segMax*100}%;background:#b43d3d;border-radius:9px;position:absolute;top:0;left:0;height:100%"></div></div><b>${money(d.atRisk)}</b></div>`).join('');
-    // Channel chart
-    const channels={Direct:{total:0,atRisk:0},Partner:{total:0,atRisk:0}};
-    state.rows.filter(isCurrentOpenRenewal).forEach(r=>{const gen=normalize(val(r,'generatedBy')),arr=num(val(r,'renewalArr'))||0,ch=gen.includes('partner')?'Partner':'Direct';channels[ch].total+=arr;const s=scoreRow(r);if(s.risk>=40)channels[ch].atRisk+=arr});
-    const chMax=Math.max(...Object.values(channels).map(c=>c.total),1);
-    $('channel-chart').innerHTML=Object.entries(channels).map(([ch,d])=>`<div class="bar-row"><span>${ch}</span><div class="bar-track" style="position:relative"><div class="bar-fill" style="width:${d.total/chMax*100}%;background:#d9dfdc;border-radius:9px"></div><div class="bar-fill" style="width:${d.atRisk/chMax*100}%;background:#d28417;border-radius:9px;position:absolute;top:0;left:0;height:100%"></div></div><b>${money(d.atRisk)} at risk</b></div>`).join('');
-  }
+  function renderAll(){renderDashboard();renderPortfolioContext();renderAccounts();renderTriggers();renderRules();renderQuality();renderRuns();renderAIResults();}
   function renderDashboard(){
     if(!state.accounts.length)return; const counts=countTiers();
     $('run-banner').innerHTML=`<strong>${state.selectedFY==='all'?'All fiscal years':'FY'+String(state.selectedFY).slice(-2)}</strong> · run <strong>${esc(state.fileHash)}</strong> · rule set <strong>v${ruleMeta.version}</strong> · ${number(state.rows.length)} rows → ${number(state.accounts.length)} accounts. Same file, year, and rules = same queue.`;
@@ -567,14 +557,29 @@
     const quarters=quarterlyForecast(),qmax=Math.max(...Object.values(quarters).flatMap(x=>[x.churn,x.expansion]),1);
     $('quarter-chart').innerHTML=Object.entries(quarters).filter(([q,x])=>q!=='Unmapped'||x.churn||x.expansion).map(([q,x])=>`<div class="quarter-row"><strong>${q}</strong><div class="dual-track"><div class="dual-churn" title="Churn" style="width:${x.churn/qmax*50}%"></div><div class="dual-expansion" title="Expansion" style="width:${x.expansion/qmax*50}%"></div></div><b>${money(x.churn)} churn</b><b class="expansion-value">${money(x.expansion)} expand</b></div>`).join('');
     const cal=calibration();$('calibration-table').innerHTML=`<table class="cal-table"><thead><tr><th>Tier</th><th>Closed</th><th>Observed churn</th><th>Medium assumption</th></tr></thead><tbody>${Object.entries(cal).filter(([,x])=>x.n).map(([tier,x])=>`<tr><td>${tier}</td><td>${x.n}</td><td>${(x.churn/x.n*100).toFixed(0)}%</td><td>${((SCENARIOS[tier]?.medium||0)*100).toFixed(0)}%</td></tr>`).join('')}</tbody></table><p class="muted">Historical directional check; not statistical calibration.</p>`;
-    const conflicts=state.accounts.filter(a=>a.ai?.conflict).sort((a,b)=>b.renewalArr-a.renewalArr).slice(0,5);
-    $('conflict-list').innerHTML=miniList(conflicts,a=>`${a.ai.risk_category}: ${a.ai.evidence_text||a.ai.reasoning}`,'No AI conflicts yet. Run extraction to populate this section.');
-    $('cro-list').innerHTML=miniList(state.accounts.filter(a=>['Critical','High'].includes(a.tier)).sort((a,b)=>b.renewalArr-a.renewalArr).slice(0,5),a=>`${a.actionOwner}: ${a.action}`,'No commercial escalations.');
-    $('cco-list').innerHTML=miniList(state.accounts.filter(a=>a.risk>=40||a.health==='Critical'||a.health==='At-Risk').sort((a,b)=>b.risk-a.risk||b.renewalArr-a.renewalArr).slice(0,5),a=>`CSM leadership: ${a.action}`,'No customer escalations.');
+    const textRiskIds=new Set(['risk-budget-text','risk-gong-seat','risk-reason']),conflicts=state.accounts.filter(a=>{const textRisk=a.evidence.find(e=>textRiskIds.has(e.ruleId)||e.ruleId?.startsWith('ai-'));const structuredOkay=normalize(a.health)==='healthy'||(a.utilization!==null&&a.utilization>=.75);a.conflictEvidence=a.ai?.conflict?(a.ai.evidence_text||a.ai.reasoning):(structuredOkay&&textRisk?textRisk.label:null);return Boolean(a.conflictEvidence);}).sort((a,b)=>b.renewalArr-a.renewalArr).slice(0,5);
+    $('conflict-list').innerHTML=miniList(conflicts,a=>`${a.health} structured status vs ${a.conflictEvidence}`,'No structured-versus-text conflicts detected for this fiscal year.');
+    $('cro-list').innerHTML=miniList(state.accounts.filter(a=>a.tier!=='Healthy').sort((a,b)=>priority(b)-priority(a)||b.renewalArr-a.renewalArr).slice(0,5),a=>`${a.actionOwner}: ${a.action}`,'No commercial escalations.');
+    $('cco-list').innerHTML=miniList(state.accounts.filter(a=>a.tier!=='Healthy').sort((a,b)=>b.risk-a.risk||b.renewalArr-a.renewalArr).slice(0,5),a=>`CSM leadership: validate ${a.evidence[0]?.label||'the risk signal'} and commit the next customer milestone.`,'No customer escalations.');
   }
   function renderOperationalQueue(){const risk=$('dash-risk-filter').value,type=$('dash-type-filter').value;const list=state.accounts.filter(a=>a.tier!=='Healthy'&&(risk==='all'||a.tier===risk)&&(type==='all'||a.segment===type)).slice(0,8);$('top-accounts').innerHTML=list.map(a=>`<div class="account-row"><span class="risk-pip ${a.tier.toLowerCase()}"></span><div><strong>${esc(a.name)}</strong><small><b>${esc(a.actionOwner)}:</b> ${esc(a.action)}</small><small>${esc(a.evidence[0]?.label||'No triggered rule')}</small></div><span class="arr">${money(a.renewalArr)}<small>${a.tier} · ${a.risk||a.expansion}</small></span></div>`).join('')||'<p class="muted">No accounts match these filters.</p>';}
   const metricValue=(v,kind='percent')=>v===null||v===undefined?'<span class="coverage">Not mapped</span>':kind==='percent'?`${Math.abs(v)<=1?Math.round(v*100):Math.round(v)}%`:number(v);
   function renderBehaviorHealth(){const list=state.accounts.filter(a=>a.tier!=='Healthy').slice(0,12);$('behavior-body').innerHTML=list.map(a=>`<tr><td><strong>${esc(a.name)}</strong></td><td>${esc(a.segment)}</td><td class="behavior-cell">${metricValue(a.featureDepth)}</td><td class="behavior-cell">${metricValue(a.multiUser)}</td><td class="behavior-cell">${metricValue(a.highValueActions,'number')}</td><td class="behavior-cell">${metricValue(a.utilization)}</td><td class="evidence"><strong>${esc(a.action)}</strong><small>${a.usageDelta===null||a.usageDelta===undefined?'Usage change not mapped':`Usage ${a.usageDelta>0?'+':''}${a.usageDelta}%`}</small></td></tr>`).join('')||'<tr><td colspan="7" class="muted">No at-risk cohort for this fiscal year.</td></tr>';}
+  function renderPortfolioContext(){
+    if(!state.rows.length)return;
+    const renewals=state.rows.filter(r=>/subscription renewal|renewal/.test(normalize(val(r,'recordType'))+' '+normalize(val(r,'dealType')))),closed=renewals.filter(r=>['won','lost'].includes(normalize(val(r,'outcome'))));
+    const baseArr=closed.reduce((s,r)=>s+(num(val(r,'renewalArr'))||0),0),retainedArr=closed.filter(r=>normalize(val(r,'outcome'))==='won').reduce((s,r)=>s+(num(val(r,'renewalArr'))||0)+Math.max(0,num(val(r,'newArr'))||0),0),ndr=baseArr>0?retainedArr/baseArr:null;
+    $('kpi-ndr').textContent=ndr===null?'—':(ndr*100).toFixed(1)+'%';$('kpi-ndr-note').textContent=ndr===null?'No closed renewals':`${money(retainedArr)} retained + expansion / ${money(baseArr)} starting ARR`;
+    const won=closed.filter(r=>normalize(val(r,'outcome'))==='won'),contracted=won.filter(r=>{const booking=num(val(r,'totalBooking')),arr=num(val(r,'renewalArr'));return booking!==null&&arr>0&&booking<arr*.85;});$('kpi-contraction').textContent=won.length?Math.round(contracted.length/won.length*100)+'%':'—';$('kpi-contraction-note').textContent=`${contracted.length} of ${won.length} won renewals; booking-field proxy`;
+    const sorted=[...state.accounts].sort((a,b)=>b.renewalArr-a.renewalArr),top10=sorted.slice(0,10).reduce((s,a)=>s+a.renewalArr,0),total=state.accounts.reduce((s,a)=>s+a.renewalArr,0),concentration=total?top10/total:0;$('kpi-concentration').textContent=total?(concentration*100).toFixed(0)+'%':'—';$('kpi-concentration-note').textContent=`Top 10 = ${money(top10)} of ${money(total)}`;
+    const accountRows=a=>state.rows.filter(r=>String(val(r,'account')||'Unnamed account')===a.name&&isCurrentOpenRenewal(r)),dark=state.accounts.filter(a=>accountRows(a).every(r=>!val(r,'note')&&!val(r,'gong')));$('kpi-dark').textContent=number(dark.length);$('kpi-dark-note').textContent=`${money(dark.reduce((s,a)=>s+a.renewalArr,0))} ARR without mapped notes`;
+    const textRiskIds=new Set(['risk-budget-text','risk-gong-seat','risk-reason']),healthy=state.accounts.filter(a=>normalize(a.health)==='healthy'),conflicted=healthy.filter(a=>a.evidence.some(e=>textRiskIds.has(e.ruleId)||e.ruleId?.startsWith('ai-')));$('kpi-conflict').textContent=healthy.length?Math.round(conflicted.length/healthy.length*100)+'%':'—';$('kpi-conflict-note').textContent=`${conflicted.length} of ${healthy.length} Healthy accounts have text risk`;
+    const stalled=state.accounts.filter(a=>accountRows(a).some(r=>{const age=num(val(r,'recalAge'))??num(val(r,'age'))??0;return age>90&&/open|at risk|1 at risk|2 open/.test(normalize(val(r,'stage')));}));$('kpi-stalled').textContent=number(stalled.length);$('kpi-stalled-note').textContent=`${money(stalled.reduce((s,a)=>s+a.renewalArr,0))} ARR open more than 90 days`;
+    const urgent=state.accounts.filter(a=>['Critical','High'].includes(a.tier)),covered=urgent.filter(a=>a.evidence.length);$('kpi-coverage').textContent=urgent.length?Math.round(covered.length/urgent.length*100)+'%':'—';$('kpi-coverage-note').textContent=`${covered.length} of ${urgent.length} critical/high accounts`;
+    const fired=state.accounts.filter(a=>a.evidence.length);$('kpi-firerate').textContent=state.accounts.length?Math.round(fired.length/state.accounts.length*100)+'%':'—';$('kpi-firerate-note').textContent=`${fired.length} of ${state.accounts.length} accounts triggered a rule`;
+    const segments={};state.accounts.forEach(a=>{const key=a.segment||'Unknown';if(!segments[key])segments[key]={total:0,risk:0};segments[key].total+=a.renewalArr;if(['Critical','High'].includes(a.tier))segments[key].risk+=a.renewalArr;});const segmentMax=Math.max(...Object.values(segments).map(x=>x.total),1);$('segment-churn-chart').innerHTML=Object.entries(segments).sort((a,b)=>b[1].risk-a[1].risk).map(([name,x])=>`<div class="bar-row"><span>${esc(name)}</span><div class="bar-track" style="position:relative"><div class="bar-fill" style="width:${x.total/segmentMax*100}%;background:#d9dfdc"></div><div class="bar-fill" style="width:${x.risk/segmentMax*100}%;background:#b43d3d;position:absolute;inset:0 auto 0 0"></div></div><b>${money(x.risk)}</b></div>`).join('')||'<p class="muted">No segment data mapped.</p>';
+    const channels={Direct:{total:0,risk:0},Partner:{total:0,risk:0}};state.rows.filter(isCurrentOpenRenewal).forEach(r=>{const channel=normalize(val(r,'generatedBy')).includes('partner')?'Partner':'Direct',arr=num(val(r,'renewalArr'))||0,s=scoreRow(r);channels[channel].total+=arr;if(s.risk>=40)channels[channel].risk+=arr;});const channelMax=Math.max(...Object.values(channels).map(x=>x.total),1);$('channel-chart').innerHTML=Object.entries(channels).map(([name,x])=>`<div class="bar-row"><span>${name}</span><div class="bar-track" style="position:relative"><div class="bar-fill" style="width:${x.total/channelMax*100}%;background:#d9dfdc"></div><div class="bar-fill" style="width:${x.risk/channelMax*100}%;background:#d28417;position:absolute;inset:0 auto 0 0"></div></div><b>${money(x.risk)}</b></div>`).join('');
+  }
   function miniList(items,detail,empty){return items.length?items.map(a=>`<div class="mini-item"><strong>${esc(a.name)} · ${money(a.renewalArr)}</strong><small>${esc(detail(a))}</small></div>`).join(''):`<p class="muted">${esc(empty)}</p>`;}
   function renderAccounts(){
     const owners=[...new Set(state.accounts.map(a=>a.owner))].sort();const select=$('owner-filter'),current=select.value;select.innerHTML='<option value="all">All owners</option>'+owners.map(o=>`<option>${esc(o)}</option>`).join('');select.value=owners.includes(current)?current:'all';const segments=[...new Set(state.accounts.map(a=>a.segment))].sort(),segmentSelect=$('segment-filter'),segmentCurrent=segmentSelect.value;segmentSelect.innerHTML='<option value="all">All account types</option>'+segments.map(s=>`<option>${esc(s)}</option>`).join('');segmentSelect.value=segments.includes(segmentCurrent)?segmentCurrent:'all';filterAccounts();
@@ -601,9 +606,11 @@
 
   function showAccount(id){
     const a=state.accounts.find(x=>x.id===id);if(!a)return;
-    $('account-detail').innerHTML=`<div class="account-detail"><button class="icon-button close-detail" onclick="document.getElementById('account-dialog').close()">×</button><div class="detail-head"><div><p class="eyebrow">ACCOUNT EVIDENCE PACK</p><h2>${esc(a.name)}</h2><span class="tier ${a.tier}">${a.tier}</span></div><div><strong>${money(a.renewalArr)}</strong><br><small class="muted">renewal ARR</small></div></div><div class="detail-grid"><div class="detail-block"><h3>Decision record</h3><p><b>Owner:</b> ${esc(a.owner)}</p><p><b>Action owner:</b> ${esc(a.actionOwner)}</p><p><b>Risk / expansion:</b> ${a.risk} / ${a.expansion}</p><p><b>Confidence:</b> ${esc(a.confidence)}</p><p><b>Source rows:</b> ${a.rows.join(', ')}</p>${a.ai?`<p><b>AI extraction:</b> ${esc(a.ai.risk_category)} · ${Math.round(a.ai.confidence*100)}%${a.ai.conflict?' · structured/text conflict':''}</p>`:''}</div><div class="detail-block"><h3>Recommended intervention</h3><p>${esc(a.action)}</p><p class="muted">Human review required before forecast override or customer outreach.</p></div><div class="detail-block full"><h3>Triggered evidence</h3><div class="evidence-list">${a.evidence.map(e=>`<div class="evidence-item"><b>${esc(e.label)} · ${e.points} pts</b><span>${esc(e.usecase)} · ${esc(e.owner)} · ${esc(e.opportunity||'Account evidence')}</span></div>`).join('')||'<span class="muted">No rule evidence.</span>'}</div></div></div></div>`;
+    const review=reviews[a.id]||{decision:'Pending review',note:''};
+    $('account-detail').innerHTML=`<div class="account-detail"><button class="icon-button close-detail" onclick="document.getElementById('account-dialog').close()">×</button><div class="detail-head"><div><p class="eyebrow">ACCOUNT DECISION DRAWER</p><h2>${esc(a.name)}</h2><span class="tier ${a.tier}">${a.tier}</span><div class="source-strip"><span class="source-chip">Rows ${a.rows.join(', ')}</span><span class="source-chip">${esc(a.confidence)} confidence</span>${a.ai?`<span class="source-chip">AI ${Math.round(a.ai.confidence*100)}%</span>`:''}</div></div><div><strong>${money(a.renewalArr)}</strong><br><small class="muted">renewal ARR</small></div></div><div class="decision-callout"><span>Required next action · ${esc(a.actionOwner)}</span><strong>${esc(a.action)}</strong></div><div class="drawer-review"><select id="review-decision"><option${review.decision==='Pending review'?' selected':''}>Pending review</option><option${review.decision==='Accept action'?' selected':''}>Accept action</option><option${review.decision==='Override risk'?' selected':''}>Override risk</option><option${review.decision==='Defer'?' selected':''}>Defer</option></select><input id="review-note" value="${esc(review.note)}" placeholder="Reason or reviewer note"><button class="button primary" data-save-review="${esc(a.id)}">Save review</button></div><div class="detail-grid"><div class="detail-block"><h3>Structured + behavioral</h3><p><b>Owner:</b> ${esc(a.owner)}</p><p><b>Risk / expansion:</b> ${a.risk} / ${a.expansion}</p><p><b>Health:</b> ${esc(a.health)}</p><p><b>Utilization:</b> ${a.utilization===null?'Not mapped':metricValue(a.utilization)}</p><p><b>Adoption depth:</b> ${a.featureDepth===null?'Not mapped':metricValue(a.featureDepth)}</p></div><div class="detail-block"><h3>Text extraction</h3>${a.ai?`<p><b>Category:</b> ${esc(a.ai.risk_category)}</p><p><b>Evidence:</b> ${esc(a.ai.evidence_text||a.ai.reasoning)}</p><p><b>Conflict:</b> ${a.ai.conflict?'Yes — review required':'No detected conflict'}</p>`:'<p class="muted">AI extraction has not been run for this account.</p>'}</div><div class="detail-block full"><h3>Triggered evidence</h3><div class="evidence-list">${a.evidence.map(e=>`<div class="evidence-item"><b>${esc(e.label)} · ${e.points} pts</b><span>${esc(e.usecase)} · ${esc(e.owner)} · ${esc(e.opportunity||'Account evidence')}</span></div>`).join('')||'<span class="muted">No rule evidence.</span>'}</div></div></div></div>`;
     $('account-dialog').showModal();
   }
+  function saveReview(id){reviews[id]={decision:$('review-decision').value,note:$('review-note').value.trim(),at:new Date().toISOString()};localStorage.setItem(STORAGE.reviews,JSON.stringify(reviews));toast('Account review saved');}
 
   function populateRuleForm(r){
     $('rule-id').value=r?.id||'';$('rule-name').value=r?.name||'';$('rule-usecase').value=r?.usecase||'risk';$('rule-field').value=r?.field||'utilization';$('rule-operator').value=r?.operator||'lt';$('rule-value').value=r?.value||'';$('rule-points').value=r?.points||20;$('rule-owner').value=r?.owner||'CSM';$('rule-label').value=r?.label||'';$('rule-action').value=r?.action||'';$('rule-reason').value='';$('rule-active').checked=r?.active??true;$('rule-dialog-title').textContent=r?'Edit rule':'Create rule';$('rule-dialog').showModal();
@@ -621,10 +628,10 @@
 
   function download(name,content,type='text/csv;charset=utf-8'){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),500);}
   function csv(rows){if(!rows.length)return'';const heads=Object.keys(rows[0]);const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';return heads.map(cell).join(',')+'\n'+rows.map(r=>heads.map(h=>cell(r[h])).join(',')).join('\n');}
-  function exportQueue(){download('signalops-weekly-queue-'+new Date().toISOString().slice(0,10)+'.csv',csv(state.accounts.map((a,i)=>({priority:i+1,tier:a.tier,account:a.name,opportunity_owner:a.owner,action_owner:a.actionOwner,renewal_arr:a.renewalArr,new_arr:a.newArr,risk_score:a.risk,expansion_score:a.expansion,confidence:a.confidence,health:a.health,utilization:a.utilization,ai_category:a.ai?.risk_category||'',ai_confidence:a.ai?.confidence??'',ai_conflict:a.ai?.conflict??'',evidence:a.evidence.map(e=>e.label).join(' | '),recommended_action:a.action,rule_version:ruleMeta.version,input_hash:state.fileHash}))));}
-  function exportQuality(){download('signalops-data-quality-'+new Date().toISOString().slice(0,10)+'.csv',csv(state.quality));}
-  function exportRules(){download('signalops-rule-pack-v'+ruleMeta.version+'.json',JSON.stringify({product:'SignalOps AI',schemaVersion:1,exportedAt:new Date().toISOString(),meta:ruleMeta,rules},null,2),'application/json');}
-  async function importRules(file){try{const data=JSON.parse(await file.text());if(!Array.isArray(data.rules)||!data.rules.every(r=>r.id&&r.name&&r.field&&r.operator))throw new Error('Not a valid SignalOps rule pack.');rules=data.rules;persistRules({action:'imported',ruleId:'rule-pack',name:file.name,reason:'Imported rule pack after schema validation.'});rerunWithRules();renderRules();toast('Imported '+rules.length+' rules');}catch(e){toast(e.message);}}
+  function exportQueue(){download('churn-tool-weekly-queue-'+new Date().toISOString().slice(0,10)+'.csv',csv(state.accounts.map((a,i)=>({priority:i+1,tier:a.tier,account:a.name,opportunity_owner:a.owner,action_owner:a.actionOwner,renewal_arr:a.renewalArr,new_arr:a.newArr,risk_score:a.risk,expansion_score:a.expansion,confidence:a.confidence,health:a.health,utilization:a.utilization,structured_text_conflict:a.conflictEvidence||'',ai_category:a.ai?.risk_category||'',ai_confidence:a.ai?.confidence??'',ai_conflict:a.ai?.conflict??'',evidence:a.evidence.map(e=>e.label).join(' | '),recommended_action:a.action,rule_version:ruleMeta.version,input_hash:state.fileHash}))));}
+  function exportQuality(){download('churn-tool-data-quality-'+new Date().toISOString().slice(0,10)+'.csv',csv(state.quality));}
+  function exportRules(){download('churn-tool-rule-pack-v'+ruleMeta.version+'.json',JSON.stringify({product:'Churn Tool',schemaVersion:1,exportedAt:new Date().toISOString(),meta:ruleMeta,rules},null,2),'application/json');}
+  async function importRules(file){try{const data=JSON.parse(await file.text());if(!Array.isArray(data.rules)||!data.rules.every(r=>r.id&&r.name&&r.field&&r.operator))throw new Error('Not a valid Churn Tool rule pack.');rules=data.rules;persistRules({action:'imported',ruleId:'rule-pack',name:file.name,reason:'Imported rule pack after schema validation.'});rerunWithRules();renderRules();toast('Imported '+rules.length+' rules');}catch(e){toast(e.message);}}
 
   const AI_CATEGORIES=['budget_constraint','champion_turnover_or_disengagement','product_gap_or_underuse','competitive_displacement','merger_acquisition_or_org_change','procurement_pushback','customer_disengagement','no_risk_detected','ambiguous'];
   const AI_SYSTEM_PROMPT=`You are a cautious B2B SaaS Revenue Operations analyst. Extract current unresolved renewal risk and credible expansion evidence from two short customer-text fields. Do not infer facts that are not present. Treat resolved or negated statements such as "no retention risk", "budget approved", and "procurement completed" as no current risk. Return ONLY JSON with exactly these keys: {"risk_category":"one allowed category","risk_present":boolean,"expansion_present":boolean,"confidence":number,"evidence_text":"short source-grounded phrase","reasoning":"one sentence","needs_human_review":boolean}. Allowed risk_category values: ${AI_CATEGORIES.join(', ')}. Confidence must be 0 to 1. Use ambiguous and needs_human_review=true when evidence conflicts or is unclear.`;
@@ -654,24 +661,36 @@
     state.accounts.forEach(a=>{const items=grouped.get(a.name)||[];if(!items.length)return;const primary=items.sort((x,y)=>(Number(y.risk_present)-Number(x.risk_present))||y.confidence-x.confidence)[0],structuredHealthy=normalize(a.health)==='healthy';a.ai={...primary,conflict:structuredHealthy&&primary.risk_present};if(primary.risk_present){const points=20+(primary.confidence>=.8?5:0);a.risk=Math.min(100,a.risk+points);a.evidence.push({ruleId:'ai-'+AI_PROMPT_VERSION,usecase:'risk',label:`AI: ${primary.risk_category}`,points,owner:'CSM',action:'Human-review the cited text and confirm whether the risk is current and unresolved.',opportunity:primary.opportunity});}if(primary.expansion_present){a.expansion=Math.min(100,a.expansion+20);a.evidence.push({ruleId:'ai-expansion-'+AI_PROMPT_VERSION,usecase:'expansion',label:'AI: expansion evidence',points:20,owner:'AE',action:'Validate the expansion evidence, buyer, timing, and sizing before creating pipeline.',opportunity:primary.opportunity});}a.tier=tierFor(a);const lead=a.evidence.sort((x,y)=>y.points-x.points)[0];a.action=lead.action;a.actionOwner=lead.owner;});
   }
   function renderAIResults(){$('ai-results-body').innerHTML=state.aiResults.map(r=>`<tr><td><strong>${esc(r.account)}</strong><br><small class="muted">row ${r.sourceRow}</small></td><td>${esc(r.risk_category)}</td><td><span class="ai-flag ${r.risk_present?'yes':'no'}">${r.risk_present?'Yes':'No'}</span></td><td>${r.expansion_present?'Yes':'No'}</td><td>${Math.round((r.confidence||0)*100)}%</td><td class="evidence">${esc(r.evidence_text||r.reasoning)}</td><td>${esc(r.status)}${r.needs_human_review?' · review':''}</td></tr>`).join('')||'<tr><td colspan="7" class="muted">No AI results.</td></tr>';}
-  function exportAI(){download('signalops-ai-audit-'+new Date().toISOString().slice(0,10)+'.csv',csv(state.aiResults.map(r=>({...r,input_hash:state.fileHash,run_id:state.aiRun?.id||''}))));}
+  function exportAI(){download('churn-tool-ai-audit-'+new Date().toISOString().slice(0,10)+'.csv',csv(state.aiResults.map(r=>({...r,input_hash:state.fileHash,run_id:state.aiRun?.id||''}))));}
   function renderTriggerAccounts(){const select=$('trigger-account'),current=select.value,list=state.accounts.filter(a=>a.tier!=='Healthy');select.innerHTML=list.map(a=>`<option value="${esc(a.id)}">${esc(a.name)} · ${a.tier}</option>`).join('')||'<option value="">Upload data to choose an account</option>';select.value=list.some(a=>a.id===current)?current:(list[0]?.id||'');}
   function selectedTriggerAccount(){return state.accounts.find(a=>a.id===$('trigger-account').value)||state.accounts.find(a=>a.tier!=='Healthy')||null;}
   function fillTrigger(text,a){if(!a)return text;const reason=a.evidence[0]?.label||'risk requires validation';return text.replaceAll('{{account}}',a.name).replaceAll('{{reason}}',reason).replaceAll('{{owner}}',a.actionOwner||a.owner);}
   function renderTriggers(){renderTriggerAccounts();const a=selectedTriggerAccount();$('trigger-grid').innerHTML=triggers.map(t=>`<article class="panel trigger-card"><p class="eyebrow">${esc(t.channel)}</p><h3>${esc(t.name)}</h3><textarea data-trigger-text="${esc(t.id)}" aria-label="${esc(t.name)} template">${esc(t.text)}</textarea><div class="trigger-preview">${esc(fillTrigger(t.text,a))}</div><div class="trigger-actions"><span class="coverage">Uses verified top reason</span><button class="button secondary" data-copy-trigger="${esc(t.id)}">Copy action</button></div></article>`).join('');}
   function saveTriggers(){triggers=triggers.map(t=>({...t,text:document.querySelector(`[data-trigger-text="${t.id}"]`)?.value||t.text}));localStorage.setItem(STORAGE.triggers,JSON.stringify(triggers));renderTriggers();toast('Trigger templates saved locally');}
-  async function copyTrigger(id){const t=triggers.find(x=>x.id===id),text=fillTrigger(t?.text||'',selectedTriggerAccount());try{await navigator.clipboard.writeText(text);toast('Action copied');}catch{download('signalops-action.txt',text,'text/plain');}}
+  async function copyTrigger(id){const t=triggers.find(x=>x.id===id),text=fillTrigger(t?.text||'',selectedTriggerAccount());try{await navigator.clipboard.writeText(text);toast('Action copied');}catch{download('churn-tool-action.txt',text,'text/plain');}}
   async function testAIConnection(){const key=$('anthropic-key').value.trim(),model=$('anthropic-model').value.trim(),row=state.rows.find(isCurrentOpenRenewal);if(key.length<10)return toast('Enter a valid Anthropic API key');if(!row)return toast('Upload a workbook with an eligible renewal');$('test-ai').disabled=true;$('ai-status').textContent='Testing…';try{const result=await callClaude(row,key,model,new AbortController().signal);$('ai-status').textContent=`Connected · ${result.risk_category}`;toast('Claude connection and response schema verified');}catch(error){$('ai-status').textContent='Connection failed';toast(error.message);}finally{$('test-ai').disabled=false;}}
-  function submissionMarkdown(){const c=countTiers();return `# SignalOps AI — Submission Brief\n\n## Run evidence\n- File: ${state.fileName||'Not loaded'}\n- Input hash: ${state.fileHash||'Not available'}\n- Forecast year: ${state.selectedFY==='all'?'All':`FY${String(state.selectedFY).slice(-2)}`}\n- Rows: ${state.rows.length}\n- Accounts: ${state.accounts.length}\n- Critical / High / Expansion: ${c.Critical||0} / ${c.High||0} / ${c.Expansion||0}\n- Low / P50 / High churn ARR: ${scenarioForecast('low').toFixed(2)} / ${scenarioForecast('medium').toFixed(2)} / ${scenarioForecast('high').toFixed(2)}\n- Rule version: ${ruleMeta.version}\n- AI prompt version: ${AI_PROMPT_VERSION}\n- AI rows processed: ${state.aiResults.length}\n\n## Executive decision\nRun SignalOps weekly as a governed triage layer before forecast calls. It produces a validated action queue and scenario forecast; forecast owners retain approval.\n\n## CRO pushback\nCSM language is noisy, so text-only flags remain human-review items. Keep the P50 commitment where structured deterioration and unresolved text agree. Settle disagreement through closed-outcome back-testing, override tracking, and error by tier.\n\n## Operating model\nRevOps runs and calibrates. CSM validates adoption signals. AE owns commercial actions. CRO and CCO resolve the five highest-leverage escalations. Weekly run, monthly override review, quarterly recalibration.\n\n## 90 days\n1. Days 1–30: shadow forecast calls and baseline false positives.\n2. Days 31–60: route actions and add a controlled AI proxy.\n3. Days 61–90: recalibrate rates and decide production rollout.\n\n## Known limits\nMissing behavior fields are not inferred. AI can misread stale or negated notes. No customer communication or forecast override is automatic.\n`;}
-  function exportBrief(){download('signalops-submission-brief.md',submissionMarkdown(),'text/markdown');}
-  function exportDemo(){download('signalops-demo-record-'+new Date().toISOString().slice(0,10)+'.md',submissionMarkdown()+'\n## Demo timestamp\n'+new Date().toISOString()+'\n','text/markdown');}
+  function submissionMarkdown(){const c=countTiers();return `# Churn Tool — Submission Brief\n\n## Run evidence\n- File: ${state.fileName||'Not loaded'}\n- Input hash: ${state.fileHash||'Not available'}\n- Forecast year: ${state.selectedFY==='all'?'All':`FY${String(state.selectedFY).slice(-2)}`}\n- Rows: ${state.rows.length}\n- Accounts: ${state.accounts.length}\n- Critical / High / Expansion: ${c.Critical||0} / ${c.High||0} / ${c.Expansion||0}\n- Low / P50 / High churn ARR: ${scenarioForecast('low').toFixed(2)} / ${scenarioForecast('medium').toFixed(2)} / ${scenarioForecast('high').toFixed(2)}\n- Rule version: ${ruleMeta.version}\n- AI prompt version: ${AI_PROMPT_VERSION}\n- AI rows processed: ${state.aiResults.length}\n\n## Executive decision\nRun Churn Tool weekly as a governed triage layer before forecast calls. It produces a validated action queue and scenario forecast; forecast owners retain approval.\n\n## CRO pushback response\n**What is true:** CSM notes can be stale, cautious, and inconsistent; a negative note is not a churn outcome.\n\n**Where I agree and disagree:** Text-only concern should not automatically move committed churn ARR. But when unresolved customer language agrees with low utilization, critical health, pipeline status, or a recorded churn reason, ignoring it would make the forecast less defensible.\n\n**How we settle it:** Retain every flag, leadership override, cited phrase, and final outcome for two forecast cycles. Measure observed churn and forecast error by tier, plus false positives for text-only versus combined signals. CSM leadership classifies the five largest disagreements as current, resolved, or stale.\n\n**Commitment:** Keep the current medium/P50 case. Combined structured and unresolved text evidence remains in the forecast; text-only accounts remain human-review items. Recalibrate the tier rate only when back-testing supports the change.\n\n## Operating model\nRevOps runs and calibrates. CSM validates adoption signals. AE owns commercial actions. CRO and CCO resolve the five highest-leverage escalations. Weekly run, monthly override review, quarterly recalibration.\n\n## 90 days\n1. Days 1–30: shadow forecast calls and baseline false positives.\n2. Days 31–60: route actions and add a controlled AI proxy.\n3. Days 61–90: recalibrate rates and decide production rollout.\n\n## Known limits\nMissing behavior fields are not inferred. AI can misread stale or negated notes. No customer communication or forecast override is automatic.\n`;}
+  function exportBrief(){download('churn-tool-submission-brief.md',submissionMarkdown(),'text/markdown');}
+  function exportDemo(){download('churn-tool-demo-record-'+new Date().toISOString().slice(0,10)+'.md',submissionMarkdown()+'\n## Demo timestamp\n'+new Date().toISOString()+'\n','text/markdown');}
+  function moveViewContents(sourceId,mountId){const source=$(sourceId),mount=$(mountId);if(!source||!mount)return;while(source.firstChild)mount.appendChild(source.firstChild);}
+  function consolidateViews(){moveViewContents('triggers','trigger-library-mount');moveViewContents('quality','quality-mount');moveViewContents('runs','runs-mount');moveViewContents('howto','handoff-guide-mount');}
 
   function bind(){
+    consolidateViews();
     document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
     document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.jump)));
+    document.querySelectorAll('[data-dashboard-tab]').forEach(b=>b.addEventListener('click',()=>setDashboardTab(b.dataset.dashboardTab)));setDashboardTab('decision');
     $('file-input').addEventListener('change',e=>handleFile(e.target.files[0]));$('export-button').addEventListener('click',exportQueue);$('export-quality').addEventListener('click',exportQuality);
-    $('topbar-key').addEventListener('input',e=>{$('anthropic-key').value=e.target.value;$('run-ai').disabled=e.target.value.trim().length<10;$('test-ai').disabled=e.target.value.trim().length<10});
-    $('anthropic-key').addEventListener('input',e=>{$('topbar-key').value=e.target.value});
+    if($('setup-key')){
+      $('setup-key').addEventListener('input',e=>{$('anthropic-key').value=e.target.value;$('setup-key-test').disabled=e.target.value.trim().length<10});
+      $('setup-key-test').addEventListener('click',async()=>{
+        const key=$('setup-key').value.trim();$('anthropic-key').value=key;
+        $('setup-key-status').textContent='Testing…';$('setup-key-status').style.color='#a86913';$('setup-key-test').disabled=true;
+        try{await testAIConnection();$('setup-key-status').innerHTML='<strong style="color:#146c55">✓ Successfully connected</strong> — upload your data to continue';$('setup-key-test').textContent='✓ Successfully connected'}
+        catch(e){$('setup-key-status').innerHTML='<strong style="color:#b43d3d">✗ Failed:</strong> '+esc(e.message);$('setup-key-test').textContent='Test connection'}
+        finally{$('setup-key-test').disabled=false}
+      });
+    }
     $('fiscal-year').addEventListener('change',e=>{state.selectedFY=e.target.value==='all'?'all':Number(e.target.value);state.quality=validateData(state.rows,state.headers);state.accounts=buildAccounts(state.rows);if(state.aiResults.length)applyAIResults();renderAll();toast('Forecast population changed to '+(state.selectedFY==='all'?'all fiscal years':'FY'+String(state.selectedFY).slice(-2)));});
     $('dash-risk-filter').addEventListener('change',renderOperationalQueue);$('dash-type-filter').addEventListener('change',renderOperationalQueue);
     $('trigger-account').addEventListener('change',renderTriggers);$('save-triggers').addEventListener('click',saveTriggers);$('trigger-grid').addEventListener('click',e=>{const b=e.target.closest('[data-copy-trigger]');if(b)copyTrigger(b.dataset.copyTrigger);});
@@ -679,6 +698,7 @@
     $('export-brief').addEventListener('click',exportBrief);$('export-demo').addEventListener('click',exportDemo);
     $('account-search').addEventListener('input',filterAccounts);$('tier-filter').addEventListener('change',filterAccounts);$('segment-filter').addEventListener('change',filterAccounts);$('owner-filter').addEventListener('change',filterAccounts);
     $('accounts-body').addEventListener('click',e=>{const b=e.target.closest('[data-account]');if(b)showAccount(b.dataset.account);});
+    $('account-dialog').addEventListener('click',e=>{const b=e.target.closest('[data-save-review]');if(b)saveReview(b.dataset.saveReview);});
     $('new-rule').addEventListener('click',()=>populateRuleForm());$('close-dialog').addEventListener('click',()=>$('rule-dialog').close());$('cancel-dialog').addEventListener('click',()=>$('rule-dialog').close());
     $('rule-form').addEventListener('submit',e=>{e.preventDefault();if(saveRule())$('rule-dialog').close();});
     $('rule-list').addEventListener('click',e=>{let b=e.target.closest('[data-edit-rule],[data-toggle-rule],[data-delete-rule]');if(!b)return;if(b.dataset.editRule)populateRuleForm(rules.find(r=>r.id===b.dataset.editRule));if(b.dataset.toggleRule)toggleRule(b.dataset.toggleRule);if(b.dataset.deleteRule)deleteRule(b.dataset.deleteRule);});
@@ -686,7 +706,7 @@
     $('clear-runs').addEventListener('click',()=>{if(confirm('Clear the local run audit history?')){runHistory=[];localStorage.setItem(STORAGE.runs,'[]');renderRuns();}});
     $('rule-field').innerHTML=Object.entries(FIELD_LABELS).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('')+'<option value="allText">All customer text</option>';
     $('ai-prompt-verbatim').textContent=AI_SYSTEM_PROMPT;
-    const initial=location.hash.slice(1);if(document.getElementById(initial)?.classList.contains('view'))switchView(initial);
+    const aliases={quality:'ai',runs:'ai',triggers:'rules',howto:'brief'},initial=aliases[location.hash.slice(1)]||location.hash.slice(1);if(document.getElementById(initial)?.classList.contains('view'))switchView(initial);
   }
 
   globalThis.SignalOpsCore = {
