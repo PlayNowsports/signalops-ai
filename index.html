@@ -4,9 +4,40 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Reusable RevOps churn and expansion triage with deterministic scoring, validation, and persistent rule memory.">
-  <title>Churn Tool — Tulip Renewal Decision System</title>
+  <title>Churn Tool — Renewal Decision System</title>
   <style>
 :root{--ink:#10231f;--muted:#64736f;--line:#dfe7e3;--paper:#f4f7f5;--white:#fff;--green:#146c55;--green2:#1c8a6b;--mint:#dff3e9;--red:#b43d3d;--redbg:#fae8e6;--amber:#a86913;--amberbg:#fff1d7;--blue:#315e8b;--bluebg:#e8f0fa;--shadow:0 12px 34px rgba(28,50,43,.08);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper)}*{box-sizing:border-box}body{margin:0}.shell{min-height:100vh;display:grid;grid-template-columns:248px 1fr}.sidebar{position:sticky;top:0;height:100vh;background:#0f2923;color:#d9e8e2;padding:28px 18px 20px;display:flex;flex-direction:column}.brand{display:flex;gap:12px;align-items:center;color:#fff;text-decoration:none;padding:0 10px 26px}.brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#60c49e;color:#0f2923;font-weight:900;font-size:20px}.brand strong,.brand small{display:block}.brand strong{font-size:17px}.brand small{font-size:11px;color:#99b7ad;margin-top:2px;letter-spacing:.06em}.sidebar nav{display:grid;gap:5px}.nav-item{border:0;background:transparent;color:#a9c2b9;padding:11px 12px;border-radius:9px;text-align:left;font:inherit;cursor:pointer;display:flex;gap:11px;align-items:center}.nav-item span{width:20px;text-align:center;font-size:17px}.nav-item:hover,.nav-item.active{background:#1d3c34;color:#fff}.sidebar-foot{margin-top:auto;border-top:1px solid #2c4a42;padding:18px 10px 0;display:flex;gap:10px;align-items:flex-start}.sidebar-foot strong,.sidebar-foot small{display:block}.sidebar-foot strong{font-size:12px}.sidebar-foot small{font-size:10px;color:#8dab9f;margin-top:3px}.status-dot{width:8px;height:8px;border-radius:50%;background:#63d3a7;margin-top:4px;box-shadow:0 0 0 4px rgba(99,211,167,.1)}main{min-width:0;padding:0 34px 60px}.topbar{height:112px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);gap:24px}.eyebrow{font-size:10px;letter-spacing:.14em;font-weight:800;color:var(--green);margin:0 0 7px}.topbar h1{font-family:Georgia,serif;font-size:27px;margin:0;font-weight:500}.top-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}.button{border:1px solid transparent;border-radius:8px;padding:10px 14px;font:700 12px/1 inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-decoration:none}.button.primary{background:var(--green);color:#fff}.button.primary:hover{background:#0f5845}.button.secondary{background:#fff;border-color:#cdd9d4;color:var(--ink)}.button:disabled{opacity:.45;cursor:not-allowed}.button.large{padding:14px 20px;font-size:13px}.danger-button{background:#fff;border-color:#ecc7c3;color:var(--red)}.file-badge{font-size:11px;color:var(--muted);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.view{display:none;padding-top:28px}.view.active{display:block}.hidden{display:none!important}.empty-state{min-height:610px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;max-width:750px;margin:auto;padding:40px}.upload-icon{display:grid;place-items:center;width:76px;height:76px;border-radius:22px;background:var(--mint);color:var(--green);font-size:34px;margin-bottom:25px}.empty-state h2,.section-intro h2,.panel h2{font-family:Georgia,serif;font-weight:500}.empty-state h2{font-size:35px;line-height:1.16;margin:0;max-width:650px}.empty-state>p:not(.eyebrow){color:var(--muted);line-height:1.65;max-width:630px;margin:18px 0 25px}.trust-row{display:flex;gap:24px;margin-top:26px;font-size:11px;color:var(--muted)}.run-banner{border:1px solid #c4dfd3;background:#edf8f3;border-radius:9px;padding:11px 15px;margin-bottom:18px;font-size:12px;color:#275847}.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.metric-card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--line);border-radius:10px;padding:18px;box-shadow:0 3px 12px rgba(20,40,34,.03)}.metric-card>span{display:block;font-size:11px;color:var(--muted);font-weight:700}.metric-card strong{display:block;font-family:Georgia,serif;font-size:27px;margin:10px 0 4px;font-weight:500}.metric-card small{color:var(--muted)}.metric-card.danger{border-top-color:var(--red)}.metric-card.warning{border-top-color:#d08b20}.metric-card.positive{border-top-color:var(--green2)}.metric-card.neutral{border-top-color:#7d928a}.dashboard-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-top:14px}.panel{background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 18px rgba(20,40,34,.04);padding:20px}.panel.wide{grid-row:span 2}.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:16px}.panel h2{font-size:20px;margin:0}.text-button{border:0;background:none;color:var(--green);font-weight:800;font-size:11px;cursor:pointer}.account-list{display:grid}.account-row{display:grid;grid-template-columns:9px 1fr auto;gap:13px;align-items:center;padding:14px 0;border-top:1px solid #edf1ef}.account-row:first-child{border-top:0}.risk-pip{width:7px;height:36px;border-radius:5px}.risk-pip.critical{background:var(--red)}.risk-pip.high{background:#d28417}.risk-pip.monitor{background:#6b85a1}.risk-pip.expansion{background:var(--green2)}.risk-pip.healthy{background:#9aacA5}.account-row strong,.account-row small{display:block}.account-row small{color:var(--muted);font-size:10px;margin-top:4px}.account-row .arr{text-align:right;font:600 13px Georgia,serif}.tier-chart{display:grid;gap:12px}.bar-row{display:grid;grid-template-columns:70px 1fr 72px;gap:9px;align-items:center;font-size:11px}.bar-track{height:9px;background:#edf1ef;border-radius:9px;overflow:hidden}.bar-fill{height:100%;border-radius:9px}.bar-row b{text-align:right;font-weight:700}.signal-chart{display:grid;gap:13px}.signal-row{display:grid;grid-template-columns:1fr auto;gap:5px;font-size:11px}.signal-row .bar-track{grid-column:1/3}.section-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:20px}.section-intro h2{font-size:30px;margin:0}.section-intro p:not(.eyebrow){color:var(--muted);font-size:12px;max-width:650px;line-height:1.5;margin:7px 0 0}.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;padding:13px}.toolbar input,.toolbar select,.form-grid input,.form-grid select,.form-grid textarea{border:1px solid #cfdad5;border-radius:7px;background:#fff;padding:10px 11px;font:12px inherit;color:var(--ink)}.toolbar input{min-width:310px}.toolbar .muted{margin-left:auto}.muted{color:var(--muted);font-size:11px}.table-panel{padding:0;overflow:hidden}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:11px}th{text-align:left;color:#6b7975;text-transform:uppercase;letter-spacing:.07em;font-size:9px;padding:12px 14px;border-bottom:1px solid var(--line);background:#f9fbfa;white-space:nowrap}td{padding:13px 14px;border-bottom:1px solid #edf1ef;vertical-align:top}tbody tr:hover{background:#fbfdfc}.tier{display:inline-flex;padding:4px 7px;border-radius:5px;font-weight:800;font-size:9px;text-transform:uppercase}.tier.Critical{background:var(--redbg);color:var(--red)}.tier.High{background:var(--amberbg);color:var(--amber)}.tier.Monitor{background:var(--bluebg);color:var(--blue)}.tier.Expansion{background:var(--mint);color:var(--green)}.tier.Healthy{background:#edf1ef;color:#60716b}.evidence{max-width:260px;color:#556560}.row-action{border:0;background:none;color:var(--green);cursor:pointer;font-weight:800}.rule-summary{display:flex;gap:40px;background:#18332c;color:#d8e9e2;padding:16px 20px;border-radius:9px;margin-bottom:14px}.rule-summary span{font-size:10px;color:#9fb8af}.rule-summary strong{display:block;color:#fff;font:500 18px Georgia,serif;margin-bottom:2px}.rule-list{display:grid;gap:9px}.rule-card{display:grid;grid-template-columns:auto 1fr auto;gap:15px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:9px;padding:15px 17px}.rule-card.inactive{opacity:.58}.rule-usecase{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-weight:900}.rule-usecase.risk{background:var(--redbg);color:var(--red)}.rule-usecase.expansion{background:var(--mint);color:var(--green)}.rule-card h3{font-size:13px;margin:0}.rule-card p{font-size:10px;color:var(--muted);margin:4px 0 0}.rule-card .rule-meta{display:flex;gap:8px;align-items:center}.chip{padding:4px 7px;border-radius:5px;background:#edf2f0;font-size:9px;color:#53635e}.rule-actions{display:flex;gap:5px}.icon-button{border:0;background:transparent;font-size:20px;cursor:pointer;color:var(--muted)}.quality-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}.quality-card{padding:16px;border-radius:9px;border:1px solid var(--line);background:#fff}.quality-card strong{display:block;font:500 24px Georgia,serif}.quality-card span{font-size:10px;color:var(--muted)}.quality-card.blocker{border-left:4px solid var(--red)}.quality-card.warning{border-left:4px solid #d28417}.quality-card.info{border-left:4px solid var(--green)}.run-list{display:grid;gap:10px}.run-card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:16px;display:grid;grid-template-columns:1fr repeat(4,auto);gap:25px;align-items:center}.run-card h3{font-size:13px;margin:0 0 3px}.run-card small{color:var(--muted)}.run-stat span,.run-stat strong{display:block}.run-stat span{font-size:9px;color:var(--muted);text-transform:uppercase}.run-stat strong{font-size:13px;margin-top:3px}.howto-grid{display:grid;grid-template-columns:1.55fr .8fr;gap:14px}.howto-main{grid-row:span 2}.howto-main>h2{font-size:29px}.steps{display:grid;margin-top:20px}.steps>div{display:grid;grid-template-columns:34px 1fr;gap:13px;padding:16px 0;border-top:1px solid var(--line)}.steps b{display:grid;place-items:center;width:29px;height:29px;border-radius:50%;background:var(--mint);color:var(--green)}.steps strong,.steps small{display:block}.steps small{color:var(--muted);line-height:1.5;margin-top:4px}.guide-card h3,.limits-card h3{margin-top:0}.guide-card dl{display:grid;grid-template-columns:80px 1fr;gap:10px;font-size:11px}.guide-card dt{color:var(--muted)}.guide-card dd{margin:0;font-weight:600}.limits-card{background:#fffaf1;border-color:#f0dfbb}.limits-card ul{padding-left:18px;font-size:11px;color:#645c4d;line-height:1.65;margin-bottom:0}dialog{border:0;border-radius:12px;padding:0;box-shadow:0 28px 80px rgba(7,30,23,.3);width:min(690px,calc(100vw - 30px));color:var(--ink)}dialog::backdrop{background:rgba(9,28,23,.55);backdrop-filter:blur(2px)}#rule-form{padding:24px}.dialog-head{display:flex;justify-content:space-between;align-items:flex-start}.dialog-head h2{font-family:Georgia,serif;margin:0;font-weight:500}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:20px}.form-grid label{font-size:10px;font-weight:800;color:#52615d;display:grid;gap:6px}.form-grid .full{grid-column:1/3}.form-grid textarea{min-height:70px;resize:vertical}.toggle{display:flex!important;grid-template-columns:auto 1fr!important;align-items:center;justify-content:start}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}#account-dialog{width:min(780px,calc(100vw - 30px))}.account-detail{padding:24px}.detail-head{display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line);padding-bottom:16px}.detail-head h2{font-family:Georgia,serif;font-weight:500;margin:4px 0}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}.detail-block{border:1px solid var(--line);border-radius:8px;padding:14px}.detail-block h3{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:0 0 10px}.evidence-list{display:grid;gap:8px}.evidence-item{background:#f7faf8;border-radius:6px;padding:9px;font-size:11px}.evidence-item b{display:block;margin-bottom:3px}.close-detail{position:absolute;right:14px;top:12px}#toast{position:fixed;right:25px;bottom:25px;background:#102c24;color:#fff;border-radius:8px;padding:12px 16px;font-size:11px;box-shadow:var(--shadow);transform:translateY(100px);opacity:0;transition:.2s;z-index:10}#toast.show{transform:translateY(0);opacity:1}.severity{font-weight:800;text-transform:uppercase;font-size:9px}.severity.blocker{color:var(--red)}.severity.warning{color:var(--amber)}.severity.info{color:var(--green)}@media(max-width:1050px){.shell{grid-template-columns:78px 1fr}.sidebar{padding-left:10px;padding-right:10px}.brand span:last-child,.nav-item:not(.active){font-size:0}.nav-item{justify-content:center}.nav-item.active{font-size:0}.nav-item span{font-size:18px}.sidebar-foot{display:none}.metric-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.shell{display:block}.sidebar{position:static;width:100%;height:auto;flex-direction:row;align-items:center;padding:10px;overflow:auto}.brand{padding:0 10px 0 0}.brand span:last-child{display:none}.sidebar nav{display:flex}.nav-item{white-space:nowrap}.sidebar-foot{display:none}main{padding:0 14px 40px}.topbar{height:auto;padding:18px 0;align-items:flex-start;flex-direction:column}.top-actions{justify-content:flex-start}.metric-grid,.dashboard-grid,.quality-summary,.howto-grid,.detail-grid{grid-template-columns:1fr}.panel.wide,.howto-main{grid-row:auto}.toolbar{flex-wrap:wrap}.toolbar input{min-width:100%;width:100%}.section-intro{align-items:flex-start;flex-direction:column}.rule-card{grid-template-columns:auto 1fr}.rule-actions{grid-column:2}.rule-summary{overflow:auto}.run-card{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.trust-row{flex-direction:column;gap:8px}}
+
+  </style>
+  <style>
+.utility-button{min-width:76px}
+.utility-button:not(:disabled){border-color:#adc2b9}
+.signal-inbox-panel{margin-bottom:14px;border-top:3px solid var(--green2)}
+.signal-inbox-grid{display:grid;grid-template-columns:1.4fr 1fr .8fr;gap:12px}
+.signal-inbox-grid label{display:grid;gap:6px;color:var(--muted);font-size:10px;font-weight:800}
+.signal-inbox-grid select,.signal-inbox-grid input,.signal-inbox-grid textarea{border:1px solid #cfdad5;border-radius:7px;background:#fff;padding:10px 11px;font:12px inherit;color:var(--ink)}
+.signal-inbox-grid .signal-text{grid-column:1/4}
+.signal-inbox-grid textarea{min-height:100px;resize:vertical;line-height:1.5}
+.signal-inbox-actions{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.signal-inbox-list{display:grid;gap:8px;margin-top:14px}
+.signal-item{display:grid;grid-template-columns:115px 1fr auto;gap:12px;align-items:start;border-top:1px solid var(--line);padding-top:10px}
+.signal-item:first-child{border-top:0}
+.signal-item strong,.signal-item small{display:block}
+.signal-item small{color:var(--muted);font-size:9px;margin-top:3px}
+.signal-item p{font-size:11px;line-height:1.45;margin:0;color:#4e605a}
+.signal-item button{border:0;background:none;color:var(--red);cursor:pointer;font-weight:800;font-size:10px}
+#email-dialog{width:min(760px,calc(100vw - 30px))}
+#email-form{padding:24px}
+#email-body{min-height:190px;line-height:1.5}
+.email-attachment{margin-top:14px;border:1px solid var(--line);border-radius:8px;background:#f7faf8;padding:12px 14px;font-size:11px;color:var(--muted)}
+.email-attachment strong{color:var(--ink)}
+@media(max-width:760px){
+  .signal-inbox-grid{grid-template-columns:1fr}
+  .signal-inbox-grid .signal-text{grid-column:auto}
+  .signal-item{grid-template-columns:1fr}
+  .utility-button{min-width:auto}
+  #email-dialog .dialog-actions{flex-wrap:wrap}
+}
 
   </style>
   <style>
@@ -41,51 +72,35 @@
       </nav>
       <div class="sidebar-foot">
         <span class="status-dot"></span>
-        <div><strong>Ready</strong><small>Upload a CRM export to begin</small></div>
+        <div><strong>Local by default</strong><small>Only mapped notes leave when AI is run</small></div>
       </div>
     </aside>
 
     <main>
       <header class="topbar">
         <div>
-          <p class="eyebrow">TULIP RENEWAL OPERATIONS</p>
-          <h1 id="page-title">Command center</h1>
+          <p class="eyebrow">REVOPS CONTROL PLANE</p>
+          <h1 id="page-title">Renewal command center</h1>
         </div>
         <div class="top-actions">
+          <button id="back-button" class="button secondary utility-button" disabled title="Return to the previous workspace view">← Back</button>
+          <button id="undo-button" class="button secondary utility-button" disabled title="Undo the last saved change">↶ Undo</button>
           <div class="fy-control"><label for="fiscal-year">FORECAST YEAR</label><select id="fiscal-year" disabled><option value="all">All FYs</option></select></div>
           <span id="file-badge" class="file-badge">No dataset loaded</span>
           <label class="button secondary" for="file-input">Upload XLSX / CSV</label>
           <input id="file-input" type="file" accept=".xlsx,.xls,.csv" hidden>
-          <button id="export-button" class="button primary" disabled>Export weekly queue</button>
+          <button id="export-button" class="button primary" disabled>Email weekly queue</button>
         </div>
       </header>
 
       <section id="dashboard" class="view active">
         <div id="empty-state" class="empty-state">
-          <div class="upload-icon" style="font-family:Georgia,serif;font-size:28px">C</div>
-          <h2>Churn Tool — Tulip</h2>
-          <p style="color:var(--muted);max-width:480px;margin:10px 0 0;line-height:1.6;font-size:13px">Upload your Salesforce opportunity export to generate the weekly renewal action queue. The tool scores every open renewal, flags risk and expansion, and routes actions to the right owner.</p>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:28px 0;text-align:left">
-            <div style="background:#fff;border:1px solid var(--line);border-radius:9px;padding:18px">
-              <strong style="font-size:13px">1. Upload your data</strong>
-              <p style="font-size:11px;color:var(--muted);margin:6px 0 0;line-height:1.5">Export opportunities from Salesforce as .xlsx or .csv. Keep the original column names.</p>
-              <label class="button primary" for="file-input" style="margin-top:12px;display:inline-flex">Choose file</label>
-            </div>
-            <div style="background:#fff;border:1px solid var(--line);border-radius:9px;padding:18px">
-              <strong style="font-size:13px">2. Connect text extraction <span style="font-size:10px;color:var(--muted);font-weight:400">(optional)</span></strong>
-              <p style="font-size:11px;color:var(--muted);margin:6px 0 0;line-height:1.5">To read CSM notes and Gong highlights, paste a Claude API key:</p>
-              <ol style="font-size:10px;color:var(--muted);margin:6px 0 0;padding-left:16px;line-height:1.6">
-                <li>Go to <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--green);font-weight:700">console.anthropic.com</a></li>
-                <li>Create Key → copy it</li>
-                <li>Paste below</li>
-              </ol>
-              <input id="setup-key" type="password" placeholder="sk-ant-api03-..." style="margin-top:8px;padding:9px 10px;border:1px solid var(--line);border-radius:7px;font:11px inherit;width:100%">
-              <div style="display:flex;gap:6px;margin-top:6px"><button class="button primary" id="setup-key-test" style="padding:8px 12px;font-size:11px;flex:1" disabled>Test connection</button></div>
-              <div id="setup-key-status" style="font-size:11px;min-height:16px;margin-top:4px"></div>
-              <p style="font-size:9px;color:#8d9590;margin:4px 0 0">Key stays in browser memory only. Your account, your usage.</p>
-            </div>
-          </div>
+          <div class="upload-icon">⇧</div>
+          <p class="eyebrow">START A REPRODUCIBLE RUN</p>
+          <h2>Turn an Excel or CSV export into a weekly churn action queue.</h2>
+          <p>Upload any workbook containing a customer/account column. Churn Tool selects the most relevant sheet, maps common business column names, validates the data, and produces account-level churn and expansion actions.</p>
+          <label class="button primary large" for="file-input">Choose Excel or CSV file</label>
+          <div class="trust-row"><span>✓ Local processing</span><span>✓ Versioned rules</span><span>✓ Deterministic output</span></div>
         </div>
 
         <div id="dashboard-content" class="hidden">
@@ -170,13 +185,24 @@
       </section>
 
       <section id="ai" class="view">
-        <div class="section-intro"><div><p class="eyebrow">STRUCTURED + TEXT</p><h2>Data quality and text extraction</h2><p>Text extraction reads the CSM note and Gong highlight for each renewal. Output is schema-validated, recorded with a prompt version, and added as evidence — not accepted as ground truth.</p></div><span id="ai-status" class="file-badge">Not run</span></div>
+        <div class="section-intro"><div><p class="eyebrow">STRUCTURED + UNSTRUCTURED</p><h2>Claude signal extraction</h2><p>Claude reads only the mapped CSM note and Gong highlight for each selected renewal. Its output is schema-validated, recorded with a prompt version, and added as evidence—not accepted as ground truth.</p></div><span id="ai-status" class="file-badge">Not run</span></div>
+        <article class="panel signal-inbox-panel">
+          <div class="panel-head"><div><p class="eyebrow">SIGNAL INBOX</p><h2>Add Gong and CSM evidence</h2><p class="muted">Paste a note or import a CSV/TXT export, map it to an account, and refresh deterministic rules before optionally running Claude. Raw text stays in this browser session unless you run AI.</p></div><span id="signal-inbox-status" class="chip">0 new signals</span></div>
+          <div class="signal-inbox-grid">
+            <label>Account<select id="signal-account"><option value="">Upload a workbook first</option></select></label>
+            <label>Source<select id="signal-source"><option value="gong">Gong call highlight</option><option value="note">CSM health note</option></select></label>
+            <label>Evidence date<input id="signal-date" type="date"></label>
+            <label class="signal-text">Customer evidence<textarea id="signal-text" placeholder="Paste the customer statement, call summary, or CSM note. Include only evidence you are authorized to process."></textarea></label>
+          </div>
+          <div class="signal-inbox-actions"><label class="button secondary" for="signal-file">Import notes CSV / TXT</label><input id="signal-file" type="file" accept=".csv,.txt,.json" hidden><button id="add-signal" class="button secondary" disabled>Add to evidence</button><button id="run-inbox-ai" class="button primary" disabled>Run AI on new signals</button></div>
+          <div id="signal-inbox-list" class="signal-inbox-list"><p class="muted">No Gong or CSM evidence added in this session.</p></div>
+        </article>
         <div class="ai-grid">
           <article class="panel">
             <h3>Connection</h3>
             <label class="field-label">Anthropic API key<input id="anthropic-key" type="password" autocomplete="off" placeholder="sk-ant-…"></label>
-            <label class="field-label">Claude model<input id="anthropic-model" value="claude-sonnet-4-6"></label>
-            <label class="field-label">Rows to process<select id="ai-limit"><option value="25">First 25 — demo</option><option value="50" selected>First 50</option><option value="all">All current renewals</option></select></label>
+            <label class="field-label">Claude model<input id="anthropic-model" value="claude-sonnet-5"></label>
+            <label class="field-label">Rows to process<select id="ai-limit"><option value="inbox">New signal inbox only</option><option value="25">First 25 — demo</option><option value="50" selected>First 50</option><option value="all">All current renewals</option></select></label>
             <div class="privacy-note">The key remains in memory for this browser session and is sent directly to Anthropic. Use a temporary/restricted key. A production rollout should use a controlled backend proxy.</div>
             <button id="test-ai" class="button secondary" disabled>Test connection</button>
             <button id="run-ai" class="button primary" disabled>Run Claude extraction</button>
@@ -190,7 +216,7 @@
             <p id="ai-progress-label" class="muted">Upload a valid workbook first.</p>
           </article>
         </div>
-        <article class="panel ai-results-panel"><div class="panel-head"><div><p class="eyebrow">RUN AUDIT</p><h2>AI extraction results</h2></div><button id="export-ai" class="button secondary" disabled>Export AI audit</button></div><div class="table-wrap"><table><thead><tr><th>Account</th><th>Category</th><th>Risk</th><th>Expansion</th><th>Confidence</th><th>Evidence</th><th>Status</th></tr></thead><tbody id="ai-results-body"><tr><td colspan="7" class="muted">No AI run yet.</td></tr></tbody></table></div></article>
+        <article class="panel ai-results-panel"><div class="panel-head"><div><p class="eyebrow">RUN AUDIT</p><h2>AI extraction results</h2></div><button id="export-ai" class="button secondary" disabled>Email AI audit</button></div><div class="table-wrap"><table><thead><tr><th>Account</th><th>Category</th><th>Risk</th><th>Expansion</th><th>Confidence</th><th>Evidence</th><th>Status</th></tr></thead><tbody id="ai-results-body"><tr><td colspan="7" class="muted">No AI run yet.</td></tr></tbody></table></div></article>
         <div id="quality-mount" class="audit-mount"></div>
         <div id="runs-mount" class="audit-mount"></div>
       </section>
@@ -211,7 +237,7 @@
       <section id="rules" class="view">
         <div class="section-intro">
           <div><p class="eyebrow">PERSISTENT DECISION LOGIC</p><h2>Rule memory</h2><p>Rules are stored in this browser, versioned on every change, and can be exported for team review or imported next quarter.</p></div>
-          <div class="top-actions"><button id="import-rules" class="button secondary">Import rules</button><input id="rules-input" type="file" accept=".json" hidden><button id="export-rules" class="button secondary">Export rules</button><button id="new-rule" class="button primary">Create rule</button></div>
+          <div class="top-actions"><button id="import-rules" class="button secondary">Import rules</button><input id="rules-input" type="file" accept=".json" hidden><button id="export-rules" class="button secondary">Email rule pack</button><button id="new-rule" class="button primary">Create rule</button></div>
         </div>
         <div class="rule-summary"><span><strong id="active-rule-count">0</strong> active rules</span><span><strong id="rule-version">v1</strong> current version</span><span><strong id="last-rule-change">Default</strong> last change</span></div>
         <div id="rule-list" class="rule-list"></div>
@@ -219,7 +245,7 @@
       </section>
 
       <section id="quality" class="view">
-        <div class="section-intro"><div><p class="eyebrow">FAIL LOUDLY</p><h2>Data quality gate</h2><p>The run separates blocking schema problems from row-level warnings. Findings are visible and exportable; nothing is silently repaired.</p></div><button id="export-quality" class="button secondary" disabled>Export findings</button></div>
+        <div class="section-intro"><div><p class="eyebrow">FAIL LOUDLY</p><h2>Data quality gate</h2><p>The run separates blocking schema problems from row-level warnings. Findings are visible and exportable; nothing is silently repaired.</p></div><button id="export-quality" class="button secondary" disabled>Email findings</button></div>
         <div id="quality-summary" class="quality-summary"></div>
         <div class="panel table-panel"><div class="table-wrap"><table><thead><tr><th>Severity</th><th>Check</th><th>Rows</th><th>What it means</th><th>Action</th></tr></thead><tbody id="quality-body"></tbody></table></div></div>
       </section>
@@ -230,14 +256,14 @@
       </section>
 
       <section id="brief" class="view">
-        <div class="section-intro"><div><p class="eyebrow">HANDOFF + EXECUTIVE CASE</p><h2>Submission brief</h2><p>The operating case, pushback response, rollout plan, workflow log, and demo record travel with the tool.</p></div><div class="submission-actions"><button id="export-demo" class="button secondary" disabled>Export demo record</button><button id="export-brief" class="button primary">Export submission brief</button></div></div>
+        <div class="section-intro"><div><p class="eyebrow">HANDOFF + EXECUTIVE CASE</p><h2>Submission brief</h2><p>The operating case, pushback response, rollout plan, workflow log, and demo record travel with the tool.</p></div><div class="submission-actions"><button id="export-demo" class="button secondary" disabled>Email demo record</button><button id="export-brief" class="button primary">Email submission brief</button></div></div>
         <div class="brief-grid">
           <article class="panel brief-block"><h3>Executive memo</h3><p><strong>Decision:</strong> run Churn Tool weekly as a governed triage layer before forecast calls. It converts one CRM export into a validated risk queue, three churn scenarios, quarterly exposure, and named executive actions. It does not replace the forecast owner.</p><p><strong>Expected outcome:</strong> shorter account-review preparation, earlier save-plan ownership, and an auditable record of why an account moved. Measure adoption by weekly run completion, action acceptance, false-positive review, and forecast error by tier.</p></article>
           <article class="panel brief-block"><h3>CRO pushback response</h3><div class="compact-copy">You are right that CSM language is noisy and recovery is possible. I will not treat concern words as churn. I will keep the P50 forecast where structured deterioration and unresolved text agree; text-only flags stay in human review. We settle the disagreement by back-testing the flagged cohort against closed outcomes, tracking overrides, and measuring error by tier. Until that evidence supports a change, the medium case remains the operating commitment.</div><details class="prompt-details"><summary>Read the full response</summary><div class="full-response"><p><strong>What is true in the critique.</strong> CSM notes are written for customer management, not statistical forecasting. They can be stale, cautious, inconsistent across CSMs, or describe an issue that has already been resolved. Tulip has also recovered difficult renewals before, so a negative note is not the same thing as a churn outcome.</p><p><strong>Where I agree and disagree.</strong> I agree that text-only concern should not automatically move committed churn ARR. I disagree that the noise makes the text disposable. When an unresolved customer statement agrees with low utilization, critical health, a pipeline forecast, or a recorded churn reason, ignoring it would create a more optimistic—but less defensible—forecast.</p><p><strong>How we settle it.</strong> For the next two forecast cycles, RevOps will retain every model flag, CRO/CSM override, cited evidence, and final outcome. We will measure observed churn by tier, false-positive rates for text-only versus combined signals, and forecast error by segment and stage. CSM leaders will review the five largest disagreements weekly and classify each note as current, resolved, or stale.</p><p><strong>Forecast commitment.</strong> I am keeping the current medium/P50 case as the operating forecast. Accounts with combined structured and unresolved text evidence remain in the forecast; text-only accounts remain review items until confirmed. If back-testing shows the combined-signal tier materially overstates churn, I will lower the scenario rate at the next monthly calibration—not override individual accounts until the total looks better.</p></div></details></article>
           <article class="panel brief-block"><h3>Operating model</h3><ul><li><strong>RevOps:</strong> upload, validate, publish queue, monitor calibration.</li><li><strong>CSM:</strong> confirm adoption and customer-context signals.</li><li><strong>AE:</strong> own commercial save and expansion actions.</li><li><strong>CRO/CCO:</strong> resolve the five highest-leverage escalations.</li><li><strong>Cadence:</strong> weekly run; monthly override review; quarterly rule calibration.</li></ul></article>
           <article class="panel brief-block"><h3>First 90 days</h3><ol><li><strong>Days 1–30:</strong> shadow forecast calls, baseline false positives, lock metric definitions.</li><li><strong>Days 31–60:</strong> route accepted actions, add backend AI proxy, monitor completion and error.</li><li><strong>Days 61–90:</strong> recalibrate scenario rates, publish governance owner, decide production rollout.</li></ol></article>
           <article class="panel brief-block"><h3>Demo evidence</h3><div class="status-checklist"><div class="status-check"><b>✓</b><span>Actual supplied workbook fixture tested.</span></div><div class="status-check"><b>✓</b><span>Deterministic rules, formulas, exports, and run hash captured.</span></div><div class="status-check pending"><b>○</b><span>Run “Test connection” with a throwaway Anthropic key and capture a screenshot/Loom.</span></div><div class="status-check pending"><b>○</b><span>Export the demo record after the live AI run.</span></div></div></article>
-          <article class="panel brief-block"><h3>AI workflow log</h3><ul><li><strong>Model:</strong> Claude Sonnet 4.6 via Messages API.</li><li><strong>Time saved:</strong> roughly 90 minutes across schema review, rule scaffolding, and UI iteration; calculations were independently fixture-tested.</li><li><strong>Suspect output caught:</strong> negated risk language could be marked active; the prompt now treats resolved and negated statements as no current risk.</li><li><strong>Control:</strong> strict schema, invalid output scores zero, prompt version recorded.</li><li><strong>Current weakness:</strong> cannot reliably separate stale risk from current risk when notes have no timestamp.</li></ul></article>
+          <article class="panel brief-block"><h3>AI workflow log</h3><ul><li><strong>Model:</strong> Claude Sonnet 5 via Messages API.</li><li><strong>Time saved:</strong> roughly 90 minutes across schema review, rule scaffolding, and UI iteration; calculations were independently fixture-tested.</li><li><strong>Suspect output caught:</strong> negated risk language could be marked active; the prompt now treats resolved and negated statements as no current risk.</li><li><strong>Control:</strong> temperature 0, strict schema, invalid output scores zero, prompt version recorded.</li><li><strong>Current weakness:</strong> AI cannot reliably separate stale risk from current risk when notes have no timestamp.</li></ul></article>
           <article class="panel brief-block wide"><h3>Prompts that did the work</h3><details class="prompt-details"><summary>View four prompts verbatim</summary><pre>1. Inspect the supplied CRM export and data dictionary. Identify load-bearing fields, definitional drift, contradictions, missingness, and checks that must block or warn before any churn forecast is produced.
 
 2. Design a deterministic account-level churn and expansion scoring model that combines structured health, utilization, renewal fields, CSM notes, Gong highlights, and recorded churn reasons. Every score must retain source evidence, an owner, and a recommended action.
@@ -258,11 +284,11 @@
               <div><b>1</b><span><strong>Export</strong><small>RevOps exports the current Salesforce opportunity book as XLSX or CSV. Keep the original field names.</small></span></div>
               <div><b>2</b><span><strong>Upload and validate</strong><small>The file stays in the browser. Blocking schema issues stop the run; row-level contradictions become explicit findings.</small></span></div>
               <div><b>3</b><span><strong>Review the queue</strong><small>RevOps reviews Critical and High accounts, evidence, and proposed owner/action. No score should be used without its evidence.</small></span></div>
-              <div><b>4</b><span><strong>Route and export</strong><small>Export the weekly CSV. CSM owns adoption/health actions, AE owns commercial actions, and leadership resolves coverage or exception decisions.</small></span></div>
+              <div><b>4</b><span><strong>Route by email</strong><small>Review the generated email draft and attached weekly queue. CSM owns adoption/health actions, AE owns commercial actions, and leadership resolves coverage or exception decisions.</small></span></div>
               <div><b>5</b><span><strong>Learn deliberately</strong><small>Change rules through Rule Memory, record the reason, export the rule pack, and compare outcomes next quarter.</small></span></div>
             </div>
           </article>
-          <aside class="panel guide-card"><h3>Operating contract</h3><dl><dt>Runner</dt><dd>RevOps analyst</dd><dt>Consumers</dt><dd>CRO, Sales leaders, CSM leaders, AEs, CSMs</dd><dt>Cadence</dt><dd>Weekly; full recalibration quarterly</dd><dt>Decisions</dt><dd>Escalations, save plans, expansion outreach, forecast overrides</dd><dt>Inputs</dt><dd>Fresh Salesforce opportunity export</dd><dt>Outputs</dt><dd>Ranked queue, quality report, rule pack, run log</dd></dl></aside>
+          <aside class="panel guide-card"><h3>Operating contract</h3><dl><dt>Runner</dt><dd>RevOps analyst</dd><dt>Consumers</dt><dd>CRO, Sales leaders, CSM leaders, AEs, CSMs</dd><dt>Cadence</dt><dd>Weekly; full recalibration quarterly</dd><dt>Decisions</dt><dd>Escalations, save plans, expansion outreach, forecast overrides</dd><dt>Inputs</dt><dd>Salesforce export + optional Gong/CSM signal files</dd><dt>Outputs</dt><dd>Reviewable email drafts with attached queue, quality report, rule pack, or AI audit</dd></dl></aside>
           <aside class="panel limits-card"><h3>Do not trust it for</h3><ul><li>Automatic churn probability or financial forecast accuracy</li><li>Interpreting missing notes as positive customer sentiment</li><li>Replacing CSM or AE judgment on account context</li><li>Sending customer communication without human approval</li><li>Comparing segments without reviewing classification drift</li></ul></aside>
         </div>
       </section>
@@ -291,10 +317,24 @@
   </dialog>
 
   <dialog id="account-dialog"><div id="account-detail"></div></dialog>
+  <dialog id="email-dialog">
+    <form id="email-form" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">HUMAN HANDOFF</p><h2>Email draft</h2><p class="muted">Review the recipient and message before opening or downloading the email.</p></div><button type="button" class="icon-button" id="close-email">×</button></div>
+      <div class="form-grid">
+        <label>To<input id="email-to" type="email" multiple placeholder="owner@company.com"></label>
+        <label>CC<input id="email-cc" type="text" placeholder="revops@company.com"></label>
+        <label class="full">Subject<input id="email-subject" required></label>
+        <label class="full">Message<textarea id="email-body" required></textarea></label>
+      </div>
+      <div id="email-attachment" class="email-attachment"></div>
+      <div class="privacy-note">“Open email app” cannot attach files automatically. “Download .eml” creates a complete email draft with the export attached.</div>
+      <div class="dialog-actions"><button type="button" class="button secondary" id="cancel-email">Cancel</button><button type="button" class="button secondary" id="copy-email">Copy email</button><button type="button" class="button secondary" id="open-email">Open email app</button><button type="button" class="button primary" id="download-email">Download .eml draft</button></div>
+    </form>
+  </dialog>
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" integrity="sha256-yVBhl8r4CaB1tt7h2g02+xnacVj/6KiOewyWxdhiPJk=" crossorigin="anonymous"></script>
   <script>
-/* Churn Tool v1.0 — deterministic RevOps decision routing */
+/* Churn Tool v1.1 — deterministic RevOps decision routing, evidence inbox, and reviewable email handoffs */
 (function () {
   'use strict';
 
@@ -341,7 +381,7 @@
     {id:'adoption',name:'Adoption reset',channel:'CSM action',text:'Launch a 30-day adoption reset for {{account}}: {{reason}}. Baseline usage, name the blocked workflow, and set a weekly target.'},
     {id:'executive',name:'Executive sponsor',channel:'Leadership ask',text:'Request executive sponsor support for {{account}}: {{reason}}. Secure one decision, one owner, and one deadline.'}
   ];
-  let state = { rows: [], accounts: [], quality: [], fileName: '', fileHash: '', headers: [], runAt: null, aiResults: [], aiRun: null, selectedFY:null, dashboardTab:'decision' };
+  let state = { rows: [], accounts: [], quality: [], fileName: '', fileHash: '', headers: [], runAt: null, aiResults: [], aiRun: null, selectedFY:null, dashboardTab:'decision', signalInbox:[] };
   let aiAbort = null;
   const AI_PROMPT_VERSION = 'churn-expansion-extraction-v2.0';
   const SCENARIOS = {
@@ -354,6 +394,10 @@
   let runHistory = loadJson(STORAGE.runs, []);
   let triggers = loadJson(STORAGE.triggers, DEFAULT_TRIGGERS);
   let reviews = loadJson(STORAGE.reviews, {});
+  let undoStack = [];
+  let viewHistory = [];
+  let currentView = 'dashboard';
+  let emailDraft = null;
 
   function rule(id,name,usecase,field,operator,value,points,label,owner,action) {
     return { id,name,usecase,field,operator,value,points,label,owner,action,active:true,createdAt:'2026-07-19T00:00:00.000Z',updatedAt:'2026-07-19T00:00:00.000Z',reason:'Default rule derived from the supplied Tulip context and data dictionary.' };
@@ -371,22 +415,41 @@
   const esc = v => String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
   const normalize = v => String(v ?? '').trim().toLowerCase();
   const val = (row, key) => { const aliases=FIELD_ALIASES[key]||[key];for (const name of aliases) if (Object.prototype.hasOwnProperty.call(row,name)) return row[name];const wanted=new Set(aliases.map(normalize));for(const name of Object.keys(row))if(wanted.has(normalize(name)))return row[name];return null; };
+  const setVal = (row,key,value) => { const aliases=FIELD_ALIASES[key]||[key],wanted=new Set(aliases.map(normalize));const existing=Object.keys(row).find(name=>wanted.has(normalize(name)));row[existing||FIELD_LABELS[key]||aliases[0]]=value; };
   const hasField = (headers,key) => { const wanted=new Set((FIELD_ALIASES[key]||[key]).map(normalize));return headers.some(h=>wanted.has(normalize(h))); };
-  const num = v => { if (v === null || v === undefined || v === '') return null; let s=String(v).replace(/[$,%]/g,''); const fyMatch=s.match(/^FY\s*(\d{2,4})$/i); if(fyMatch){const yr=Number(fyMatch[1]);s=String(yr<100?2000+yr:yr)} const n = Number(s); return Number.isFinite(n) ? n : null; };
+  const num = v => { if (v === null || v === undefined || v === '') return null; const n = Number(String(v).replace(/[$,%]/g,'')); return Number.isFinite(n) ? n : null; };
   const combinedText = row => [val(row,'note'),val(row,'gong'),val(row,'reason'),val(row,'lossReason')].filter(Boolean).join(' | ');
 
   function toast(message) { const el=$('toast'); el.textContent=message; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),2600); }
-  function switchView(id) {
+  const clone = value => typeof structuredClone==='function' ? structuredClone(value) : JSON.parse(JSON.stringify(value));
+  function updateUndoButton(){const button=$('undo-button');if(!button)return;button.disabled=!undoStack.length;button.textContent=undoStack.length?'↶ Undo '+undoStack.at(-1).label:'↶ Undo';}
+  function captureUndo(label,{includeRows=false}={}){
+    undoStack.push({label,rules:clone(rules),ruleMeta:clone(ruleMeta),triggers:clone(triggers),reviews:clone(reviews),runHistory:clone(runHistory),signalInbox:clone(state.signalInbox),rows:includeRows?clone(state.rows):null,aiResults:includeRows?clone(state.aiResults):null});
+    undoStack=undoStack.slice(-12);updateUndoButton();
+  }
+  function undoLast(){
+    const snapshot=undoStack.pop();if(!snapshot)return;
+    rules=snapshot.rules;ruleMeta=snapshot.ruleMeta;triggers=snapshot.triggers;reviews=snapshot.reviews;runHistory=snapshot.runHistory;state.signalInbox=snapshot.signalInbox;
+    if(snapshot.rows){state.rows=snapshot.rows;state.headers=state.rows.length?Object.keys(state.rows[0]):[];state.aiResults=snapshot.aiResults||[];state.quality=validateData(state.rows,state.headers);state.accounts=buildAccounts(state.rows);if(state.aiResults.length)applyAIResults();}
+    localStorage.setItem(STORAGE.rules,JSON.stringify(rules));localStorage.setItem(STORAGE.meta,JSON.stringify(ruleMeta));localStorage.setItem(STORAGE.triggers,JSON.stringify(triggers));localStorage.setItem(STORAGE.reviews,JSON.stringify(reviews));localStorage.setItem(STORAGE.runs,JSON.stringify(runHistory));
+    renderAll();renderSignalInbox();refreshSignalAccountOptions();updateUndoButton();toast('Undid: '+snapshot.label);
+  }
+  function updateBackButton(){const button=$('back-button');if(button)button.disabled=!viewHistory.length;}
+  function switchView(id,record=true) {
+    if(record&&id!==currentView)viewHistory.push(currentView);
+    currentView=id;updateBackButton();
     document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
     document.querySelectorAll('.nav-item').forEach(v=>v.classList.toggle('active',v.dataset.view===id));
-    const titles={dashboard:'Command center',triggers:'Rules & action triggers',ai:'Data & text extraction',accounts:'Account action queue',rules:'Rules & action triggers',quality:'Data & text extraction',runs:'Data & text extraction',brief:'Handoff',howto:'Handoff'};
+    const titles={dashboard:'Renewal command center',triggers:'Rules & action triggers',ai:'Data & AI audit',accounts:'Account action queue',rules:'Rules & action triggers',quality:'Data & AI audit',runs:'Data & AI audit',brief:'Handoff',howto:'Handoff'};
     $('page-title').textContent=titles[id]; location.hash=id;
   }
+  function goBack(){const previous=viewHistory.pop();if(!previous)return;switchView(previous,false);updateBackButton();}
   function setDashboardTab(tab){state.dashboardTab=tab==='context'?'context':'decision';document.querySelectorAll('[data-dashboard-scope]').forEach(el=>el.classList.toggle('hidden',el.dataset.dashboardScope!==state.dashboardTab));document.querySelectorAll('[data-dashboard-tab]').forEach(b=>{const active=b.dataset.dashboardTab===state.dashboardTab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));});const grid=document.querySelector('.dashboard-grid');if(grid){grid.classList.toggle('context-mode',state.dashboardTab==='context');grid.classList.toggle('decision-mode',state.dashboardTab==='decision');}}
 
   async function handleFile(file) {
     if (!file) return;
     try {
+      if(state.rows.length)captureUndo('dataset replacement',{includeRows:true});
       $('file-badge').textContent='Reading '+file.name+'…';
       const buffer=await file.arrayBuffer(); state.fileHash=await digest(buffer); state.fileName=file.name;
       let rows;
@@ -398,39 +461,15 @@
         rows=candidates[0]?.data||[];
       }
       if (!rows.length) throw new Error('The first sheet has no data rows.');
-      state.headers=Object.keys(rows[0]); state.rows=rows;
-      const fiscalYears=[...new Set(rows.map(r=>{let fy=num(val(r,'closeFY'));if(fy)return fy;const fp=String(val(r,'fiscalPeriod')||'');const m=fp.match(/FY\s*(\d{2,4})/i);if(m){const yr=Number(m[1]);return yr<100?2000+yr:yr}return null}).filter(Boolean))].sort((a,b)=>a-b);state.selectedFY=fiscalYears.includes(2027)?2027:fiscalYears.includes(2026)?2026:(fiscalYears.at(-1)||null);renderFiscalYears(fiscalYears);
+      state.headers=Object.keys(rows[0]); state.rows=rows;state.signalInbox=[];
+      const fiscalYears=[...new Set(rows.map(r=>num(val(r,'closeFY'))).filter(Boolean))].sort((a,b)=>a-b);state.selectedFY=fiscalYears.includes(2026)?2026:(fiscalYears.at(-1)||null);renderFiscalYears(fiscalYears);
       state.quality=validateData(rows,state.headers);
       const blockers=state.quality.filter(q=>q.severity==='blocker');
       if (blockers.length) { state.accounts=[]; renderAll(); switchView('quality'); throw new Error('Run stopped: '+blockers.length+' blocking schema issue'+(blockers.length===1?'':'s')+'.'); }
       state.accounts=buildAccounts(rows); state.runAt=new Date(); state.aiResults=[];state.aiRun=null;recordRun(); renderAll();
       $('empty-state').classList.add('hidden'); $('dashboard-content').classList.remove('hidden'); $('export-button').disabled=false; $('export-quality').disabled=false;
-      $('file-badge').textContent=file.name;$('run-ai').disabled=false;$('test-ai').disabled=false;$('export-demo').disabled=false; switchView('dashboard'); toast('Structured scoring complete');
-      const existingKey=($('setup-key')?$('setup-key').value:'')|| $('anthropic-key').value.trim();
-      if(existingKey.length>=10){
-        $('anthropic-key').value=existingKey;
-        toast('Testing text extraction connection…');
-        try{await testAIConnection();toast('✓ Successfully connected — go to Data & text extraction to run')}
-        catch(e){toast('✗ Key failed: '+e.message+' — check key in Data & text extraction')}
-      } else{showKeyPrompt()}
+      $('file-badge').textContent=file.name;$('run-ai').disabled=false;$('test-ai').disabled=false;$('export-demo').disabled=false;refreshSignalAccountOptions();renderSignalInbox();switchView('dashboard');toast('Run complete: '+number(rows.length)+' rows analyzed');
     } catch (error) { $('file-badge').textContent=state.fileName||'No dataset loaded'; toast(error.message||'Could not read this file'); renderQuality(); }
-  }
-
-  function showKeyPrompt(){
-    const old=document.getElementById('key-prompt');if(old)old.remove();
-    const banner=document.createElement('div');banner.id='key-prompt';banner.className='run-banner';
-    banner.style.cssText='background:#fff6e5;border-color:#ead5ad;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start';
-    banner.innerHTML=`<div style="flex:1;min-width:260px"><strong style="color:#a86913;font-size:13px">Text extraction available</strong><p style="font-size:11px;color:#64736f;margin:6px 0 0;line-height:1.6">To read CSM notes and Gong highlights, connect a Claude API key:</p><ol style="font-size:11px;color:#64736f;margin:6px 0 0;padding-left:18px;line-height:1.7"><li>Go to <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--green);font-weight:700">console.anthropic.com/settings/keys</a></li><li>Click <strong>Create Key</strong> → copy it</li><li>Paste below and click <strong>Test</strong></li></ol><p style="font-size:9px;color:#8d9590;margin:6px 0 0">Key stays in browser memory. Your account, your usage.</p></div><div style="display:flex;flex-direction:column;gap:6px;min-width:240px"><input id="prompt-key-input" type="password" placeholder="sk-ant-api03-..." style="padding:10px;border:1px solid #ead5ad;border-radius:7px;font:12px inherit;width:100%"><div style="display:flex;gap:6px"><button class="button primary" id="prompt-key-test" style="flex:1">Test & connect</button><button class="button secondary" id="prompt-key-skip">Skip</button></div><div id="prompt-key-status" style="font-size:11px;min-height:16px"></div></div>`;
-    $('dashboard-content').insertBefore(banner,$('dashboard-content').children[1]);
-    $('prompt-key-test').addEventListener('click',async()=>{
-      const key=$('prompt-key-input').value.trim();if(key.length<10){$('prompt-key-status').textContent='Key too short';$('prompt-key-status').style.color='#b43d3d';return}
-      $('anthropic-key').value=key;$('prompt-key-status').textContent='Testing…';$('prompt-key-status').style.color='#a86913';$('prompt-key-test').disabled=true;
-      try{await testAIConnection();$('prompt-key-status').innerHTML='<strong style="color:#146c55">✓ Successfully connected.</strong> Go to Data & text extraction to run.';banner.style.background='#edf8f3';banner.style.borderColor='#c4dfd3';setTimeout(()=>{banner.style.transition='opacity .3s';banner.style.opacity='0';setTimeout(()=>banner.remove(),300)},4000)}
-      catch(e){$('prompt-key-status').innerHTML='<strong style="color:#b43d3d">✗ Failed:</strong> '+esc(e.message);$('prompt-key-status').style.color='#b43d3d'}
-      finally{$('prompt-key-test').disabled=false}
-    });
-    $('prompt-key-input').addEventListener('keydown',e=>{if(e.key==='Enter')$('prompt-key-test').click()});
-    $('prompt-key-skip').addEventListener('click',()=>{banner.remove();toast('Skipped — structured scoring only. Add a key in Data & text extraction later.')});
   }
   async function digest(buffer) { try { const hash=await crypto.subtle.digest('SHA-256',buffer); return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,12); } catch { return 'unavailable'; } }
   function renderFiscalYears(years){const select=$('fiscal-year');select.innerHTML=years.map(y=>`<option value="${y}">FY${String(y).slice(-2)}</option>`).join('')+'<option value="all">All FYs</option>';select.value=state.selectedFY||'all';select.disabled=false;}
@@ -493,7 +532,7 @@
     const motion=normalize(val(row,'recordType'))+' '+normalize(val(row,'dealType'));
     const isRenewal=motion.trim()?/subscription renewal|renewal|retention|churn|contract/.test(motion):true;
     const closeFY=num(val(row,'closeFY'));
-    const matchesFY=state.selectedFY===null||state.selectedFY==='all'||(closeFY!==null&&closeFY===Number(state.selectedFY));
+    const matchesFY=state.selectedFY===null||state.selectedFY==='all'||closeFY===null||closeFY===Number(state.selectedFY);
     return isOpen&&isRenewal&&matchesFY;
   }
   function buildAccounts(rows) {
@@ -610,7 +649,7 @@
     $('account-detail').innerHTML=`<div class="account-detail"><button class="icon-button close-detail" onclick="document.getElementById('account-dialog').close()">×</button><div class="detail-head"><div><p class="eyebrow">ACCOUNT DECISION DRAWER</p><h2>${esc(a.name)}</h2><span class="tier ${a.tier}">${a.tier}</span><div class="source-strip"><span class="source-chip">Rows ${a.rows.join(', ')}</span><span class="source-chip">${esc(a.confidence)} confidence</span>${a.ai?`<span class="source-chip">AI ${Math.round(a.ai.confidence*100)}%</span>`:''}</div></div><div><strong>${money(a.renewalArr)}</strong><br><small class="muted">renewal ARR</small></div></div><div class="decision-callout"><span>Required next action · ${esc(a.actionOwner)}</span><strong>${esc(a.action)}</strong></div><div class="drawer-review"><select id="review-decision"><option${review.decision==='Pending review'?' selected':''}>Pending review</option><option${review.decision==='Accept action'?' selected':''}>Accept action</option><option${review.decision==='Override risk'?' selected':''}>Override risk</option><option${review.decision==='Defer'?' selected':''}>Defer</option></select><input id="review-note" value="${esc(review.note)}" placeholder="Reason or reviewer note"><button class="button primary" data-save-review="${esc(a.id)}">Save review</button></div><div class="detail-grid"><div class="detail-block"><h3>Structured + behavioral</h3><p><b>Owner:</b> ${esc(a.owner)}</p><p><b>Risk / expansion:</b> ${a.risk} / ${a.expansion}</p><p><b>Health:</b> ${esc(a.health)}</p><p><b>Utilization:</b> ${a.utilization===null?'Not mapped':metricValue(a.utilization)}</p><p><b>Adoption depth:</b> ${a.featureDepth===null?'Not mapped':metricValue(a.featureDepth)}</p></div><div class="detail-block"><h3>Text extraction</h3>${a.ai?`<p><b>Category:</b> ${esc(a.ai.risk_category)}</p><p><b>Evidence:</b> ${esc(a.ai.evidence_text||a.ai.reasoning)}</p><p><b>Conflict:</b> ${a.ai.conflict?'Yes — review required':'No detected conflict'}</p>`:'<p class="muted">AI extraction has not been run for this account.</p>'}</div><div class="detail-block full"><h3>Triggered evidence</h3><div class="evidence-list">${a.evidence.map(e=>`<div class="evidence-item"><b>${esc(e.label)} · ${e.points} pts</b><span>${esc(e.usecase)} · ${esc(e.owner)} · ${esc(e.opportunity||'Account evidence')}</span></div>`).join('')||'<span class="muted">No rule evidence.</span>'}</div></div></div></div>`;
     $('account-dialog').showModal();
   }
-  function saveReview(id){reviews[id]={decision:$('review-decision').value,note:$('review-note').value.trim(),at:new Date().toISOString()};localStorage.setItem(STORAGE.reviews,JSON.stringify(reviews));toast('Account review saved');}
+  function saveReview(id){captureUndo('account review');reviews[id]={decision:$('review-decision').value,note:$('review-note').value.trim(),at:new Date().toISOString()};localStorage.setItem(STORAGE.reviews,JSON.stringify(reviews));toast('Account review saved');}
 
   function populateRuleForm(r){
     $('rule-id').value=r?.id||'';$('rule-name').value=r?.name||'';$('rule-usecase').value=r?.usecase||'risk';$('rule-field').value=r?.field||'utilization';$('rule-operator').value=r?.operator||'lt';$('rule-value').value=r?.value||'';$('rule-points').value=r?.points||20;$('rule-owner').value=r?.owner||'CSM';$('rule-label').value=r?.label||'';$('rule-action').value=r?.action||'';$('rule-reason').value='';$('rule-active').checked=r?.active??true;$('rule-dialog-title').textContent=r?'Edit rule':'Create rule';$('rule-dialog').showModal();
@@ -619,24 +658,53 @@
     const id=$('rule-id').value||('rule-'+Date.now()),existing=rules.find(r=>r.id===id),now=new Date().toISOString();
     const item={id,name:$('rule-name').value.trim(),usecase:$('rule-usecase').value,field:$('rule-field').value,operator:$('rule-operator').value,value:$('rule-value').value.trim(),points:Number($('rule-points').value),owner:$('rule-owner').value,label:$('rule-label').value.trim(),action:$('rule-action').value.trim(),reason:$('rule-reason').value.trim(),active:$('rule-active').checked,createdAt:existing?.createdAt||now,updatedAt:now};
     if(item.operator==='regex'){try{new RegExp(item.value)}catch{toast('The regular expression is invalid');return false;}}
-    if(existing)rules[rules.indexOf(existing)]=item;else rules.push(item);persistRules({action:existing?'updated':'created',ruleId:id,name:item.name,reason:item.reason});
+    captureUndo(existing?'rule edit':'rule creation');if(existing)rules[rules.indexOf(existing)]=item;else rules.push(item);persistRules({action:existing?'updated':'created',ruleId:id,name:item.name,reason:item.reason});
     rerunWithRules();renderRules();toast('Rule saved as version '+ruleMeta.version);return true;
   }
   function rerunWithRules(){if(!state.rows.length)return;state.accounts=buildAccounts(state.rows);if(state.aiResults.length)applyAIResults();renderDashboard();renderAccounts();}
-  function toggleRule(id){const r=rules.find(x=>x.id===id);if(!r)return;r.active=!r.active;r.updatedAt=new Date().toISOString();persistRules({action:r.active?'activated':'deactivated',ruleId:id,name:r.name,reason:'Status changed in Rule Memory.'});rerunWithRules();renderRules();toast(r.name+' '+(r.active?'activated':'deactivated'));}
-  function deleteRule(id){const r=rules.find(x=>x.id===id);if(!r||!confirm('Delete “'+r.name+'”? The audit history will retain the deletion event.'))return;rules=rules.filter(x=>x.id!==id);persistRules({action:'deleted',ruleId:id,name:r.name,reason:'Deleted in Rule Memory.'});rerunWithRules();renderRules();toast('Rule deleted');}
+  function toggleRule(id){const r=rules.find(x=>x.id===id);if(!r)return;captureUndo('rule status change');r.active=!r.active;r.updatedAt=new Date().toISOString();persistRules({action:r.active?'activated':'deactivated',ruleId:id,name:r.name,reason:'Status changed in Rule Memory.'});rerunWithRules();renderRules();toast(r.name+' '+(r.active?'activated':'deactivated'));}
+  function deleteRule(id){const r=rules.find(x=>x.id===id);if(!r||!confirm('Delete “'+r.name+'”? The audit history will retain the deletion event.'))return;captureUndo('rule deletion');rules=rules.filter(x=>x.id!==id);persistRules({action:'deleted',ruleId:id,name:r.name,reason:'Deleted in Rule Memory.'});rerunWithRules();renderRules();toast('Rule deleted');}
 
   function download(name,content,type='text/csv;charset=utf-8'){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),500);}
   function csv(rows){if(!rows.length)return'';const heads=Object.keys(rows[0]);const cell=v=>'"'+String(v??'').replace(/"/g,'""')+'"';return heads.map(cell).join(',')+'\n'+rows.map(r=>heads.map(h=>cell(r[h])).join(',')).join('\n');}
-  function exportQueue(){download('churn-tool-weekly-queue-'+new Date().toISOString().slice(0,10)+'.csv',csv(state.accounts.map((a,i)=>({priority:i+1,tier:a.tier,account:a.name,opportunity_owner:a.owner,action_owner:a.actionOwner,renewal_arr:a.renewalArr,new_arr:a.newArr,risk_score:a.risk,expansion_score:a.expansion,confidence:a.confidence,health:a.health,utilization:a.utilization,structured_text_conflict:a.conflictEvidence||'',ai_category:a.ai?.risk_category||'',ai_confidence:a.ai?.confidence??'',ai_conflict:a.ai?.conflict??'',evidence:a.evidence.map(e=>e.label).join(' | '),recommended_action:a.action,rule_version:ruleMeta.version,input_hash:state.fileHash}))));}
-  function exportQuality(){download('churn-tool-data-quality-'+new Date().toISOString().slice(0,10)+'.csv',csv(state.quality));}
-  function exportRules(){download('churn-tool-rule-pack-v'+ruleMeta.version+'.json',JSON.stringify({product:'Churn Tool',schemaVersion:1,exportedAt:new Date().toISOString(),meta:ruleMeta,rules},null,2),'application/json');}
-  async function importRules(file){try{const data=JSON.parse(await file.text());if(!Array.isArray(data.rules)||!data.rules.every(r=>r.id&&r.name&&r.field&&r.operator))throw new Error('Not a valid Churn Tool rule pack.');rules=data.rules;persistRules({action:'imported',ruleId:'rule-pack',name:file.name,reason:'Imported rule pack after schema validation.'});rerunWithRules();renderRules();toast('Imported '+rules.length+' rules');}catch(e){toast(e.message);}}
+  function queueEmail({subject,body,attachmentName='',attachmentContent='',attachmentType='text/plain'}){
+    emailDraft={subject,body,attachmentName,attachmentContent,attachmentType};$('email-to').value='';$('email-cc').value='';$('email-subject').value=subject;$('email-body').value=body;$('email-attachment').innerHTML=attachmentName?`<strong>Attachment:</strong> ${esc(attachmentName)} · included in the .eml draft`:'<strong>No attachment.</strong> Message-only handoff.';$('email-dialog').showModal();
+  }
+  function currentEmail(){return{...emailDraft,to:$('email-to').value.trim(),cc:$('email-cc').value.trim(),subject:$('email-subject').value.trim(),body:$('email-body').value};}
+  function base64Utf8(text){const bytes=new TextEncoder().encode(String(text));let binary='';for(let i=0;i<bytes.length;i+=0x8000)binary+=String.fromCharCode(...bytes.subarray(i,i+0x8000));const encoded=btoa(binary);return(encoded.match(/.{1,76}/g)||[]).join('\r\n');}
+  function buildEml(draft){
+    const boundary='signalops-'+Date.now(),headers=[`To: ${draft.to||''}`,`Cc: ${draft.cc||''}`,`Subject: ${draft.subject}`,`Date: ${new Date().toUTCString()}`,'MIME-Version: 1.0',`Content-Type: multipart/mixed; boundary="${boundary}"`,'',`--${boundary}`,'Content-Type: text/plain; charset="UTF-8"','Content-Transfer-Encoding: base64','',base64Utf8(draft.body)];
+    if(draft.attachmentName)headers.push(`--${boundary}`,`Content-Type: ${draft.attachmentType}; name="${draft.attachmentName}"`,'Content-Transfer-Encoding: base64',`Content-Disposition: attachment; filename="${draft.attachmentName}"`,'',base64Utf8(draft.attachmentContent));headers.push(`--${boundary}--`,'');return headers.join('\r\n');
+  }
+  function downloadEmail(){const draft=currentEmail();if(!draft.subject||!draft.body)return toast('Add an email subject and message');const name=(draft.attachmentName||'churn-tool-handoff').replace(/\.[^.]+$/,'')+'.eml';download(name,buildEml(draft),'message/rfc822');$('email-dialog').close();toast('Email draft downloaded with attachment');}
+  function openEmail(){const draft=currentEmail();location.href=`mailto:${encodeURIComponent(draft.to||'')}?cc=${encodeURIComponent(draft.cc||'')}&subject=${encodeURIComponent(draft.subject||'')}&body=${encodeURIComponent(draft.body||'')}`;}
+  async function copyEmail(){const draft=currentEmail(),text=`To: ${draft.to}\nCC: ${draft.cc}\nSubject: ${draft.subject}\n\n${draft.body}`;try{await navigator.clipboard.writeText(text);toast('Email copied');}catch{download('churn-tool-email.txt',text,'text/plain');}}
+  function exportQueue(){const date=new Date().toISOString().slice(0,10),content=csv(state.accounts.map((a,i)=>({priority:i+1,tier:a.tier,account:a.name,opportunity_owner:a.owner,action_owner:a.actionOwner,renewal_arr:a.renewalArr,new_arr:a.newArr,risk_score:a.risk,expansion_score:a.expansion,confidence:a.confidence,health:a.health,utilization:a.utilization,structured_text_conflict:a.conflictEvidence||'',ai_category:a.ai?.risk_category||'',ai_confidence:a.ai?.confidence??'',ai_conflict:a.ai?.conflict??'',evidence:a.evidence.map(e=>e.label).join(' | '),recommended_action:a.action,rule_version:ruleMeta.version,input_hash:state.fileHash})));queueEmail({subject:`Weekly renewal action queue · ${date}`,body:`Team,\n\nAttached is the weekly renewal action queue generated from ${state.fileName||'the current workbook'}. The P50 churn case is ${money(scenarioForecast('medium'))}. Please review your assigned accounts, confirm the evidence, and reply with the next customer commitment and date.\n\nNo customer communication or forecast override is automatic.`,attachmentName:`churn-tool-weekly-queue-${date}.csv`,attachmentContent:content,attachmentType:'text/csv'});}
+  function exportQuality(){const date=new Date().toISOString().slice(0,10);queueEmail({subject:`Churn Tool data-quality findings · ${date}`,body:`Team,\n\nAttached are the data-quality findings for ${state.fileName||'the current workbook'}. Blocking defects should be resolved before the output is used; warnings remain visible and require owner review.`,attachmentName:`churn-tool-data-quality-${date}.csv`,attachmentContent:csv(state.quality),attachmentType:'text/csv'});}
+  function exportRules(){queueEmail({subject:`Churn Tool rule pack · v${ruleMeta.version}`,body:`RevOps,\n\nAttached is rule pack v${ruleMeta.version}. Please review the logic, owner, evidence label, and change history before importing it into another browser or forecast cycle.`,attachmentName:`churn-tool-rule-pack-v${ruleMeta.version}.json`,attachmentContent:JSON.stringify({product:'Churn Tool',schemaVersion:1,exportedAt:new Date().toISOString(),meta:ruleMeta,rules},null,2),attachmentType:'application/json'});}
+  async function importRules(file){try{const data=JSON.parse(await file.text());if(!Array.isArray(data.rules)||!data.rules.every(r=>r.id&&r.name&&r.field&&r.operator))throw new Error('Not a valid Churn Tool rule pack.');captureUndo('rule-pack import');rules=data.rules;persistRules({action:'imported',ruleId:'rule-pack',name:file.name,reason:'Imported rule pack after schema validation.'});rerunWithRules();renderRules();toast('Imported '+rules.length+' rules');}catch(e){toast(e.message);}}
+
+  function refreshSignalAccountOptions(){
+    const select=$('signal-account');if(!select)return;const current=select.value,names=[...new Set(state.accounts.map(a=>a.name))].sort();select.innerHTML=names.length?names.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join(''):'<option value="">Upload a workbook first</option>';select.value=names.includes(current)?current:(names[0]||'');$('add-signal').disabled=!names.length;$('run-inbox-ai').disabled=!state.signalInbox.length;
+  }
+  function renderSignalInbox(){
+    if(!$('signal-inbox-list'))return;const items=state.signalInbox;$('signal-inbox-status').textContent=items.length+' new signal'+(items.length===1?'':'s');$('run-inbox-ai').disabled=!items.length;$('signal-inbox-list').innerHTML=items.length?items.map(item=>`<div class="signal-item"><div><strong>${esc(item.account)}</strong><small>${item.source==='gong'?'Gong':'CSM'} · ${esc(item.date||'undated')}</small></div><p>${esc(item.text)}</p><button data-remove-signal="${esc(item.id)}">Remove</button></div>`).join(''):'<p class="muted">No Gong or CSM evidence added in this session.</p>';
+  }
+  function applySignal(account,source,text,date){
+    const candidates=state.rows.map((row,index)=>({row,index})).filter(item=>normalize(val(item.row,'account'))===normalize(account)),target=candidates.find(item=>isCurrentOpenRenewal(item.row))||candidates[0];if(!target)return false;const tagged=(date?`[${date}] `:'')+String(text).trim(),current=String(val(target.row,source)||'').trim();setVal(target.row,source,current?current+' | '+tagged:tagged);state.signalInbox.unshift({id:'signal-'+Date.now()+'-'+Math.random().toString(16).slice(2),account,source,text:String(text).trim(),date:date||'',rowIndex:target.index,taggedText:tagged});return true;
+  }
+  function rebuildAfterSignals(){state.headers=state.rows.length?Object.keys(state.rows[0]):state.headers;state.quality=validateData(state.rows,state.headers);state.accounts=buildAccounts(state.rows);if(state.aiResults.length)applyAIResults();renderAll();refreshSignalAccountOptions();renderSignalInbox();}
+  function addSignalFromForm(){const account=$('signal-account').value,source=$('signal-source').value,text=$('signal-text').value.trim(),date=$('signal-date').value;if(!account||!text)return toast('Choose an account and add customer evidence');captureUndo('signal addition',{includeRows:true});if(!applySignal(account,source,text,date)){undoStack.pop();updateUndoButton();return toast('The account could not be matched to a source row');}$('signal-text').value='';$('ai-limit').value='inbox';rebuildAfterSignals();toast('Evidence added; deterministic rules refreshed');}
+  function removeSignal(id){const item=state.signalInbox.find(x=>x.id===id);if(!item)return;captureUndo('signal removal',{includeRows:true});const row=state.rows[item.rowIndex],current=String(val(row,item.source)||''),parts=current.split(' | ').filter(part=>part!==item.taggedText);setVal(row,item.source,parts.join(' | '));state.signalInbox=state.signalInbox.filter(x=>x.id!==id);rebuildAfterSignals();toast('Signal removed');}
+  async function importSignalFile(file){
+    if(!file)return;try{const text=await file.text();if(/\.txt$/i.test(file.name)){ $('signal-text').value=text.trim();toast('Text loaded—choose an account and add it');return; }let rows;if(/\.json$/i.test(file.name))rows=JSON.parse(text);else rows=XLSX.utils.sheet_to_json(XLSX.read(text,{type:'string'}).Sheets.Sheet1,{defval:null,raw:true});if(!Array.isArray(rows)||!rows.length)throw new Error('No note rows found');captureUndo('signal-file import',{includeRows:true});let added=0;for(const row of rows){const account=val(row,'account'),date=val(row,'closeDate')||'';if(!account)continue;const note=val(row,'note'),gong=val(row,'gong');if(note&&applySignal(account,'note',note,date))added++;if(gong&&applySignal(account,'gong',gong,date))added++;}if(!added){undoStack.pop();updateUndoButton();throw new Error('No rows matched an existing account plus a Gong or CSM note column');}rebuildAfterSignals();$('ai-limit').value='inbox';toast('Imported '+added+' customer signals');}catch(error){toast(error.message||'Could not import signal file');}
+  }
+  function runInboxAI(){if(!state.signalInbox.length)return toast('Add Gong or CSM evidence first');$('ai-limit').value='inbox';runAI();}
 
   const AI_CATEGORIES=['budget_constraint','champion_turnover_or_disengagement','product_gap_or_underuse','competitive_displacement','merger_acquisition_or_org_change','procurement_pushback','customer_disengagement','no_risk_detected','ambiguous'];
   const AI_SYSTEM_PROMPT=`You are a cautious B2B SaaS Revenue Operations analyst. Extract current unresolved renewal risk and credible expansion evidence from two short customer-text fields. Do not infer facts that are not present. Treat resolved or negated statements such as "no retention risk", "budget approved", and "procurement completed" as no current risk. Return ONLY JSON with exactly these keys: {"risk_category":"one allowed category","risk_present":boolean,"expansion_present":boolean,"confidence":number,"evidence_text":"short source-grounded phrase","reasoning":"one sentence","needs_human_review":boolean}. Allowed risk_category values: ${AI_CATEGORIES.join(', ')}. Confidence must be 0 to 1. Use ambiguous and needs_human_review=true when evidence conflicts or is unclear.`;
   async function callClaude(row,key,model,signal){
-    const payload={model,max_tokens:350,system:AI_SYSTEM_PROMPT,messages:[{role:'user',content:`CSM Health Note: ${val(row,'note')||'(blank)'}\nLatest Gong Call Highlight: ${val(row,'gong')||'(blank)'}`} ]};
+    const payload={model,max_tokens:350,temperature:0,system:AI_SYSTEM_PROMPT,messages:[{role:'user',content:`CSM Health Note: ${val(row,'note')||'(blank)'}\nLatest Gong Call Highlight: ${val(row,'gong')||'(blank)'}`} ]};
     const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify(payload),signal});
     if(!response.ok){const retryable=response.status===429||response.status>=500;let detail='';try{const body=await response.json();detail=body?.error?.message?` — ${body.error.message}`:'';}catch{}throw new Error(`Anthropic ${response.status}${detail}${retryable?' — retry later':''}`);}
     const data=await response.json(),raw=(data.content||[]).find(x=>x.type==='text')?.text||'';let parsed;
@@ -646,7 +714,7 @@
   }
   async function runAI(){
     const key=$('anthropic-key').value.trim(),model=$('anthropic-model').value.trim();if(key.length<10)return toast('Enter a valid Anthropic API key');if(!model)return toast('Enter a Claude model ID');
-    const source=state.rows.filter(isCurrentOpenRenewal),limit=$('ai-limit').value,rows=limit==='all'?source:source.slice(0,Number(limit));if(!rows.length)return toast('No current open renewals to process');
+    const source=state.rows.filter(isCurrentOpenRenewal),limit=$('ai-limit').value,inboxAccounts=new Set(state.signalInbox.map(x=>normalize(x.account))),rows=limit==='inbox'?source.filter(row=>inboxAccounts.has(normalize(val(row,'account')))):limit==='all'?source:source.slice(0,Number(limit));if(!rows.length)return toast(limit==='inbox'?'No eligible inbox signals to process':'No current open renewals to process');
     aiAbort=new AbortController();$('run-ai').disabled=true;$('cancel-ai').disabled=false;$('ai-status').textContent='Running…';state.aiResults=[];
     for(let i=0;i<rows.length;i++){
       if(aiAbort.signal.aborted)break;const row=rows[i],base={account:val(row,'account')||'Unnamed',opportunity:val(row,'opportunity')||'',sourceRow:state.rows.indexOf(row)+2,status:'success',model,promptVersion:AI_PROMPT_VERSION};
@@ -661,39 +729,31 @@
     state.accounts.forEach(a=>{const items=grouped.get(a.name)||[];if(!items.length)return;const primary=items.sort((x,y)=>(Number(y.risk_present)-Number(x.risk_present))||y.confidence-x.confidence)[0],structuredHealthy=normalize(a.health)==='healthy';a.ai={...primary,conflict:structuredHealthy&&primary.risk_present};if(primary.risk_present){const points=20+(primary.confidence>=.8?5:0);a.risk=Math.min(100,a.risk+points);a.evidence.push({ruleId:'ai-'+AI_PROMPT_VERSION,usecase:'risk',label:`AI: ${primary.risk_category}`,points,owner:'CSM',action:'Human-review the cited text and confirm whether the risk is current and unresolved.',opportunity:primary.opportunity});}if(primary.expansion_present){a.expansion=Math.min(100,a.expansion+20);a.evidence.push({ruleId:'ai-expansion-'+AI_PROMPT_VERSION,usecase:'expansion',label:'AI: expansion evidence',points:20,owner:'AE',action:'Validate the expansion evidence, buyer, timing, and sizing before creating pipeline.',opportunity:primary.opportunity});}a.tier=tierFor(a);const lead=a.evidence.sort((x,y)=>y.points-x.points)[0];a.action=lead.action;a.actionOwner=lead.owner;});
   }
   function renderAIResults(){$('ai-results-body').innerHTML=state.aiResults.map(r=>`<tr><td><strong>${esc(r.account)}</strong><br><small class="muted">row ${r.sourceRow}</small></td><td>${esc(r.risk_category)}</td><td><span class="ai-flag ${r.risk_present?'yes':'no'}">${r.risk_present?'Yes':'No'}</span></td><td>${r.expansion_present?'Yes':'No'}</td><td>${Math.round((r.confidence||0)*100)}%</td><td class="evidence">${esc(r.evidence_text||r.reasoning)}</td><td>${esc(r.status)}${r.needs_human_review?' · review':''}</td></tr>`).join('')||'<tr><td colspan="7" class="muted">No AI results.</td></tr>';}
-  function exportAI(){download('churn-tool-ai-audit-'+new Date().toISOString().slice(0,10)+'.csv',csv(state.aiResults.map(r=>({...r,input_hash:state.fileHash,run_id:state.aiRun?.id||''}))));}
+  function exportAI(){const date=new Date().toISOString().slice(0,10),content=csv(state.aiResults.map(r=>({...r,input_hash:state.fileHash,run_id:state.aiRun?.id||''})));queueEmail({subject:`Churn Tool AI evidence audit · ${date}`,body:`RevOps and CS leadership,\n\nAttached is the AI evidence audit for the current renewal run. Review source evidence, conflicts, and all human-review flags before accepting any account action. Invalid model output contributed zero points.`,attachmentName:`churn-tool-ai-audit-${date}.csv`,attachmentContent:content,attachmentType:'text/csv'});}
   function renderTriggerAccounts(){const select=$('trigger-account'),current=select.value,list=state.accounts.filter(a=>a.tier!=='Healthy');select.innerHTML=list.map(a=>`<option value="${esc(a.id)}">${esc(a.name)} · ${a.tier}</option>`).join('')||'<option value="">Upload data to choose an account</option>';select.value=list.some(a=>a.id===current)?current:(list[0]?.id||'');}
   function selectedTriggerAccount(){return state.accounts.find(a=>a.id===$('trigger-account').value)||state.accounts.find(a=>a.tier!=='Healthy')||null;}
   function fillTrigger(text,a){if(!a)return text;const reason=a.evidence[0]?.label||'risk requires validation';return text.replaceAll('{{account}}',a.name).replaceAll('{{reason}}',reason).replaceAll('{{owner}}',a.actionOwner||a.owner);}
-  function renderTriggers(){renderTriggerAccounts();const a=selectedTriggerAccount();$('trigger-grid').innerHTML=triggers.map(t=>`<article class="panel trigger-card"><p class="eyebrow">${esc(t.channel)}</p><h3>${esc(t.name)}</h3><textarea data-trigger-text="${esc(t.id)}" aria-label="${esc(t.name)} template">${esc(t.text)}</textarea><div class="trigger-preview">${esc(fillTrigger(t.text,a))}</div><div class="trigger-actions"><span class="coverage">Uses verified top reason</span><button class="button secondary" data-copy-trigger="${esc(t.id)}">Copy action</button></div></article>`).join('');}
-  function saveTriggers(){triggers=triggers.map(t=>({...t,text:document.querySelector(`[data-trigger-text="${t.id}"]`)?.value||t.text}));localStorage.setItem(STORAGE.triggers,JSON.stringify(triggers));renderTriggers();toast('Trigger templates saved locally');}
-  async function copyTrigger(id){const t=triggers.find(x=>x.id===id),text=fillTrigger(t?.text||'',selectedTriggerAccount());try{await navigator.clipboard.writeText(text);toast('Action copied');}catch{download('churn-tool-action.txt',text,'text/plain');}}
+  function renderTriggers(){renderTriggerAccounts();const a=selectedTriggerAccount();$('trigger-grid').innerHTML=triggers.map(t=>`<article class="panel trigger-card"><p class="eyebrow">${esc(t.channel)}</p><h3>${esc(t.name)}</h3><textarea data-trigger-text="${esc(t.id)}" aria-label="${esc(t.name)} template">${esc(t.text)}</textarea><div class="trigger-preview">${esc(fillTrigger(t.text,a))}</div><div class="trigger-actions"><span class="coverage">Uses verified top reason</span><button class="button secondary" data-copy-trigger="${esc(t.id)}">Email action</button></div></article>`).join('');}
+  function saveTriggers(){captureUndo('trigger-template edit');triggers=triggers.map(t=>({...t,text:document.querySelector(`[data-trigger-text="${t.id}"]`)?.value||t.text}));localStorage.setItem(STORAGE.triggers,JSON.stringify(triggers));renderTriggers();toast('Trigger templates saved locally');}
+  async function copyTrigger(id){const t=triggers.find(x=>x.id===id),account=selectedTriggerAccount(),text=fillTrigger(t?.text||'',account);queueEmail({subject:`${t?.name||'Account action'} · ${account?.name||'customer account'}`,body:`Team,\n\n${text}\n\nPlease confirm the owner, customer commitment, and due date before this action is marked complete.`});}
   async function testAIConnection(){const key=$('anthropic-key').value.trim(),model=$('anthropic-model').value.trim(),row=state.rows.find(isCurrentOpenRenewal);if(key.length<10)return toast('Enter a valid Anthropic API key');if(!row)return toast('Upload a workbook with an eligible renewal');$('test-ai').disabled=true;$('ai-status').textContent='Testing…';try{const result=await callClaude(row,key,model,new AbortController().signal);$('ai-status').textContent=`Connected · ${result.risk_category}`;toast('Claude connection and response schema verified');}catch(error){$('ai-status').textContent='Connection failed';toast(error.message);}finally{$('test-ai').disabled=false;}}
   function submissionMarkdown(){const c=countTiers();return `# Churn Tool — Submission Brief\n\n## Run evidence\n- File: ${state.fileName||'Not loaded'}\n- Input hash: ${state.fileHash||'Not available'}\n- Forecast year: ${state.selectedFY==='all'?'All':`FY${String(state.selectedFY).slice(-2)}`}\n- Rows: ${state.rows.length}\n- Accounts: ${state.accounts.length}\n- Critical / High / Expansion: ${c.Critical||0} / ${c.High||0} / ${c.Expansion||0}\n- Low / P50 / High churn ARR: ${scenarioForecast('low').toFixed(2)} / ${scenarioForecast('medium').toFixed(2)} / ${scenarioForecast('high').toFixed(2)}\n- Rule version: ${ruleMeta.version}\n- AI prompt version: ${AI_PROMPT_VERSION}\n- AI rows processed: ${state.aiResults.length}\n\n## Executive decision\nRun Churn Tool weekly as a governed triage layer before forecast calls. It produces a validated action queue and scenario forecast; forecast owners retain approval.\n\n## CRO pushback response\n**What is true:** CSM notes can be stale, cautious, and inconsistent; a negative note is not a churn outcome.\n\n**Where I agree and disagree:** Text-only concern should not automatically move committed churn ARR. But when unresolved customer language agrees with low utilization, critical health, pipeline status, or a recorded churn reason, ignoring it would make the forecast less defensible.\n\n**How we settle it:** Retain every flag, leadership override, cited phrase, and final outcome for two forecast cycles. Measure observed churn and forecast error by tier, plus false positives for text-only versus combined signals. CSM leadership classifies the five largest disagreements as current, resolved, or stale.\n\n**Commitment:** Keep the current medium/P50 case. Combined structured and unresolved text evidence remains in the forecast; text-only accounts remain human-review items. Recalibrate the tier rate only when back-testing supports the change.\n\n## Operating model\nRevOps runs and calibrates. CSM validates adoption signals. AE owns commercial actions. CRO and CCO resolve the five highest-leverage escalations. Weekly run, monthly override review, quarterly recalibration.\n\n## 90 days\n1. Days 1–30: shadow forecast calls and baseline false positives.\n2. Days 31–60: route actions and add a controlled AI proxy.\n3. Days 61–90: recalibrate rates and decide production rollout.\n\n## Known limits\nMissing behavior fields are not inferred. AI can misread stale or negated notes. No customer communication or forecast override is automatic.\n`;}
-  function exportBrief(){download('churn-tool-submission-brief.md',submissionMarkdown(),'text/markdown');}
-  function exportDemo(){download('churn-tool-demo-record-'+new Date().toISOString().slice(0,10)+'.md',submissionMarkdown()+'\n## Demo timestamp\n'+new Date().toISOString()+'\n','text/markdown');}
+  function exportBrief(){const content=submissionMarkdown();queueEmail({subject:'Churn Tool submission brief',body:'Leadership,\n\nAttached is the current Churn Tool submission brief, including the executive decision, operating model, controls, limits, and 90-day rollout.',attachmentName:'churn-tool-submission-brief.md',attachmentContent:content,attachmentType:'text/markdown'});}
+  function exportDemo(){const date=new Date().toISOString().slice(0,10),content=submissionMarkdown()+'\n## Demo timestamp\n'+new Date().toISOString()+'\n';queueEmail({subject:`Churn Tool demo record · ${date}`,body:'Review team,\n\nAttached is the reproducible demo record for the current Churn Tool run, including file identity, rule version, output counts, controls, and timestamp.',attachmentName:`churn-tool-demo-record-${date}.md`,attachmentContent:content,attachmentType:'text/markdown'});}
   function moveViewContents(sourceId,mountId){const source=$(sourceId),mount=$(mountId);if(!source||!mount)return;while(source.firstChild)mount.appendChild(source.firstChild);}
   function consolidateViews(){moveViewContents('triggers','trigger-library-mount');moveViewContents('quality','quality-mount');moveViewContents('runs','runs-mount');moveViewContents('howto','handoff-guide-mount');}
 
   function bind(){
     consolidateViews();
+    $('back-button').addEventListener('click',goBack);$('undo-button').addEventListener('click',undoLast);updateBackButton();updateUndoButton();
     document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.view)));
     document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>switchView(b.dataset.jump)));
     document.querySelectorAll('[data-dashboard-tab]').forEach(b=>b.addEventListener('click',()=>setDashboardTab(b.dataset.dashboardTab)));setDashboardTab('decision');
     $('file-input').addEventListener('change',e=>handleFile(e.target.files[0]));$('export-button').addEventListener('click',exportQueue);$('export-quality').addEventListener('click',exportQuality);
-    if($('setup-key')){
-      $('setup-key').addEventListener('input',e=>{$('anthropic-key').value=e.target.value;$('setup-key-test').disabled=e.target.value.trim().length<10});
-      $('setup-key-test').addEventListener('click',async()=>{
-        const key=$('setup-key').value.trim();$('anthropic-key').value=key;
-        $('setup-key-status').textContent='Testing…';$('setup-key-status').style.color='#a86913';$('setup-key-test').disabled=true;
-        try{await testAIConnection();$('setup-key-status').innerHTML='<strong style="color:#146c55">✓ Successfully connected</strong> — upload your data to continue';$('setup-key-test').textContent='✓ Successfully connected'}
-        catch(e){$('setup-key-status').innerHTML='<strong style="color:#b43d3d">✗ Failed:</strong> '+esc(e.message);$('setup-key-test').textContent='Test connection'}
-        finally{$('setup-key-test').disabled=false}
-      });
-    }
     $('fiscal-year').addEventListener('change',e=>{state.selectedFY=e.target.value==='all'?'all':Number(e.target.value);state.quality=validateData(state.rows,state.headers);state.accounts=buildAccounts(state.rows);if(state.aiResults.length)applyAIResults();renderAll();toast('Forecast population changed to '+(state.selectedFY==='all'?'all fiscal years':'FY'+String(state.selectedFY).slice(-2)));});
     $('dash-risk-filter').addEventListener('change',renderOperationalQueue);$('dash-type-filter').addEventListener('change',renderOperationalQueue);
     $('trigger-account').addEventListener('change',renderTriggers);$('save-triggers').addEventListener('click',saveTriggers);$('trigger-grid').addEventListener('click',e=>{const b=e.target.closest('[data-copy-trigger]');if(b)copyTrigger(b.dataset.copyTrigger);});
+    $('signal-account').addEventListener('change',()=>{});$('add-signal').addEventListener('click',addSignalFromForm);$('run-inbox-ai').addEventListener('click',runInboxAI);$('signal-file').addEventListener('change',e=>importSignalFile(e.target.files[0]));$('signal-inbox-list').addEventListener('click',e=>{const b=e.target.closest('[data-remove-signal]');if(b)removeSignal(b.dataset.removeSignal);});
     $('test-ai').addEventListener('click',testAIConnection);$('run-ai').addEventListener('click',runAI);$('cancel-ai').addEventListener('click',()=>aiAbort?.abort());$('export-ai').addEventListener('click',exportAI);
     $('export-brief').addEventListener('click',exportBrief);$('export-demo').addEventListener('click',exportDemo);
     $('account-search').addEventListener('input',filterAccounts);$('tier-filter').addEventListener('change',filterAccounts);$('segment-filter').addEventListener('change',filterAccounts);$('owner-filter').addEventListener('change',filterAccounts);
@@ -703,10 +763,11 @@
     $('rule-form').addEventListener('submit',e=>{e.preventDefault();if(saveRule())$('rule-dialog').close();});
     $('rule-list').addEventListener('click',e=>{let b=e.target.closest('[data-edit-rule],[data-toggle-rule],[data-delete-rule]');if(!b)return;if(b.dataset.editRule)populateRuleForm(rules.find(r=>r.id===b.dataset.editRule));if(b.dataset.toggleRule)toggleRule(b.dataset.toggleRule);if(b.dataset.deleteRule)deleteRule(b.dataset.deleteRule);});
     $('export-rules').addEventListener('click',exportRules);$('import-rules').addEventListener('click',()=>$('rules-input').click());$('rules-input').addEventListener('change',e=>importRules(e.target.files[0]));
-    $('clear-runs').addEventListener('click',()=>{if(confirm('Clear the local run audit history?')){runHistory=[];localStorage.setItem(STORAGE.runs,'[]');renderRuns();}});
+    $('clear-runs').addEventListener('click',()=>{if(confirm('Clear the local run audit history?')){captureUndo('run-history deletion');runHistory=[];localStorage.setItem(STORAGE.runs,'[]');renderRuns();}});
+    $('close-email').addEventListener('click',()=>$('email-dialog').close());$('cancel-email').addEventListener('click',()=>$('email-dialog').close());$('download-email').addEventListener('click',downloadEmail);$('open-email').addEventListener('click',openEmail);$('copy-email').addEventListener('click',copyEmail);
     $('rule-field').innerHTML=Object.entries(FIELD_LABELS).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('')+'<option value="allText">All customer text</option>';
     $('ai-prompt-verbatim').textContent=AI_SYSTEM_PROMPT;
-    const aliases={quality:'ai',runs:'ai',triggers:'rules',howto:'brief'},initial=aliases[location.hash.slice(1)]||location.hash.slice(1);if(document.getElementById(initial)?.classList.contains('view'))switchView(initial);
+    refreshSignalAccountOptions();renderSignalInbox();const aliases={quality:'ai',runs:'ai',triggers:'rules',howto:'brief'},initial=aliases[location.hash.slice(1)]||location.hash.slice(1);if(document.getElementById(initial)?.classList.contains('view'))switchView(initial,false);
   }
 
   globalThis.SignalOpsCore = {
