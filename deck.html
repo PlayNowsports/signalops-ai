@@ -4,31 +4,43 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Loading Tulip GTM Operations Deck</title>
-<style>html,body{height:100%;margin:0;background:#05070a;color:#e8eef7;font-family:Arial,sans-serif}body{display:grid;place-items:center}.status{max-width:680px;padding:32px;text-align:center}.status b{display:block;font-size:22px;margin-bottom:10px}.status span{color:#8a94a6}</style>
+<style>
+html,body{height:100%;margin:0;background:#05070a;color:#e8eef7;font-family:Arial,sans-serif}
+body{display:grid;place-items:center}.status{max-width:680px;padding:32px;text-align:center}
+.status b{display:block;font-size:22px;margin-bottom:10px}.status span{color:#8a94a6}
+</style>
 </head>
 <body>
-<div class="status"><b>Loading presentation…</b><span>The restored deck is being opened.</span></div>
+<div class="status"><b>Loading presentation…</b><span>The interactive deck is being opened.</span></div>
 <script>
-(async()=>{
+(async function(){
   try{
-    const paths=['deck-payload/part1.txt','deck-payload/part2.txt','deck-payload/part3.txt','deck-payload/part4a.txt','deck-payload/part4b.txt'];
-    const parts=await Promise.all(paths.map(async p=>{
-      const r=await fetch(p,{cache:'no-store'});
-      if(!r.ok) throw new Error(`${p}: ${r.status}`);
-      return (await r.text()).trim();
-    }));
-    const b64=parts.join('');
-    const binary=atob(b64);
-    const bytes=new Uint8Array(binary.length);
-    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
-    if(typeof DecompressionStream==='undefined') throw new Error('This browser does not support gzip decompression.');
-    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-    const html=await new Response(stream).text();
+    const source='https://raw.githubusercontent.com/PlayNowsports/signalops-ai/222ec59f5b4276280e1349b0a9107d88a3e57cf8/deck.html';
+    const response=await fetch(source,{cache:'no-store'});
+    if(!response.ok) throw new Error('Deck source returned '+response.status);
+    const html=await response.text();
+    const doc=new DOMParser().parseFromString(html,'text/html');
+    const stage=doc.querySelector('.deck-stage');
+    const moveIds=['slide-exec','slide-reco','slide-next','slide-future'];
+    const moving=moveIds.map(id=>doc.getElementById(id)).filter(Boolean);
+    moving.forEach(node=>node.remove());
+    const remaining=Array.from(stage.querySelectorAll('.slide'));
+    const reference=remaining[16]||null;
+    moving.forEach(node=>stage.insertBefore(node,reference));
+    Array.from(doc.scripts).forEach(function(script){
+      if(script.src) return;
+      script.textContent=script.textContent
+        .replace(/\n?const firstEvidence = document\.getElementById\('slide-1'\);/g,'')
+        .replace(/\n?deckStage\.insertBefore\(document\.getElementById\('slide-exec'\), firstEvidence\);/g,'')
+        .replace(/\n?deckStage\.insertBefore\(document\.getElementById\('slide-reco'\), firstEvidence\);/g,'')
+        .replace(/\n?deckStage\.insertBefore\(document\.getElementById\('slide-next'\), firstEvidence\);/g,'')
+        .replace(/\n?deckStage\.insertBefore\(document\.getElementById\('slide-future'\), firstEvidence\);/g,'');
+    });
     document.open();
-    document.write(html);
+    document.write('<!doctype html>'+doc.documentElement.outerHTML);
     document.close();
   }catch(error){
-    document.body.innerHTML=`<div class="status"><b>The presentation could not load.</b><span>${String(error.message||error)}</span></div>`;
+    document.body.innerHTML='<div class="status"><b>The presentation could not load.</b><span>'+String(error.message||error)+'</span></div>';
     console.error(error);
   }
 })();
